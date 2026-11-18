@@ -3,7 +3,8 @@ import { projects, type Project } from '../data/projects';
 import { link } from '../lib/url';
 
 const featured = projects.filter((project) => project.featured);
-const others = projects.filter((project) => !project.featured);
+const cards = projects.filter((project) => !project.featured && (project.page || project.code));
+const also = projects.filter((project) => !project.featured && !project.page && !project.code);
 const meta = (project: Project) => [project.year, project.where].filter(Boolean).join(', ');
 const morph = (project: Project) => (project.page ? `view-transition-name: project-${project.slug}` : undefined);
 
@@ -60,7 +61,7 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
 
     <div class="grid">
       {
-        others.map((project) => (
+        cards.map((project) => (
           <article class="card panel" id={`project-${project.slug}`}>
             <p class="meta">
               <span>{meta(project)}</span>
@@ -103,6 +104,44 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
         ))
       }
     </div>
+
+    {
+      also.length > 0 && (
+        <div class="also panel">
+          <h3 class="also-title" id="also-title">
+            Also built
+          </h3>
+          {also.map((project) => (
+            <article class="row" id={`project-${project.slug}`}>
+              <div>
+                <h4>{project.name}</h4>
+                <p class="meta">{meta(project)}</p>
+              </div>
+              <div>
+                <p class="tagline">{project.tagline}</p>
+                {project.facts.length > 0 && (
+                  <ul class="facts" role="list">
+                    {project.facts.map((fact) => {
+                      const [num, label] = split(fact);
+                      return (
+                        <li>
+                          {num && <span class="num">{num}</span>} {label}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                <ul class="stack" role="list" aria-label="Built with">
+                  {project.stack.map((tool) => (
+                    <li class="chip">{tool}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      )
+    }
   </div>
 </section>
 
@@ -397,5 +436,55 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
 
   .links a:hover {
     text-decoration-color: var(--accent);
+  }
+
+  .also {
+    --pad: clamp(1.25rem, 0.9rem + 1.2vw, 1.75rem);
+    margin-top: 1rem;
+    padding-inline: var(--pad);
+  }
+
+  .also-title {
+    width: auto;
+    margin-top: 0;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .row {
+    display: grid;
+    gap: 0.75rem 2rem;
+    padding-block: 1.6rem;
+  }
+
+  .row + .row {
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 48rem) {
+    .row {
+      grid-template-columns: 15rem minmax(0, 1fr);
+    }
+  }
+
+  h4 {
+    font-size: var(--step-1);
+    letter-spacing: -0.015em;
+  }
+
+  .row .meta {
+    margin-top: 0.35rem;
+  }
+
+  .row .tagline {
+    margin-top: 0;
+  }
+
+  .row .stack {
+    margin-top: 1.1rem;
   }
 </style>

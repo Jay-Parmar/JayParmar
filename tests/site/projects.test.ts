@@ -60,6 +60,13 @@ describe('projects', () => {
     for (const { project, name } of repeated) expect(name).toContain(project);
   });
 
+  it('list the projects with no page or public code together under Also built', () => {
+    const also = html.slice(html.indexOf('id="also-title"'), html.indexOf('id="skills"'));
+    for (const project of projects) {
+      expect(also.includes(`id="project-${project.slug}"`), project.slug).toBe(!project.page && !project.code);
+    }
+  });
+
   it('keep the words you see in the name of each link', () => {
     for (const { text, name } of repeated) expect(name.toLowerCase()).toContain(text.toLowerCase());
   });
