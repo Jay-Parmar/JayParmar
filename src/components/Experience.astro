@@ -1,0 +1,134 @@
+---
+import { education, roles } from '../data/experience';
+import { lines } from '../data/lines';
+
+const names = new Map(lines.map((line) => [line.id, line.name]));
+const period = (start: string, end: string) => `${start} to ${end === 'Present' ? 'now' : end}`;
+const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
+---
+
+<section class="section" id="experience" aria-labelledby="experience-title">
+  <div class="wrap">
+    <h2 class="title" id="experience-title">Experience</h2>
+    <ol class="timeline" role="list">
+      {
+        roles.map((role) => (
+          <li class="stop" id={role.id}>
+            <p class="when">{period(role.start, role.end)}</p>
+            <h3>{role.title}</h3>
+            <p class="where">
+              {role.company}, {role.place}
+            </p>
+            {role.groups.map((group) => (
+              <div class="group" style={`--c: var(--${group.line})`}>
+                <h4>{names.get(group.line)}</h4>
+                <ul role="list">
+                  {group.points.map((point) => (
+                    <li>{parts(point).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </li>
+        ))
+      }
+      <li class="stop" id="education">
+        <p class="when">{period(education.start, education.end)}</p>
+        <h3>{education.degree}</h3>
+        <p class="where">{education.school}, {education.place}</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    --x: 0.9rem;
+    --dot: 1.5rem;
+    margin-top: 3rem;
+    padding-left: clamp(2.75rem, 2rem + 2vw, 3.5rem);
+  }
+
+  .stop {
+    position: relative;
+    padding-bottom: 3.5rem;
+  }
+
+  .stop:last-child {
+    padding-bottom: 0;
+  }
+
+  .stop::before,
+  .stop::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--x) - clamp(2.75rem, 2rem + 2vw, 3.5rem));
+  }
+
+  .stop::before {
+    z-index: 1;
+    top: 0.25rem;
+    width: var(--dot);
+    height: var(--dot);
+    margin-left: calc(var(--line) / 2 - var(--dot) / 2);
+    border: 4px solid var(--ink);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+
+  .stop:not(:last-child)::after {
+    top: calc(0.25rem + var(--dot) / 2);
+    width: var(--line);
+    height: 100%;
+    background: var(--ink);
+  }
+
+  .when {
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  h3 {
+    margin-top: 0.15rem;
+    font-size: var(--step-3);
+  }
+
+  .where {
+    margin-top: 0.35rem;
+    font-size: var(--step-1);
+  }
+
+  .group {
+    max-width: var(--measure);
+    margin-top: 1.75rem;
+    padding-left: clamp(0.85rem, 0.5rem + 1.5vw, 1.25rem);
+    border-left: 4px solid var(--c);
+  }
+
+  h4 {
+    font-size: var(--step-0);
+    font-weight: 700;
+  }
+
+  .group ul {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.6rem;
+  }
+
+  .group li {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .group li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+</style>
