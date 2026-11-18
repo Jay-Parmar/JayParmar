@@ -36,6 +36,9 @@ describe('projects', () => {
 
   it('pull out the number that leads each fact', () => {
     expect(nums(card('hirejutsu'))).toEqual(['629', '15', '2,000+']);
+    expect(nums(card('hold-my-files'))).toEqual(['146']);
+    expect(nums(card('foodhub-sniffer'))).toEqual(['36']);
+    expect(nums(card('ens-meeting-bridge'))).toEqual([]);
   });
 
   it('mark the projects with public code as open source', () => {
