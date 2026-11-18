@@ -1,7 +1,7 @@
 ---
 import type { LineId } from '../data/lines';
 import { mapLines, mapStations, viewBox, type MapStation } from '../data/map';
-import { nearest, pathData, polylineLength, type Point } from '../lib/metro';
+import { nearest, pathData, polylineLength, trainTiming, type Point } from '../lib/metro';
 
 const [width, height] = viewBox;
 
@@ -28,6 +28,17 @@ const arrival = (station: MapStation) =>
       .map(({ points, delay, duration }) => delay + nearest(points, middle(station)).fraction * duration),
   );
 
+// Once the map is drawn, a train runs each line out and back, waiting at its stations.
+const done = Math.max(...drawn.map(({ delay, duration }) => delay + duration));
+const trains = drawn.map(({ line, points }) => {
+  const fractions = mapStations
+    .filter((station) => station.lines.includes(line))
+    .map((station) => nearest(points, middle(station)).fraction);
+  const stops = [...new Set([0, 1, ...fractions].map((f) => Number(f.toFixed(4))))].sort((a, b) => a - b);
+  const loop = (2 * polylineLength(points)) / 70 + 0.8 * (2 * stops.length - 1);
+  return { line, loop, ...trainTiming(stops, 0.8 / loop) };
+});
+
 const seconds = (value: number) => `${value.toFixed(2)}s`;
 ---
 
@@ -49,6 +60,26 @@ const seconds = (value: number) => `${value.toFixed(2)}s`;
         ))
       }
     </g>
+    <g class="trains" aria-hidden="true">
+      {
+        trains.map(({ line, loop, keyPoints, keyTimes }) => (
+          <rect class="train" x="-10" y="-4.5" width="20" height="9" rx="4.5" visibility="hidden">
+            <set attributeName="visibility" to="visible" begin={seconds(done + 0.3)} fill="freeze" />
+            <animateMotion
+              dur={seconds(loop)}
+              begin={seconds(done + 0.3)}
+              repeatCount="indefinite"
+              rotate="auto"
+              calcMode="linear"
+              keyPoints={keyPoints}
+              keyTimes={keyTimes}
+            >
+              <mpath href={`#line-${line}`} />
+            </animateMotion>
+          </rect>
+        ))
+      }
+    </g>
     <g class="stations">
       {
         mapStations.map((station) => {
@@ -62,12 +93,24 @@ const seconds = (value: number) => `${value.toFixed(2)}s`;
               style={`--arrive: ${seconds(arrival(station))}`}
             >
               {x1 === x2 && y1 === y2 ? (
-                <circle class="marker" cx={x1} cy={y1} r="8" />
+                <>
+                  <g class="focus">
+                    <circle class="halo" cx={x1} cy={y1} r="16" />
+                    <circle class="gap" cx={x1} cy={y1} r="13" />
+                  </g>
+                  <circle class="marker" cx={x1} cy={y1} r="8" />
+                </>
               ) : (
-                <g class="marker">
-                  <line class="ring" x1={x1} y1={y1} x2={x2} y2={y2} />
-                  <line class="fill" x1={x1} y1={y1} x2={x2} y2={y2} />
-                </g>
+                <>
+                  <g class="focus">
+                    <line class="halo" x1={x1} y1={y1} x2={x2} y2={y2} />
+                    <line class="gap" x1={x1} y1={y1} x2={x2} y2={y2} />
+                  </g>
+                  <g class="marker">
+                    <line class="ring" x1={x1} y1={y1} x2={x2} y2={y2} />
+                    <line class="fill" x1={x1} y1={y1} x2={x2} y2={y2} />
+                  </g>
+                </>
               )}
               <text class="name" x={x} y={y} text-anchor={anchor}>
                 {station.name}
@@ -99,6 +142,13 @@ const seconds = (value: number) => `${value.toFixed(2)}s`;
     stroke-width: var(--line);
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+
+  .train {
+    display: none;
+    fill: var(--ink);
+    stroke: var(--paper);
+    stroke-width: 1.5;
   }
 
   circle.marker {
@@ -152,9 +202,35 @@ const seconds = (value: number) => `${value.toFixed(2)}s`;
     text-underline-offset: 3px;
   }
 
-  .station:focus-visible .ring,
-  .station:focus-visible circle.marker {
-    stroke: var(--backend);
+  .focus {
+    display: none;
+  }
+
+  .station:focus-visible .focus {
+    display: inline;
+  }
+
+  circle.halo {
+    fill: var(--ink);
+  }
+
+  circle.gap {
+    fill: var(--paper);
+  }
+
+  line.halo,
+  line.gap {
+    stroke-linecap: round;
+  }
+
+  line.halo {
+    stroke: var(--ink);
+    stroke-width: 34;
+  }
+
+  line.gap {
+    stroke: var(--paper);
+    stroke-width: 28;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -165,6 +241,10 @@ const seconds = (value: number) => `${value.toFixed(2)}s`;
 
     .station {
       animation: appear 0.4s ease-out var(--arrive) both;
+    }
+
+    .train {
+      display: inline;
     }
 
     .marker {
