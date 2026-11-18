@@ -211,6 +211,14 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
     }
   }
 
+  @media print {
+    .window {
+      background: var(--surface);
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .window {
       animation: window-in 0.8s var(--ease) 0.15s both;

@@ -308,32 +308,28 @@ svg {
     transition: none !important;
   }
 
-  .map {
-    break-inside: avoid;
-  }
-
   body > header,
   .skip,
   .footer,
-  .terminus,
-  .trains {
+  .packets {
     display: none !important;
   }
 
-  .section,
-  .contact {
+  .hero::before,
+  .hero::after,
+  .system::before {
+    display: none;
+  }
+
+  .section {
     padding-block: 2rem 0;
   }
 
-  .head {
-    position: static !important;
-  }
-
+  .system,
   .result,
-  .stop,
-  .project,
-  .row,
-  .panel {
+  .group,
+  .featured,
+  .card {
     break-inside: avoid;
   }
 }
