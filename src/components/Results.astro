@@ -54,11 +54,12 @@ import { results } from '../data/results';
 
   if (cells.length && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
     const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
-    const stat = (cell: HTMLElement) => cell.querySelector<HTMLElement>('.stat')!;
+    const parts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.stat, .bars')];
     const after = (cell: HTMLElement) => cell.querySelector<HTMLElement>('.after')!;
     const counts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.figure, .after .value')];
     const widths = new Map(cells.map((cell) => [cell, after(cell).style.getPropertyValue('--w')]));
     const finals = new Map(cells.flatMap(counts).map((count) => [count, count.textContent ?? '']));
+    const started = new Set<HTMLElement>();
     const done = new Set<HTMLElement>();
 
     const show = (cell: HTMLElement, value: string) => {
@@ -67,7 +68,7 @@ import { results } from '../data/results';
 
     const finish = (cell: HTMLElement) => {
       done.add(cell);
-      observer.unobserve(stat(cell));
+      for (const part of parts(cell)) observer.unobserve(part);
       cell.classList.remove('is-pending', 'is-moving');
       after(cell).style.setProperty('--w', widths.get(cell)!);
       for (const count of counts(cell)) count.textContent = finals.get(count)!;
@@ -95,9 +96,11 @@ import { results } from '../data/results';
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          observer.unobserve(entry.target);
-          run(entry.target.closest<HTMLElement>('.result')!);
+          const cell = entry.target.closest<HTMLElement>('.result')!;
+          if (!entry.isIntersecting || started.has(cell)) continue;
+          started.add(cell);
+          for (const part of parts(cell)) observer.unobserve(part);
+          run(cell);
         }
       },
       { threshold: 1, rootMargin: '0px 0px -15% 0px' },
@@ -107,7 +110,7 @@ import { results } from '../data/results';
       cell.classList.add('is-pending');
       after(cell).style.setProperty('--w', cell.dataset.from ?? '1');
       show(cell, cell.dataset.start ?? '');
-      observer.observe(stat(cell));
+      for (const part of parts(cell)) observer.observe(part);
     }
 
     addEventListener('beforeprint', () => cells.forEach(finish));
