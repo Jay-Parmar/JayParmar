@@ -1,8 +1,8 @@
 export const profile = {
   name: 'Jay Parmar',
-  role: 'Backend software engineer',
+  role: 'Software Developer',
   intro:
-    "I've spent 3+ years designing backend systems, data pipelines and databases, and doing the AWS and DevOps work that ships them.",
+    "I build React interfaces and the systems behind them. In 3+ years I've designed backend services, built data pipelines and shipped software on AWS.",
   current: 'Full Stack Developer at ESSI Integrated Technologies',
   location: 'New Delhi, India',
   email: 'jayparmar789@gmail.com',
