@@ -26,6 +26,10 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
   <SiteNav current="projects" />
 
   <main id="main" class="wrap page">
+    <a class="back" href={link('#projects')}>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"></path></svg>
+      All projects
+    </a>
     <p class="meta">
       <span>{project.year}</span>
       {project.code && <span class="open">Open source</span>}
@@ -90,6 +94,32 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
     height: 34rem;
     background: radial-gradient(closest-side, rgb(110 161 255 / 0.09), transparent);
     pointer-events: none;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 2rem;
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .back:hover {
+    color: var(--text);
+  }
+
+  .back svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .meta {

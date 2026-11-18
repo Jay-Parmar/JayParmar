@@ -60,6 +60,12 @@ describe('projects', () => {
     for (const { project, name } of repeated) expect(name).toContain(project);
   });
 
+  it('lead back to the list from the top of their pages', () => {
+    for (const project of projects.filter((project) => project.page)) {
+      expect(page(project.slug).match(/<a [^>]*href="([^"]+)"/)?.[1], project.slug).toBe('/JayParmar/#projects');
+    }
+  });
+
   it('list the projects with no page or public code together under Also built', () => {
     const also = html.slice(html.indexOf('id="also-title"'), html.indexOf('id="skills"'));
     for (const project of projects) {
