@@ -37,7 +37,7 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
           </li>
         ))
       }
-      <li class="entry" id="education">
+      <li class="entry" id={education.id}>
         <div class="meta">
           <span class="node" aria-hidden="true" />
           <p class="period">{period(education.start, education.end)}</p>
