@@ -114,3 +114,14 @@ describe('home page', () => {
     expect(html).toContain(`href="${profile.github}"`);
   });
 });
+
+describe('section nav', () => {
+  const html = read(join(dist, 'index.html'));
+
+  it('links every section in page order', () => {
+    const nav = html.match(/<nav[^>]*aria-label="Sections"[^>]*>([\s\S]*?)<\/nav>/);
+    expect(nav).not.toBeNull();
+    const targets = [...nav![1].matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
+    expect(targets).toEqual(['results', 'experience', 'projects', 'skills', 'contact']);
+  });
+});
