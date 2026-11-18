@@ -22,7 +22,9 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
             </p>
             {role.groups.map((group) => (
               <div class="group" style={`--c: var(--${group.line})`}>
-                <h4>{names.get(group.line)}</h4>
+                <h4>
+                  <span class="badge">{names.get(group.line)}</span>
+                </h4>
                 <ul role="list">
                   {group.points.map((point) => (
                     <li>{parts(point).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>
@@ -156,8 +158,7 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
   }
 
   h4 {
-    font-size: var(--step-0);
-    font-weight: 700;
+    line-height: 1;
   }
 
   .group ul {

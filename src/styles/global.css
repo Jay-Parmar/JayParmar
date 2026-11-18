@@ -249,3 +249,15 @@ html {
     animation: none !important;
   }
 }
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem 0.05rem;
+  border-radius: 99px;
+  background: var(--c, var(--ink));
+  color: var(--on-line);
+  font-size: var(--step--1);
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
