@@ -7,6 +7,10 @@ const section = html
   .replace(/<script[\s\S]*?<\/script>/g, '');
 
 describe('results', () => {
+  it('is called Impact, like its link in the nav', () => {
+    expect(section).toMatch(/<h2[^>]*>Impact<\/h2>/);
+  });
+
   it('does not call the model comparison a before and after', () => {
     expect(section).not.toContain('before and after the change');
   });
