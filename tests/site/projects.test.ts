@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { projects } from '../../src/data/projects';
 
 const html = readFileSync('dist/index.html', 'utf8');
-const between = (from: string, to: string) => html.slice(html.indexOf(from), html.indexOf(to));
 const card = (slug: string) => {
   const start = html.indexOf(`id="project-${slug}"`);
   return html.slice(start, html.indexOf('</article>', start));
@@ -24,11 +23,6 @@ const repeated = projects
   .filter(({ text }) => ['How it works', 'Code on GitHub'].includes(text));
 
 describe('projects', () => {
-  it('mark the lines of every project', () => {
-    const section = between('id="projects"', 'id="skills"');
-    expect(section.match(/<span class="badge"/g)?.length).toBe(projects.flatMap((project) => project.lines).length);
-  });
-
   it('list their whole stack as chips', () => {
     for (const project of projects) expect(chips(card(project.slug)), project.slug).toEqual(project.stack);
   });

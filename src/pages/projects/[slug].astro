@@ -1,5 +1,4 @@
 ---
-import LineMark from '../../components/LineMark.astro';
 import SiteNav from '../../components/SiteNav.astro';
 import { profile } from '../../data/profile';
 import { projects, type Project } from '../../data/projects';
@@ -24,7 +23,6 @@ const { what, how } = project.page!;
   <SiteNav />
 
   <main id="main" class="wrap page">
-    <LineMark ids={project.lines} />
     <p class="year">{project.year}</p>
     <h1 style={`view-transition-name: project-${project.slug}`}>{project.name}</h1>
     <p class="tagline">{project.tagline}</p>

@@ -1,7 +1,6 @@
 ---
 import { projects, type Project } from '../data/projects';
 import { link } from '../lib/url';
-import LineMark from './LineMark.astro';
 
 const featured = projects.filter((project) => project.featured);
 const others = projects.filter((project) => !project.featured);
@@ -17,7 +16,6 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     {
       featured.map((project) => (
         <article class="project featured" id={`project-${project.slug}`}>
-          <LineMark ids={project.lines} />
           <p class="meta">{meta(project)}</p>
           <h3 style={morph(project)}>{project.name}</h3>
           <p class="tagline">{project.tagline}</p>
@@ -51,8 +49,7 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
       {
         others.map((project) => (
           <article class="project" id={`project-${project.slug}`}>
-            <LineMark ids={project.lines} />
-            <p class="meta">{meta(project)}</p>
+              <p class="meta">{meta(project)}</p>
             <h3 style={morph(project)}>{project.name}</h3>
             <p class="tagline">{project.tagline}</p>
             {project.facts.length > 0 && (
