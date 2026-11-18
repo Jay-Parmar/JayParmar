@@ -41,6 +41,12 @@ describe('projects', () => {
     expect(nums(card('ens-meeting-bridge'))).toEqual([]);
   });
 
+  it('pull out the number that leads each fact on their own pages', () => {
+    expect(nums(page('hirejutsu'))).toEqual(['629', '15', '2,000+']);
+    expect(nums(page('hold-my-files'))).toEqual(['146']);
+    expect(nums(page('foodhub-sniffer'))).toEqual(['36']);
+  });
+
   it('mark the projects with public code as open source', () => {
     const open = ['hirejutsu', 'hold-my-files', 'foodhub-sniffer'];
     const marked = projects.filter((project) => card(project.slug).includes('>Open source<'));

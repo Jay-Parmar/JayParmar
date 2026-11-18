@@ -17,42 +17,58 @@ interface Props {
 
 const { project } = Astro.props;
 const { what, how } = project.page!;
+
+/** The number a fact starts with, if any, and the rest of it. */
+const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ?? [undefined, fact];
 ---
 
 <Base title={`${project.name}, a project by ${profile.name}`} description={project.tagline}>
   <SiteNav />
 
   <main id="main" class="wrap page">
-    <p class="meta">
-      <span>{project.year}</span>
-      {project.code && <span class="open">Open source</span>}
-    </p>
-    <h1 style={`view-transition-name: project-${project.slug}`}>{project.name}</h1>
-    <p class="tagline">{project.tagline}</p>
-    <ul class="facts" role="list">
-      {project.facts.map((fact) => <li>{fact}</li>)}
+    <div class="intro">
+      <p class="meta">
+        <span>{project.year}</span>
+        {project.code && <span class="open">Open source</span>}
+      </p>
+      <h1 style={`view-transition-name: project-${project.slug}`}>{project.name}</h1>
+      <p class="tagline">{project.tagline}</p>
+    </div>
+
+    <ul class="stats panel" role="list">
+      {
+        project.facts.map((fact) => {
+          const [num, label] = split(fact);
+          return (
+            <li>
+              {num && <span class="num">{num}</span>} <span class="label">{label}</span>
+            </li>
+          );
+        })
+      }
     </ul>
 
-    <section aria-labelledby="what">
+    <section class="part" aria-labelledby="what">
       <h2 id="what">What it does</h2>
-      <ul role="list">
+      <ul class="points" role="list">
         {what.map((point) => <li>{point}</li>)}
       </ul>
     </section>
 
-    <section aria-labelledby="how">
+    <section class="part" aria-labelledby="how">
       <h2 id="how">How it's built</h2>
-      <ul role="list">
+      <ul class="points" role="list">
         {how.map((point) => <li>{point}</li>)}
       </ul>
     </section>
 
-    <section aria-labelledby="stack">
+    <section class="part" aria-labelledby="stack">
       <h2 id="stack">Built with</h2>
       <ul class="stack" role="list">
         {project.stack.map((tool) => <li class="chip">{tool}</li>)}
       </ul>
     </section>
+
     <p class="actions">
       <a class="button primary" href={project.code}>Code on GitHub</a>
       <a class="button" href={link('#projects')}>All projects</a>
@@ -63,7 +79,7 @@ const { what, how } = project.page!;
 <style>
   .page {
     max-width: 52rem;
-    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+    padding-block: clamp(3rem, 2rem + 4vw, 5.5rem) clamp(5rem, 3.5rem + 6vw, 9rem);
   }
 
   .meta {
@@ -71,7 +87,6 @@ const { what, how } = project.page!;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem 0.75rem;
-    margin-bottom: 1rem;
     color: var(--muted);
     font-size: var(--step--1);
     font-variant-numeric: tabular-nums;
@@ -101,83 +116,114 @@ const { what, how } = project.page!;
 
   h1 {
     width: fit-content;
+    margin-top: 1.25rem;
     font-size: var(--step-5);
-    letter-spacing: -0.02em;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
   }
 
   .tagline {
-    max-width: 44ch;
-    margin-top: 1rem;
-    font-size: var(--step-1);
+    max-width: 36ch;
+    margin-top: 1.5rem;
+    color: var(--text-2);
+    font-size: var(--step-2);
     line-height: 1.45;
   }
 
-  .facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 1.5rem;
-    margin-top: 1.5rem;
-    font-weight: 700;
+  .stats {
+    display: grid;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    overflow: hidden;
   }
 
-  .facts li {
+  .stats li {
     display: flex;
-    align-items: baseline;
+    flex-direction: column;
+    justify-content: center;
     gap: 0.5rem;
+    padding: 1.25rem 1.5rem;
   }
 
-  .facts li::before {
-    content: '';
-    flex: none;
-    width: 0.5rem;
-    height: 0.5rem;
-    border: 2px solid var(--ink);
-    border-radius: 50%;
-    transform: translateY(-0.1em);
+  .stats li + li {
+    border-top: 1px solid var(--border);
   }
 
-  section {
-    margin-top: 3rem;
+  .num {
+    color: var(--text);
+    font-size: var(--step-4);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .label {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  .label:only-child {
+    color: var(--text);
+    font-size: var(--step-1);
+    font-weight: 500;
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 40rem) {
+    .stats {
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+
+    .stats li {
+      padding: 1.5rem 1.75rem;
+    }
+
+    .stats li + li {
+      border-top: 0;
+      border-left: 1px solid var(--border);
+    }
+  }
+
+  .part {
+    display: grid;
+    gap: 1rem 2rem;
+    margin-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 48rem) {
+    .part {
+      grid-template-columns: 11rem minmax(0, 1fr);
+    }
   }
 
   h2 {
-    font-size: var(--step-3);
+    font-size: var(--step-1);
+    letter-spacing: -0.015em;
   }
 
-  section ul:not(.stack) {
-    display: grid;
-    gap: 0.85rem;
+  .points li {
     max-width: var(--measure);
-    margin-top: 1.25rem;
+    padding-bottom: 1rem;
   }
 
-  section li:not(.chip) {
-    position: relative;
-    padding-left: 1.25rem;
-  }
-
-  section li:not(.chip)::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.62em;
-    width: 0.375rem;
-    height: 0.375rem;
-    border-radius: 50%;
-    background: var(--ink);
+  .points li + li {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
   }
 
   .stack {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    margin-top: 1.25rem;
   }
 
   .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 3rem;
+    margin-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
   }
 </style>
