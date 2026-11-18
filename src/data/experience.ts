@@ -1,5 +1,10 @@
 import type { AreaId } from './skills';
 
+interface Point {
+  text: string;
+  result?: string;
+}
+
 export interface Role {
   id: string;
   title: string;
@@ -7,7 +12,7 @@ export interface Role {
   place: string;
   start: string;
   end: string;
-  groups: { area: AreaId; points: string[] }[];
+  groups: { area: AreaId; points: Point[] }[];
 }
 
 /** Newest first. Text between ** marks is shown in bold. */
@@ -23,30 +28,42 @@ export const roles: Role[] = [
       {
         area: 'backend',
         points: [
-          "Designed the multi-server architecture of a video platform for a state police network: a FastAPI control plane that runs a fleet of servers as one system, assigns work to hosts and generates each host's Compose and nginx config. Scaled it from 25 to **240+ cameras**.",
-          'Load tested that fleet with **100 operators** and 70 live viewers on a harness I wrote, moved health checks off the request path so a failed server costs nothing, and cut live-view stalls from up to 19 s to **about 1 s**.',
-          'Prepared a product for STQC certification and VAPT: role-scoped APIs and WebSockets, session revocation, a hash-chained audit trail, and semgrep and gitleaks release gates. API p95 fell from **755 to 125 ms**.',
-          "Led a team of 3 on UVSS, a Django and Celery system that rebuilds a vehicle's underside as a 3D point cloud in **about 4 s**, with 75% test coverage.",
+          {
+            result: 'cameras',
+            text: 'Designed a FastAPI control plane for a state police network. It assigns work across servers and generates Docker Compose and nginx configuration for each host. The platform grew from 25 to **240+ cameras**.',
+          },
+          {
+            result: 'stalls',
+            text: 'Built a load-test harness for **100 operators** and 70 live viewers. Moved host health checks off the request path and cut live-view stalls from up to 19 s to **about 1 s**.',
+          },
+          {
+            result: 'latency',
+            text: 'Prepared a product for STQC certification and VAPT with role-scoped APIs and WebSockets, session revocation, a hash-chained audit trail, and semgrep and gitleaks release gates. API p95 fell from **755 to 125 ms**.',
+          },
+          { text: "Led a team of 3 on UVSS, a Django and Celery system that rebuilds a vehicle's underside as a 3D point cloud in **about 4 s**, with 75% test coverage." },
         ],
       },
       {
         area: 'cloud',
         points: [
-          'Managed AWS for several products: HTTPS behind Cloudflare with Origin CA certificates, security groups open only to the office and Cloudflare, and CloudFormation changes that keep instances in place.',
-          'Built a gated release path for an ERSS-112 command centre where a pull agent on EC2 deploys only commits that pass every test and security gate, after a backup and with no inbound access.',
-          'Ran Ubuntu VMs and LXC containers on Proxmox with failover, moved releases to Docker and GitLab CI/CD for **70% faster** updates, and built offline install kits for sites with no internet.',
+          { text: 'Managed AWS for several products: HTTPS behind Cloudflare with Origin CA certificates, security groups open only to the office and Cloudflare, and CloudFormation changes that keep instances in place.' },
+          { text: 'Built a gated release path for an ERSS-112 command centre where a pull agent on EC2 deploys only commits that pass every test and security gate, after a backup and with no inbound access.' },
+          { text: 'Ran Ubuntu VMs and LXC containers on Proxmox with failover, moved releases to Docker and GitLab CI/CD for **70% faster** updates, and built offline install kits for sites with no internet.' },
         ],
       },
       {
         area: 'data',
         points: [
-          'Designed a detection pipeline: Kafka consumers write events to PostgreSQL, with pgvector face search and a pg_trgm prefilter for an OCR-aware Damerau-Levenshtein plate matcher over **11,000 plates**.',
+          { text: 'Designed a detection pipeline: Kafka consumers write events to PostgreSQL, with pgvector face search and a pg_trgm prefilter for an OCR-aware Damerau-Levenshtein plate matcher over **11,000 plates**.' },
         ],
       },
       {
         area: 'ml',
         points: [
-          'Audited the analytics models: found a TensorRT export bug forcing a PyTorch fallback, and showed SigLIP 2 with a trained head scores **95%** on 100 labelled vehicle crops, against 81% for the deployed model.',
+          {
+            result: 'accuracy',
+            text: 'Audited vehicle analytics and found a TensorRT export bug that forced a PyTorch fallback. On 100 labelled vehicle crops, a trained SigLIP 2 head scored **95%**, compared with 81% for the deployed model.',
+          },
         ],
       },
     ],
@@ -62,8 +79,8 @@ export const roles: Role[] = [
       {
         area: 'backend',
         points: [
-          'Core developer on a recruitment platform with **200k+ daily users**. Owned Django REST endpoints and PostgreSQL schema work, and kept it responsive with pagination and query tuning.',
-          'Led a team of 4 through feature deliveries and handled releases with the product and client teams.',
+          { text: 'Core developer on a recruitment platform with **200k+ daily users**. Owned Django REST endpoints and PostgreSQL schema work, and kept it responsive with pagination and query tuning.' },
+          { text: 'Led a team of 4 through feature deliveries and handled releases with the product and client teams.' },
         ],
       },
     ],
@@ -78,7 +95,7 @@ export const roles: Role[] = [
     groups: [
       {
         area: 'frontend',
-        points: ["Built reusable web components and shipped production features using the team's CI and testing setup."],
+        points: [{ text: "Built reusable web components and shipped production features using the team's CI and testing setup." }],
       },
     ],
   },

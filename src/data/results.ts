@@ -4,6 +4,7 @@ export interface Result {
   kind: 'change' | 'comparison';
   label: string;
   context: string;
+  workLabel: string;
   before: number;
   after: number;
   beforeText: string;
@@ -17,6 +18,7 @@ export interface Result {
 export const results: Result[] = [
   {
     id: 'latency',
+    workLabel: 'API and release work',
     kind: 'change',
     label: 'API response time, 95th percentile',
     context: 'While preparing a product for STQC certification and VAPT.',
@@ -30,6 +32,7 @@ export const results: Result[] = [
   },
   {
     id: 'stalls',
+    workLabel: 'Load test setup',
     kind: 'change',
     label: 'Live-view stalls under load',
     context: 'Load test with 100 operators and 70 live viewers, on a harness I wrote.',
@@ -42,6 +45,7 @@ export const results: Result[] = [
   },
   {
     id: 'cameras',
+    workLabel: 'Fleet architecture',
     kind: 'change',
     label: 'Cameras on one video platform',
     context: 'Scaled with the multi-server architecture I designed.',
@@ -55,6 +59,7 @@ export const results: Result[] = [
   },
   {
     id: 'accuracy',
+    workLabel: 'Model evaluation',
     kind: 'comparison',
     label: 'Vehicle classification accuracy',
     context: 'On 100 labelled vehicle crops: the deployed model against SigLIP 2 with a trained head.',
