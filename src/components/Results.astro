@@ -51,8 +51,9 @@ import { results } from '../data/results';
 
 <script>
   const cells = [...document.querySelectorAll<HTMLElement>('.result[data-start]')];
+  const motion = matchMedia('(prefers-reduced-motion: no-preference)');
 
-  if (cells.length && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  if (cells.length && motion.matches) {
     const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
     const parts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.stat, .bars')];
     const after = (cell: HTMLElement) => cell.querySelector<HTMLElement>('.after')!;
@@ -97,7 +98,7 @@ import { results } from '../data/results';
       (entries) => {
         for (const entry of entries) {
           const cell = entry.target.closest<HTMLElement>('.result')!;
-          if (!entry.isIntersecting || started.has(cell)) continue;
+          if (!entry.isIntersecting || started.has(cell) || done.has(cell)) continue;
           started.add(cell);
           for (const part of parts(cell)) observer.unobserve(part);
           run(cell);
@@ -113,7 +114,13 @@ import { results } from '../data/results';
       for (const part of parts(cell)) observer.observe(part);
     }
 
-    addEventListener('beforeprint', () => cells.forEach(finish));
+    const finishAll = () => {
+      observer.disconnect();
+      cells.forEach(finish);
+    };
+
+    motion.addEventListener('change', finishAll, { once: true });
+    addEventListener('beforeprint', finishAll);
   }
 </script>
 

@@ -114,7 +114,6 @@ a {
   text-decoration-color: var(--border-2);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.25em;
-  transition: text-decoration-color 0.2s;
 }
 
 a:hover {
@@ -205,19 +204,11 @@ svg {
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s,
-    transform 0.2s;
 }
 
 .button:hover {
   border-color: #3d4455;
   background: var(--surface-2);
-}
-
-.button:active {
-  transform: translateY(1px);
 }
 
 .button.primary {
@@ -270,20 +261,29 @@ svg {
   color: var(--text-2);
 }
 
-@view-transition {
-  navigation: auto;
-}
+@media (prefers-reduced-motion: no-preference) {
+  a {
+    transition: text-decoration-color 0.2s;
+  }
 
-::view-transition-group(*) {
-  animation-duration: 0.45s;
-  animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
-}
+  .button {
+    transition:
+      background-color 0.2s,
+      border-color 0.2s,
+      transform 0.2s;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
+  .button:active {
+    transform: translateY(1px);
+  }
+
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
   }
 }
 

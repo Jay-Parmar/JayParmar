@@ -126,7 +126,6 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     font-size: var(--step--1);
     font-weight: 500;
     text-decoration: none;
-    transition: color 0.2s;
   }
 
   .back:hover {
@@ -354,7 +353,6 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     padding: 1.25rem 1.5rem;
     color: var(--text);
     text-decoration: none;
-    transition: border-color 0.25s;
   }
 
   .next:hover {
@@ -380,13 +378,20 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     width: 1.25rem;
     height: 1.25rem;
     color: var(--muted);
-    transition:
-      color 0.2s,
-      transform 0.2s var(--ease);
   }
 
   .next:hover svg {
     color: var(--text);
-    transform: translateX(3px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .back { transition: color 0.2s; }
+    .next { transition: border-color 0.25s; }
+    .next svg {
+      transition:
+        color 0.2s,
+        transform 0.2s var(--ease);
+    }
+    .next:hover svg { transform: translateX(3px); }
   }
 </style>

@@ -343,7 +343,10 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     display: flex;
     flex-direction: column;
     padding: var(--pad);
-    transition: border-color 0.25s;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card { transition: border-color 0.25s; }
   }
 
   @media (hover: hover) {
