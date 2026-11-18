@@ -55,6 +55,14 @@
   }
 }
 
+.night {
+  --backend: #ff5c6c;
+  --data: #5b9bff;
+  --cloud: #34c27a;
+  --ml: #a97cf0;
+  --frontend: #f39b3c;
+}
+
 *,
 *::before,
 *::after {

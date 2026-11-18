@@ -11,6 +11,8 @@ function tokens(block: string): Record<string, string> {
 const light = tokens(css.slice(css.indexOf(':root {'), css.indexOf('}', css.indexOf(':root {'))));
 const darkStart = css.indexOf('@media (prefers-color-scheme: dark)');
 const dark = { ...light, ...tokens(darkStart < 0 ? '' : css.slice(darkStart, css.indexOf('}', darkStart))) };
+const nightStart = css.indexOf('.night {');
+const night = tokens(nightStart < 0 ? '' : css.slice(nightStart, css.indexOf('}', nightStart)));
 
 function luminance(hex: string): number {
   const [r, g, b] = [1, 3, 5].map((i) => {
@@ -37,6 +39,10 @@ describe('colour tokens', () => {
       expect(contrast(theme.muted, theme.paper)).toBeGreaterThanOrEqual(4.5);
       expect(contrast(theme['band-ink'], theme.band)).toBeGreaterThanOrEqual(7);
       expect(contrast(theme['band-muted'], theme.band)).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it(`keep every line bright on the dark band in the ${name} theme`, () => {
+      for (const id of lineIds) expect(contrast(night[id] ?? '#000000', theme.band), id).toBeGreaterThanOrEqual(3);
     });
 
     it(`keep every line visible and its badge readable in the ${name} theme`, () => {
