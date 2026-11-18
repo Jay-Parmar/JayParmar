@@ -10,6 +10,16 @@ describe('contact', () => {
     expect(contact).toMatch(/<h2[^>]*id="contact-title"[^>]*>Get in touch<\/h2>/);
   });
 
+  it('ships the copy button hidden until a script finds a clipboard', () => {
+    const button = contact.match(/<button[^>]*data-copy="([^"]*)"[^>]*>/);
+    expect(button?.[1]).toBe(profile.email);
+    expect(button?.[0]).toMatch(/\shidden(?=[\s>=])/);
+  });
+
+  it('has a polite live region to announce the copy', () => {
+    expect(contact).toMatch(/<[^>]+aria-live="polite"/);
+  });
+
   it('links to email, LinkedIn and GitHub', () => {
     expect(contact).toContain(`href="mailto:${profile.email}"`);
     expect(contact).toContain(`href="${profile.linkedin}"`);
