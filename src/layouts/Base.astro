@@ -4,6 +4,7 @@ import '@fontsource/mukta/500.css';
 import '@fontsource/mukta/700.css';
 import '@fontsource/mukta/800.css';
 import '../styles/global.css';
+import { link } from '../lib/url';
 
 interface Props {
   title: string;
@@ -21,6 +22,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href={link('favicon.svg')} type="image/svg+xml" />
     <meta name="theme-color" content="#18223a" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
