@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { roles } from '../../src/data/experience';
 import { profile } from '../../src/data/profile';
 
 const html = readFileSync('dist/index.html', 'utf8');
@@ -15,6 +16,14 @@ describe('hero', () => {
     expect(html.match(/<title>([^<]+)<\/title>/)?.[1]).toBe(title);
     expect(html.match(/<meta property="og:title" content="([^"]+)"/)?.[1]).toBe(title);
     expect(html.match(/<p class="role"[^>]*>([^<]+)<\/p>/)?.[1]).toBe('Software Developer');
+  });
+
+  it('links directly to the project list and current role from the introduction', () => {
+    const hero = html.slice(html.indexOf('id="top"'), html.indexOf('id="results"'));
+    const current = roles.find((role) => role.end === 'Present')!;
+    expect(hero).toMatch(/<a[^>]*href="#projects"[^>]*>View projects<\/a>/);
+    expect(hero).toContain(`href="#${current.id}"`);
+    expect(hero).toContain(`href="mailto:${profile.email}"`);
   });
 
   it('draws the system I designed, with a label of its own and a caption', () => {
