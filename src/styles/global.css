@@ -172,6 +172,7 @@ svg {
 
 .section {
   padding-top: var(--section);
+  scroll-margin-top: calc(2rem - var(--section));
 }
 
 .title {
