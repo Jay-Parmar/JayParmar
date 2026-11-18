@@ -1,0 +1,132 @@
+---
+import { mapLines, mapStations, viewBox } from '../data/map';
+import { pathData } from '../lib/metro';
+
+const [width, height] = viewBox;
+---
+
+<figure class="map">
+  <svg viewBox={`0 0 ${width} ${height}`} aria-labelledby="map-title">
+    <title id="map-title">
+      My work as a metro map. Each line is a set of skills, and each station is a job or a project where I used them.
+    </title>
+    <g class="lines">
+      {
+        mapLines.map(({ line, points }) => (
+          <path id={`line-${line}`} class="line" d={pathData(points)} style={`--c: var(--${line})`} />
+        ))
+      }
+    </g>
+    <g class="stations">
+      {
+        mapStations.map((station) => {
+          const [[x1, y1], [x2, y2]] = station.ends;
+          const { x, y, anchor } = station.label;
+          return (
+            <a class="station" href={station.href} aria-label={`${station.name}, ${station.year}`}>
+              {x1 === x2 && y1 === y2 ? (
+                <circle class="marker" cx={x1} cy={y1} r="8" />
+              ) : (
+                <g class="marker">
+                  <line class="ring" x1={x1} y1={y1} x2={x2} y2={y2} />
+                  <line class="fill" x1={x1} y1={y1} x2={x2} y2={y2} />
+                </g>
+              )}
+              <text class="name" x={x} y={y} text-anchor={anchor}>
+                {station.name}
+              </text>
+              <text class="year" x={x} y={y + 18} text-anchor={anchor}>
+                {station.year}
+              </text>
+            </a>
+          );
+        })
+      }
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .map {
+    margin: 0;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .line {
+    fill: none;
+    stroke: var(--c);
+    stroke-width: var(--line);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  circle.marker {
+    fill: var(--paper);
+    stroke: var(--ink);
+    stroke-width: 4;
+  }
+
+  .ring,
+  .fill {
+    stroke-linecap: round;
+  }
+
+  .ring {
+    stroke: var(--ink);
+    stroke-width: 22;
+  }
+
+  .fill {
+    stroke: var(--paper);
+    stroke-width: 14;
+  }
+
+  text {
+    paint-order: stroke;
+    stroke: var(--paper);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+
+  .name {
+    font-size: 17px;
+    font-weight: 700;
+    fill: var(--ink);
+  }
+
+  .year {
+    font-size: 14px;
+    font-weight: 500;
+    fill: var(--muted);
+  }
+
+  .station {
+    outline: none;
+  }
+
+  .station:hover .name,
+  .station:focus-visible .name {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  .station:focus-visible .ring,
+  .station:focus-visible circle.marker {
+    stroke: var(--backend);
+  }
+
+  @media (max-width: 40rem) {
+    .name {
+      font-size: 21px;
+    }
+
+    .year {
+      display: none;
+    }
+  }
+</style>
