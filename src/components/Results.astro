@@ -5,7 +5,6 @@ import { results } from '../data/results';
 <section class="section" id="results" aria-labelledby="results-title">
   <div class="wrap">
     <h2 class="title" id="results-title">Impact</h2>
-    <p class="lead">Measured on systems I worked on.</p>
     <ul class="panel cells" role="list">
       {
         results.map((result) => {
@@ -41,6 +40,7 @@ import { results } from '../data/results';
                 </div>
               </dl>
               <p class="context">{result.context}</p>
+              <a class="work" href={`#work-${result.id}`}>{result.workLabel}</a>
             </li>
           );
         })
@@ -51,8 +51,9 @@ import { results } from '../data/results';
 
 <script>
   const cells = [...document.querySelectorAll<HTMLElement>('.result[data-start]')];
+  const motion = matchMedia('(prefers-reduced-motion: no-preference)');
 
-  if (cells.length && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  if (cells.length && motion.matches) {
     const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
     const parts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.stat, .bars')];
     const after = (cell: HTMLElement) => cell.querySelector<HTMLElement>('.after')!;
@@ -97,7 +98,7 @@ import { results } from '../data/results';
       (entries) => {
         for (const entry of entries) {
           const cell = entry.target.closest<HTMLElement>('.result')!;
-          if (!entry.isIntersecting || started.has(cell)) continue;
+          if (!entry.isIntersecting || started.has(cell) || done.has(cell)) continue;
           started.add(cell);
           for (const part of parts(cell)) observer.unobserve(part);
           run(cell);
@@ -113,15 +114,27 @@ import { results } from '../data/results';
       for (const part of parts(cell)) observer.observe(part);
     }
 
-    addEventListener('beforeprint', () => cells.forEach(finish));
+    const finishAll = () => {
+      observer.disconnect();
+      cells.forEach(finish);
+    };
+
+    motion.addEventListener('change', finishAll, { once: true });
+    addEventListener('beforeprint', finishAll);
   }
 </script>
 
 <style>
+  .section {
+    --spacing: clamp(2.5rem, 3.5vw, 3.5rem);
+    padding-top: var(--spacing);
+    scroll-margin-top: calc(1rem - var(--spacing));
+  }
+
   .cells {
     display: grid;
     gap: 1px;
-    margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    margin-top: 1.5rem;
     overflow: hidden;
     background: var(--border);
   }
@@ -132,7 +145,15 @@ import { results } from '../data/results';
     }
   }
 
+  @media (min-width: 70rem) {
+    .cells {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
   .result {
+    display: flex;
+    flex-direction: column;
     padding: var(--inset);
     background: var(--surface);
   }
@@ -228,6 +249,31 @@ import { results } from '../data/results';
     margin-top: 1.5rem;
     color: var(--muted);
     font-size: var(--step--1);
+  }
+
+  .work {
+    align-self: start;
+    margin-top: auto;
+    padding-top: 0.85rem;
+    color: var(--text-2);
+    font-size: var(--step--1);
+  }
+
+  @media (min-width: 44rem) {
+    @supports (grid-template-rows: subgrid) {
+      .result {
+        display: grid;
+        grid-template-rows: subgrid;
+        grid-row: span 5;
+      }
+    }
+  }
+
+  @media (min-width: 70rem) {
+    .stat {
+      flex-direction: column;
+      align-items: start;
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {

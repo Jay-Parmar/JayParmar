@@ -6,13 +6,11 @@ import Experience from '../components/Experience.astro';
 import Results from '../components/Results.astro';
 import Skills from '../components/Skills.astro';
 import SiteNav from '../components/SiteNav.astro';
+import { profile } from '../data/profile';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base
-  title="Jay Parmar, software engineer"
-  description="Jay Parmar designs backend systems, data pipelines and databases, and does the AWS and DevOps work that ships them."
->
+<Base title={`${profile.name}, ${profile.role}`} description={profile.intro}>
   <SiteNav home />
   <main id="main">
     <Hero />

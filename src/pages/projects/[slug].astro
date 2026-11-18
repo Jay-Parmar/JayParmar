@@ -2,7 +2,7 @@
 import ProjectMeta from '../../components/ProjectMeta.astro';
 import SiteNav from '../../components/SiteNav.astro';
 import { profile } from '../../data/profile';
-import { projects, type Project } from '../../data/projects';
+import { contentsLabel, projectSections, projects, type Project } from '../../data/projects';
 import Base from '../../layouts/Base.astro';
 import { splitFact } from '../../lib/facts';
 import { link } from '../../lib/url';
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { what, how } = project.page!;
+const { steps, how } = project.page!;
 const withPages = projects.filter((other) => other.page);
 const next = withPages[(withPages.indexOf(project) + 1) % withPages.length];
 
@@ -50,26 +50,41 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
       }
     </ul>
 
-    <section class="part" aria-labelledby="what">
-      <h2 id="what">What it does</h2>
-      <ul class="points" role="list">
-        {what.map((point) => <li>{point}</li>)}
-      </ul>
-    </section>
+    <div class="reading">
+      <nav class="contents" aria-label={contentsLabel}>
+        <p>{contentsLabel}</p>
+        <ul role="list">
+          {Object.entries(projectSections).map(([id, name]) => <li><a href={`#${id}`}>{name}</a></li>)}
+        </ul>
+      </nav>
+      <div>
+        <section class="part" aria-labelledby="what">
+          <h2 id="what" tabindex="-1">{projectSections.what}</h2>
+          <ol class="steps" role="list">
+            {steps.map((step) => (
+              <li id={`step-${step.id}`} tabindex="-1">
+                <h3>{step.name}</h3>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
 
-    <section class="part" aria-labelledby="how">
-      <h2 id="how">How it's built</h2>
-      <ul class="points" role="list">
-        {how.map((point) => <li>{point}</li>)}
-      </ul>
-    </section>
+        <section class="part" aria-labelledby="how">
+          <h2 id="how" tabindex="-1">{projectSections.how}</h2>
+          <ul class="points" role="list">
+            {how.map((point) => <li>{point}</li>)}
+          </ul>
+        </section>
 
-    <section class="part" aria-labelledby="stack">
-      <h2 id="stack">Built with</h2>
-      <ul class="stack" role="list">
-        {project.stack.map((tool) => <li class="chip">{tool}</li>)}
-      </ul>
-    </section>
+        <section class="part" aria-labelledby="stack">
+          <h2 id="stack" tabindex="-1">{projectSections.stack}</h2>
+          <ul class="stack" role="list">
+            {project.stack.map((tool) => <li class="chip">{tool}</li>)}
+          </ul>
+        </section>
+      </div>
+    </div>
 
     <p class="actions">
       <a class="button primary" href={project.code}>Code on GitHub</a>
@@ -88,7 +103,7 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
   .page {
     position: relative;
     isolation: isolate;
-    max-width: 52rem;
+    max-width: 64rem;
     padding-block: clamp(3rem, 2rem + 4vw, 5.5rem) clamp(5rem, 3.5rem + 6vw, 9rem);
   }
 
@@ -111,7 +126,6 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     font-size: var(--step--1);
     font-weight: 500;
     text-decoration: none;
-    transition: color 0.2s;
   }
 
   .back:hover {
@@ -153,10 +167,9 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
 
   .stats li {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1.25rem 1.5rem;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 1rem var(--inset);
   }
 
   .stats li + li {
@@ -191,7 +204,10 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     }
 
     .stats li {
-      padding: 1.5rem 1.75rem;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+      padding-block: 1.5rem;
     }
 
     .stats li + li {
@@ -200,23 +216,109 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     }
   }
 
-  .part {
+  .reading {
     display: grid;
-    gap: 1rem 2rem;
-    margin-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
-    padding-top: 1.25rem;
+    align-items: start;
+    gap: 2.25rem;
+    margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .contents {
+    padding-block: 0.75rem;
+    border-block: 1px solid var(--border);
+    font-size: var(--step--1);
+  }
+
+  .contents p {
+    color: var(--muted);
+  }
+
+  .contents ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+  }
+
+  .contents a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .part + .part {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
     border-top: 1px solid var(--border);
   }
 
   @media (min-width: 48rem) {
-    .part {
-      grid-template-columns: 11rem minmax(0, 1fr);
+    .reading {
+      grid-template-columns: minmax(9rem, 0.3fr) minmax(0, 1fr);
+      gap: clamp(2.5rem, 6vw, 6rem);
     }
+
+    .contents {
+      position: sticky;
+      top: 6rem;
+      padding-block: 0;
+      padding-left: 1rem;
+      border: 0;
+      border-left: 1px solid var(--border-2);
+    }
+
+    .contents ul { display: grid; margin-top: 0.4rem; }
   }
 
   h2 {
+    margin-bottom: 1.35rem;
+    font-size: var(--step-3);
+    letter-spacing: -0.035em;
+  }
+
+  h3 {
     font-size: var(--step-1);
     letter-spacing: -0.015em;
+  }
+
+  .steps li {
+    position: relative;
+    padding-left: 1.4rem;
+    max-width: var(--measure);
+  }
+
+  .steps li:not(:last-child) {
+    padding-bottom: 1.65rem;
+  }
+
+  .steps li::before {
+    content: '';
+    position: absolute;
+    top: 0.45rem;
+    left: 0;
+    width: 0.55rem;
+    height: 0.55rem;
+    border: 1px solid var(--muted);
+    border-radius: 50%;
+    background: var(--bg);
+  }
+
+  .steps li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: calc(0.275rem - 0.5px);
+    top: 1rem;
+    bottom: -0.45rem;
+    width: 1px;
+    background: var(--border-2);
+  }
+
+  .steps li:target::before {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .steps p {
+    margin-top: 0.45rem;
   }
 
   .points li {
@@ -251,7 +353,6 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     padding: 1.25rem 1.5rem;
     color: var(--text);
     text-decoration: none;
-    transition: border-color 0.25s;
   }
 
   .next:hover {
@@ -277,13 +378,20 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     width: 1.25rem;
     height: 1.25rem;
     color: var(--muted);
-    transition:
-      color 0.2s,
-      transform 0.2s var(--ease);
   }
 
   .next:hover svg {
     color: var(--text);
-    transform: translateX(3px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .back { transition: color 0.2s; }
+    .next { transition: border-color 0.25s; }
+    .next svg {
+      transition:
+        color 0.2s,
+        transform 0.2s var(--ease);
+    }
+    .next:hover svg { transform: translateX(3px); }
   }
 </style>

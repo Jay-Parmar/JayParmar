@@ -32,4 +32,15 @@ describe('results', () => {
     expect(section).not.toContain('is-pending');
     for (const result of results) expect(section).toContain(result.afterText);
   });
+
+  it('links each measurement to one entry in the work history', () => {
+    const rows = section.split('<li class="result"').slice(1);
+    const experience = html.slice(html.indexOf('id="experience"'), html.indexOf('id="projects"'));
+    for (const result of results) {
+      const row = rows.find((text) => text.includes(result.label)) ?? '';
+      const target = row.match(/href="#(work-[^"]+)"/)?.[1];
+      expect(target).toBe(`work-${result.id}`);
+      expect(experience.match(new RegExp(`<li[^>]*id="${target}"`, 'g'))).toHaveLength(1);
+    }
+  });
 });

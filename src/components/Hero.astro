@@ -1,31 +1,42 @@
 ---
-import { profile } from '../data/profile';
+import { roles } from '../data/experience';
+import { heroLabels, profile } from '../data/profile';
 import SystemDiagram from './SystemDiagram.astro';
+
+const current = roles.find((role) => role.end === 'Present');
 ---
 
 <section class="hero" id="top" aria-labelledby="name">
   <div class="wrap grid">
     <div class="text">
+      <p class="location">
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M16 8.5c0 4.1-6 9-6 9s-6-4.9-6-9a6 6 0 0 1 12 0Z" />
+          <circle cx="10" cy="8.3" r="2" />
+        </svg>
+        {profile.location}
+      </p>
       <h1 id="name">{profile.name}</h1>
       <p class="role">{profile.role}</p>
       <p class="intro">{profile.intro}</p>
       <div class="actions">
-        <a class="button primary" href={`mailto:${profile.email}`}>Email me</a>
-        <a class="button" href={profile.linkedin}>LinkedIn</a>
-        <a class="button" href={profile.github}>GitHub</a>
+        <a class="button primary" href="#projects">{heroLabels.projects}</a>
+        <a class="email" href={`mailto:${profile.email}`}>
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <rect x="2.5" y="4.5" width="15" height="11" rx="2" />
+            <path d="m3.5 6 6.5 4.8L16.5 6" />
+          </svg>
+          {heroLabels.email}
+        </a>
       </div>
-      <dl class="facts">
-        <div>
-          <dt>Now</dt>
-          <dd>{profile.current}</dd>
-        </div>
-        <div>
-          <dt>Based in</dt>
-          <dd>{profile.location}</dd>
-        </div>
-      </dl>
     </div>
     <SystemDiagram />
+    {current && (
+      <div class="current">
+        <span>{heroLabels.current}</span>
+        <a href={`#${current.id}`}>{current.title} at {current.company}</a>
+      </div>
+    )}
   </div>
 </section>
 
@@ -33,127 +44,123 @@ import SystemDiagram from './SystemDiagram.astro';
   .hero {
     position: relative;
     isolation: isolate;
-    margin-top: -4rem;
-    padding-top: calc(4rem + clamp(3.5rem, 1.5rem + 6vw, 7rem));
-    overflow: hidden;
+    padding-block: clamp(2rem, 5.4vw, 5.5rem) clamp(2.5rem, 5.6vw, 5rem);
   }
 
   .hero::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -4rem 0 0;
     z-index: -1;
-    background-image:
-      linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
-    background-position: center top;
-    background-size: 64px 64px;
-    mask-image: radial-gradient(ellipse 75% 65% at 50% 0%, #000 35%, transparent 100%);
+    background: radial-gradient(ellipse at 76% 32%, rgb(110 161 255 / 0.065), transparent 54%);
+    pointer-events: none;
   }
 
   .hero::after {
     content: '';
     position: absolute;
-    top: -30%;
-    right: -15%;
-    z-index: -1;
-    width: 75%;
-    height: 110%;
-    background: radial-gradient(closest-side, rgb(110 161 255 / 0.12), transparent);
-    pointer-events: none;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border) 12%, var(--border) 88%, transparent);
   }
 
   .grid {
     display: grid;
-    gap: clamp(3rem, 2rem + 4vw, 4.5rem);
-    align-items: center;
+    grid-template-areas: 'bio' 'model' 'current';
+    gap: 1.75rem;
   }
 
-  @media (min-width: 64rem) {
-    .grid {
-      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.2fr);
-    }
+  .text { grid-area: bio; }
+  .grid > :global(.system) { grid-area: model; min-width: 0; }
+
+  .location, .email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--step--1);
+  }
+
+  .location { color: var(--muted); }
+
+  .text svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   h1 {
-    font-size: clamp(3rem, 1.6rem + 4.6vw, 4.75rem);
-    line-height: 0.95;
-    letter-spacing: -0.045em;
+    margin-top: 0.85rem;
+    font-size: clamp(3.55rem, 1rem + 5.1vw, 5.8rem);
+    font-weight: 550;
+    line-height: 1.02;
+    letter-spacing: -0.065em;
   }
 
   .role {
-    margin-top: 0.85rem;
+    margin-top: 0.4rem;
     color: var(--text-2);
     font-size: var(--step-3);
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    font-weight: 450;
+    line-height: 1.25;
+    letter-spacing: -0.035em;
   }
 
   .intro {
-    max-width: 38ch;
-    margin-top: 1.25rem;
+    max-width: 40ch;
+    margin-top: 1.35rem;
     color: var(--text-2);
-    font-size: var(--step-1);
+    font-size: clamp(1.0625rem, 0.95rem + 0.34vw, var(--step-1));
     line-height: 1.55;
   }
 
   .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 2.25rem;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.6rem;
   }
 
-  .facts {
-    display: grid;
-    gap: 0.6rem;
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    font-size: var(--step--1);
-  }
-
-  .facts div {
-    display: grid;
-    grid-template-columns: 5.5rem 1fr;
-    gap: 1rem;
-  }
-
-  dt {
-    color: var(--muted);
-  }
-
-  dd {
+  .email {
+    min-height: 2.75rem;
     color: var(--text-2);
+    font-weight: 500;
+    text-decoration: none;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .text > * {
-      animation: rise 0.7s var(--ease) var(--rise, 0s) both;
-    }
-
-    .role {
-      --rise: 0.08s;
-    }
-
-    .intro {
-      --rise: 0.16s;
-    }
-
-    .actions {
-      --rise: 0.24s;
-    }
-
-    .facts {
-      --rise: 0.32s;
-    }
+  .email:hover, .current a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
   }
 
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(0.75rem);
+  .current {
+    grid-area: current;
+    display: grid;
+    gap: 0.2rem;
+    justify-items: start;
+    border-left: 2px solid var(--border-2);
+    padding-left: 0.85rem;
+    font-size: var(--step--1);
+    line-height: 1.5;
+  }
+
+  .current span { color: var(--muted); }
+  .current a { color: var(--text-2); text-decoration-color: var(--border-2); }
+
+  @media (min-width: 52rem) {
+    .grid {
+      grid-template-areas: '. model' 'bio model' 'current model' '. model';
+      grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+      grid-template-rows: 1fr auto auto 1fr;
+      gap: 0 clamp(2.25rem, 4vw, 4.25rem);
     }
+
+    .grid > :global(.system) { align-self: center; }
+    .current { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
   }
 </style>

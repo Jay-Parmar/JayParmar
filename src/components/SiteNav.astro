@@ -104,9 +104,6 @@ const target = (id: string) => (home ? id : undefined);
     border-bottom: 1px solid var(--border);
     background: rgb(11 13 18 / 0.78);
     backdrop-filter: saturate(160%) blur(14px);
-    transition:
-      background-color 0.3s,
-      border-color 0.3s;
   }
 
   :global(.js) .nav:not(.is-scrolled) {
@@ -174,9 +171,6 @@ const target = (id: string) => (home ? id : undefined);
     font-size: var(--step--1);
     font-weight: 500;
     text-decoration: none;
-    transition:
-      color 0.2s,
-      background-color 0.2s;
   }
 
   .links a:not(.button):hover {
@@ -225,6 +219,18 @@ const target = (id: string) => (home ? id : undefined);
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .nav {
+      transition:
+        background-color 0.3s,
+        border-color 0.3s;
+    }
+
+    .links a:not(.button) {
+      transition:
+        color 0.2s,
+        background-color 0.2s;
+    }
+
     .toggle path {
       transition: transform 0.25s var(--ease);
     }
