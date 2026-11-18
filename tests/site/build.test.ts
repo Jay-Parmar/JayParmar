@@ -1,6 +1,11 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { roles } from '../../src/data/experience';
+import { lines } from '../../src/data/lines';
+import { profile } from '../../src/data/profile';
+import { projects } from '../../src/data/projects';
+import { results } from '../../src/data/results';
 
 const dist = 'dist';
 const base = '/JayParmar';
@@ -72,5 +77,40 @@ describe('built site', () => {
   it('shows no phone numbers', () => {
     const phone = /tel:|(?:\+?91[\s-]?)?\b[6-9]\d{4}[\s-]?\d{5}\b/;
     expect(pages.filter((path) => phone.test(read(path)))).toEqual([]);
+  });
+});
+
+describe('home page', () => {
+  const html = read(join(dist, 'index.html'));
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+
+  it('has every section', () => {
+    for (const id of ['top', 'results', 'experience', 'education', 'projects', 'skills', 'contact']) {
+      expect(html).toContain(`id="${id}"`);
+    }
+  });
+
+  it('shows every role, project, result and line', () => {
+    for (const role of roles) {
+      expect(html).toContain(`id="${role.id}"`);
+      expect(text).toContain(role.title);
+    }
+    for (const project of projects) {
+      expect(html).toContain(`id="project-${project.slug}"`);
+      expect(text).toContain(project.name);
+    }
+    for (const result of results) expect(text).toContain(result.label);
+    for (const line of lines) expect(text).toContain(line.name);
+  });
+
+  it('turns ** marks into bold text', () => {
+    expect(html).not.toContain('**');
+    expect(html).toMatch(/<strong[^>]*>240\+ cameras<\/strong>/);
+  });
+
+  it('gives three ways to get in touch', () => {
+    expect(html).toContain(`href="mailto:${profile.email}"`);
+    expect(html).toContain(`href="${profile.linkedin}"`);
+    expect(html).toContain(`href="${profile.github}"`);
   });
 });

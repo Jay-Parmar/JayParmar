@@ -181,3 +181,22 @@ svg {
   border-color: #2b3757;
   background: #2b3757;
 }
+
+.footer {
+  padding-block: 1.5rem;
+  border-top: 1px solid #3a4560;
+  background: var(--ink);
+  color: #c3c9d6;
+  font-size: var(--step--1);
+}
+
+.footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+}
+
+.footer :focus-visible {
+  outline-color: var(--paper);
+}

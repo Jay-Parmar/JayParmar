@@ -4,6 +4,7 @@ import '@fontsource/mukta/500.css';
 import '@fontsource/mukta/700.css';
 import '@fontsource/mukta/800.css';
 import '../styles/global.css';
+import { profile } from '../data/profile';
 import { link } from '../lib/url';
 
 interface Props {
@@ -33,5 +34,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <slot />
+    <footer class="footer">
+      <div class="wrap">
+        <p>{profile.name}, {profile.location}</p>
+        <a href="https://github.com/Jay-Parmar/JayParmar">Source on GitHub</a>
+      </div>
+    </footer>
   </body>
 </html>

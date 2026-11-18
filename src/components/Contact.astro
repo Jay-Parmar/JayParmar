@@ -1,0 +1,49 @@
+---
+import { profile } from '../data/profile';
+---
+
+<section class="contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <h2 class="title" id="contact-title">Contact</h2>
+    <p class="note">Email is the quickest way to reach me.</p>
+    <a class="email" href={`mailto:${profile.email}`}>{profile.email}</a>
+    <ul class="links" role="list">
+      <li><a href={profile.linkedin}>LinkedIn</a></li>
+      <li><a href={profile.github}>GitHub</a></li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-block: var(--section);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .contact :focus-visible {
+    outline-color: var(--paper);
+  }
+
+  .note {
+    margin-top: 0.75rem;
+    font-size: var(--step-1);
+    color: #c3c9d6;
+  }
+
+  .email {
+    display: inline-block;
+    margin-top: 2rem;
+    font-size: clamp(1.25rem, 6.8vw, 2.25rem);
+    font-weight: 700;
+    overflow-wrap: break-word;
+  }
+
+  .links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    font-size: var(--step-1);
+    font-weight: 500;
+  }
+</style>
