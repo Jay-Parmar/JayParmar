@@ -1,15 +1,21 @@
 :root {
   --paper: #ffffff;
   --ink: #18223a;
+  --ink-hover: #2b3757;
   --muted: #5a6478;
   --track: #d9dde4;
   --wash: #f3f5f8;
+  --band: #18223a;
+  --band-ink: #ffffff;
+  --band-muted: #c3c9d6;
+  --band-rule: #3a4560;
 
   --backend: #d7263d;
   --data: #1d63c8;
-  --cloud: #128a4e;
+  --cloud: #0f7d46;
   --ml: #7a3eb1;
-  --frontend: #c85a00;
+  --frontend: #b85200;
+  --on-line: #ffffff;
 
   --font: 'Mukta', system-ui, sans-serif;
 
@@ -27,6 +33,28 @@
   --line: 7px;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0e1628;
+    --ink: #e8ecf4;
+    --ink-hover: #ffffff;
+    --muted: #9ba6bb;
+    --track: #2a3550;
+    --wash: #16213a;
+    --band: #080e1b;
+    --band-ink: #e8ecf4;
+    --band-muted: #9ba6bb;
+    --band-rule: #1f2a42;
+
+    --backend: #ff5c6c;
+    --data: #5b9bff;
+    --cloud: #34c27a;
+    --ml: #a97cf0;
+    --frontend: #f39b3c;
+    --on-line: #0e1628;
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -34,7 +62,7 @@
 }
 
 html {
-  color-scheme: light;
+  color-scheme: light dark;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -178,15 +206,15 @@ svg {
 }
 
 .button.primary:hover {
-  border-color: #2b3757;
-  background: #2b3757;
+  border-color: var(--ink-hover);
+  background: var(--ink-hover);
 }
 
 .footer {
   padding-block: 1.5rem;
-  border-top: 1px solid #3a4560;
-  background: var(--ink);
-  color: #c3c9d6;
+  border-top: 1px solid var(--band-rule);
+  background: var(--band);
+  color: var(--band-muted);
   font-size: var(--step--1);
 }
 
@@ -198,7 +226,7 @@ svg {
 }
 
 .footer :focus-visible {
-  outline-color: var(--paper);
+  outline-color: var(--band-ink);
 }
 
 html {
