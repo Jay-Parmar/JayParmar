@@ -36,11 +36,12 @@ describe('site nav', () => {
     expect(open).toMatch(/overflow-y:auto/);
   });
 
-  it('blurs the page behind it in every browser, not only Safari', () => {
+  it('blurs the page behind it in every browser, older Safari included', () => {
     const css = readdirSync('dist/_astro')
       .filter((name) => name.endsWith('.css'))
       .map((name) => readFileSync(join('dist/_astro', name), 'utf8'))
       .join('\n');
     expect(css).toMatch(/[{;]backdrop-filter:saturate\(160%\) ?blur\(14px\)/);
+    expect(css).toMatch(/-webkit-backdrop-filter:saturate\(160%\) ?blur\(14px\)/);
   });
 });
