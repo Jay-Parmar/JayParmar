@@ -78,8 +78,20 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
 
 <style>
   .page {
+    position: relative;
+    isolation: isolate;
     max-width: 52rem;
     padding-block: clamp(3rem, 2rem + 4vw, 5.5rem) clamp(5rem, 3.5rem + 6vw, 9rem);
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: -4rem 0 auto;
+    z-index: -1;
+    height: 34rem;
+    background: radial-gradient(closest-side, rgb(110 161 255 / 0.09), transparent);
+    pointer-events: none;
   }
 
   .meta {
