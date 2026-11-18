@@ -1,0 +1,130 @@
+---
+import { results } from '../data/results';
+---
+
+<section class="section" id="results" aria-labelledby="results-title">
+  <div class="wrap">
+    <h2 class="title" id="results-title">Results</h2>
+    <p class="lead">Measured on systems I worked on.</p>
+    <ul class="list" role="list">
+      {
+        results.map((result) => {
+          const top = Math.max(result.before, result.after);
+          return (
+            <li class="result" style={`--c: var(--${result.line})`}>
+              <h3>{result.label}</h3>
+              <dl class="bars">
+                <div class="bar before" style={`--w: ${result.before / top}`}>
+                  <dt>{result.beforeName}</dt>
+                  <dd>
+                    <span class="fill" />
+                    <span class="value">{result.beforeText}</span>
+                  </dd>
+                </div>
+                <div class="bar after" style={`--w: ${result.after / top}`}>
+                  <dt>{result.afterName}</dt>
+                  <dd>
+                    <span class="fill" />
+                    <span class="value">{result.afterText}</span>
+                  </dd>
+                </div>
+              </dl>
+              <p class="context">{result.context}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .list {
+    display: grid;
+    gap: 3rem 4.5rem;
+    margin-top: 3rem;
+  }
+
+  @media (min-width: 52rem) {
+    .list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .result::before {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: var(--line);
+    margin-bottom: 1rem;
+    border-radius: 99px;
+    background: var(--c);
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    font-weight: 700;
+  }
+
+  .bars {
+    display: grid;
+    gap: 0.6rem;
+    margin: 1.25rem 0 0;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  dt {
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .fill {
+    flex: none;
+    width: calc((100% - 6rem) * var(--w));
+    min-width: 0.75rem;
+    height: 0.875rem;
+    border-radius: 99px;
+    background: var(--track);
+  }
+
+  .after .fill {
+    background: var(--c);
+  }
+
+  .value {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .before .value {
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .context {
+    max-width: 48ch;
+    margin-top: 1rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  @media (max-width: 30rem) {
+    .bar {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>
