@@ -21,6 +21,11 @@ describe('site nav', () => {
     }
   });
 
+  it('marks Projects as the current section on project pages', () => {
+    const nav = header('dist/projects/hirejutsu/index.html');
+    expect(nav.match(/<a[^>]*aria-current="true"[^>]*>([^<]+)</)?.[1]?.trim()).toBe('Projects');
+  });
+
   it('blurs the page behind it in every browser, not only Safari', () => {
     const css = readdirSync('dist/_astro')
       .filter((name) => name.endsWith('.css'))

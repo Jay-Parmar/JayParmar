@@ -4,9 +4,10 @@ import { link } from '../lib/url';
 
 interface Props {
   home?: boolean;
+  current?: string;
 }
 
-const { home = false } = Astro.props;
+const { home = false, current } = Astro.props;
 const sections = [
   { id: 'results', name: 'Impact' },
   { id: 'experience', name: 'Experience' },
@@ -35,7 +36,7 @@ const target = (id: string) => (home ? id : undefined);
         {
           sections.map((section) => (
             <li>
-              <a href={to(section.id)} data-target={target(section.id)}>
+              <a href={to(section.id)} data-target={target(section.id)} aria-current={section.id === current ? 'true' : undefined}>
                 {section.name}
               </a>
             </li>
