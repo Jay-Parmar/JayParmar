@@ -139,7 +139,7 @@ svg {
 }
 
 .section {
-  padding-block: var(--section);
+  padding-top: var(--section);
 }
 
 .title {
