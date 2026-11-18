@@ -11,6 +11,8 @@ function tokens(block: string): Record<string, string> {
 const light = tokens(css.slice(css.indexOf(':root {'), css.indexOf('}', css.indexOf(':root {'))));
 const darkStart = css.indexOf('@media (prefers-color-scheme: dark)');
 const dark = { ...light, ...tokens(darkStart < 0 ? '' : css.slice(darkStart, css.indexOf('}', darkStart))) };
+const printStart = css.indexOf('@media print');
+const print = tokens(printStart < 0 ? '' : css.slice(printStart, css.indexOf('}', printStart)));
 const nightStart = css.indexOf('.night {');
 const night = tokens(nightStart < 0 ? '' : css.slice(nightStart, css.indexOf('}', nightStart)));
 
@@ -52,4 +54,12 @@ describe('colour tokens', () => {
       }
     });
   }
+
+  it('print dark text on white paper in either theme', () => {
+    expect(print.paper).toBe('#ffffff');
+    expect(print.band).toBe('#ffffff');
+    expect(contrast(print.ink ?? '#ffffff', print.paper)).toBeGreaterThanOrEqual(7);
+    expect(contrast(print['band-ink'] ?? '#ffffff', print.band)).toBeGreaterThanOrEqual(7);
+    for (const id of lineIds) expect(contrast(print[id] ?? '#ffffff', print.paper), id).toBeGreaterThanOrEqual(4.5);
+  });
 });

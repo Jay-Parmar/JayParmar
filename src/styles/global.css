@@ -276,3 +276,60 @@ html {
   line-height: 1.5;
   white-space: nowrap;
 }
+
+@media print {
+  :root {
+    --paper: #ffffff;
+    --ink: #18223a;
+    --muted: #5a6478;
+    --track: #d9dde4;
+    --wash: #ffffff;
+    --band: #ffffff;
+    --band-ink: #18223a;
+    --band-muted: #5a6478;
+    --band-rule: #d9dde4;
+    --backend: #d7263d;
+    --data: #1d63c8;
+    --cloud: #0f7d46;
+    --ml: #7a3eb1;
+    --frontend: #b85200;
+    --on-line: #ffffff;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .map {
+    break-inside: avoid;
+  }
+
+  body > header,
+  .skip,
+  .footer,
+  .terminus,
+  .trains {
+    display: none !important;
+  }
+
+  .section,
+  .contact {
+    padding-block: 2rem 0;
+  }
+
+  .head {
+    position: static !important;
+  }
+
+  .result,
+  .stop,
+  .project,
+  .row {
+    break-inside: avoid;
+  }
+}
