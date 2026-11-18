@@ -1,0 +1,148 @@
+---
+import { platform } from '../data/platform';
+import SystemDiagram from './SystemDiagram.astro';
+---
+
+<section class="architecture" id="architecture" aria-labelledby="architecture-title">
+  <div class="wrap">
+    <header>
+      <p class="label">{platform.section}</p>
+      <h2 id="architecture-title">{platform.headline}</h2>
+      <p class="summary">{platform.introduction}</p>
+    </header>
+    <div class="study">
+      <div class="stage"><SystemDiagram /></div>
+      <ol class="chapters" role="list">
+        {platform.views.map((view) => (
+          <li id={`chapter-${view.id}`} data-view={view.id}>
+            <h3>{view.heading}</h3>
+            <p>{view.detail}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  const section = document.querySelector<HTMLElement>('#architecture')!;
+  const stage = section.querySelector<HTMLElement>('.stage')!;
+  const chapters = [...section.querySelectorAll<HTMLElement>('[data-view]')];
+  const guided = matchMedia('screen and (min-height: 42rem) and (prefers-reduced-motion: no-preference)');
+  const sideBySide = matchMedia('(min-width: 57rem)');
+  let active = -1;
+  let visible = false;
+  let frame = 0;
+
+  function draw() {
+    frame = 0;
+    if (!guided.matches || !visible) return;
+
+    const line = sideBySide.matches
+      ? innerHeight / 2
+      : Math.min(innerHeight - 32, Math.max(innerHeight * 0.76, stage.getBoundingClientRect().bottom + 24));
+    const bounds = chapters.map((chapter) => chapter.getBoundingClientRect());
+    const index = Math.max(0, bounds.findLastIndex((rect) => rect.top <= line));
+    const part = Math.min(1, Math.max(0, (line - bounds[index].top) / bounds[index].height));
+    const spread = Math.max(0, 1 - Math.abs(index + part - 1.35));
+    stage.style.setProperty('--spread', spread.toFixed(3));
+    chapters.forEach((chapter, i) => {
+      chapter.style.setProperty('--read', i < index ? '1' : i === index ? part.toFixed(3) : '0');
+    });
+
+    if (index !== active) {
+      active = index;
+      const choice = stage.querySelector<HTMLInputElement>(`#view-${chapters[index].dataset.view}`);
+      if (choice && !stage.contains(document.activeElement)) choice.checked = true;
+    }
+  }
+
+  function schedule() {
+    if (guided.matches && visible && !frame) frame = requestAnimationFrame(draw);
+  }
+
+  function setMode() {
+    section.toggleAttribute('data-guided', guided.matches);
+    active = -1;
+    stage.style.removeProperty('--spread');
+    schedule();
+  }
+
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    schedule();
+  }).observe(section);
+  new ResizeObserver(() => {
+    section.style.setProperty('--stage-height', `${stage.offsetHeight}px`);
+    schedule();
+  }).observe(stage);
+  addEventListener('scroll', schedule, { passive: true });
+  addEventListener('resize', schedule);
+  guided.addEventListener('change', setMode);
+  setMode();
+</script>
+
+<style>
+  .architecture {
+    padding-block: clamp(3rem, 6vw, 6rem);
+    border-block: 1px solid var(--border);
+    background: var(--bg-raised);
+  }
+
+  header { max-width: 52rem; }
+  .label { color: var(--accent); font-size: var(--step--1); font-weight: 550; }
+  h2 {
+    margin-top: 0.7rem;
+    font-size: clamp(2.25rem, 4.7vw, 4.2rem);
+    font-weight: 525;
+    letter-spacing: -0.055em;
+    line-height: 1.05;
+  }
+
+  .summary { max-width: 62ch; margin-top: 1rem; }
+  .study { display: grid; gap: 1.6rem; margin-top: clamp(2rem, 4vw, 3.5rem); }
+  .stage { min-width: 0; }
+  .chapters li { border-top: 1px solid var(--border-2); padding-block: 1.25rem; }
+  h3 { font-size: var(--step-2); font-weight: 550; letter-spacing: -0.035em; }
+  .chapters p { max-width: 41ch; margin-top: 0.65rem; }
+  @media (min-width: 57rem) {
+    .study { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(3rem, 7vw, 7rem); }
+    .stage { grid-column: 2; grid-row: 1; align-self: start; }
+    .chapters { grid-column: 1; grid-row: 1; }
+  }
+
+  @media screen and (min-height: 42rem) and (prefers-reduced-motion: no-preference) {
+    [data-guided] .stage {
+      position: sticky;
+      top: 5.5rem;
+      z-index: 2;
+      align-self: start;
+    }
+
+    [data-guided] .chapters li {
+      position: relative;
+      min-height: clamp(15rem, 40svh, 25rem);
+      padding-top: clamp(1.5rem, 3vw, 3rem);
+    }
+
+    [data-guided] .chapters li::before {
+      content: '';
+      position: absolute;
+      inset: -1px 0 auto;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(var(--read, 0));
+      transform-origin: left;
+    }
+
+    @media (max-width: 56.99rem) {
+      [data-guided] .stage { top: 4rem; background: var(--bg-raised); }
+      [data-guided] .stage :global(.bar) { padding: 0.55rem 0.9rem; column-gap: 0.5rem; }
+      [data-guided] .stage :global(.drawing svg) { max-height: 23svh; }
+      [data-guided] .chapters li {
+        min-height: clamp(11rem, 29svh, 17rem);
+        scroll-margin-top: var(--stage-height, 0px);
+      }
+    }
+  }
+</style>

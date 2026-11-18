@@ -81,8 +81,8 @@ const streams = [
       </g>
 
       <path class="bus" d="M214 69l-24 12v99l16 8m-16-46 16 8m-16-46 16 8" />
-      {shelves.map(({ name, y }) => (
-        <g transform={`translate(284 ${y})`}>
+      {shelves.map(({ name, y }, i) => (
+        <g class="host-shelf" transform={`translate(284 ${y})`} style={`--travel: ${12 - 9 * i}px`}>
           <path class="metal" d="M-84 0L0-42 84 0 0 42z" />
           <path class="side" d="M-84 0L0 42v21l-84-42z" />
           <path class="front" d="M0 42L84 0v21L0 63z" />
@@ -138,7 +138,7 @@ const streams = [
     border: 1px solid var(--border-2);
     border-radius: var(--radius);
     background: var(--bg-raised);
-    box-shadow: 0 24px 60px -42px rgb(0 0 0 / 0.7);
+    box-shadow: 0 24px 60px -42px color-mix(in srgb, var(--border-2) 45%, transparent);
   }
 
   .bar {
@@ -290,14 +290,16 @@ const streams = [
     figcaption span { grid-area: auto; visibility: visible; }
   }
 
-  .system:has(#view-allocation:checked) :is(.endpoints, .streams) { opacity: 0.32; }
+  .system:has(#view-allocation:checked) :is(.endpoints > g, .streams) { opacity: 0.4; }
   .system:has(#view-allocation:checked) .bus { stroke-width: 2; stroke-opacity: 1; }
-  .system:has(#view-playback:checked) :is(.controller, .bus) { opacity: 0.4; }
+  .system:has(#view-playback:checked) :is(.controller > g, .bus) { opacity: 0.4; }
   .system:has(#view-playback:checked) .wire { stroke-width: 2.3; stroke-opacity: 1; }
 
   @media (prefers-reduced-motion: no-preference) {
     .packet { display: inline; }
-    .endpoints, .streams, .controller, .bus { transition: opacity 0.2s; }
+    .host-shelf { translate: 0 calc(var(--spread, 0) * var(--travel)); }
+    .controller { translate: 0 calc(var(--spread, 0) * -18px); }
+    .endpoints > g, .streams, .controller > g, .bus { transition: opacity 0.2s; }
     .system:has(#view-allocation:checked) .bus { animation: assign-host 1.4s linear infinite; }
   }
 

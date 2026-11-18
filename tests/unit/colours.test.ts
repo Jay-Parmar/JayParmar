@@ -3,13 +3,14 @@ import { describe, expect, it } from 'vitest';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
 
-function tokens(start: string): Record<string, string> {
-  const at = css.indexOf(start);
-  const block = at < 0 ? '' : css.slice(at, css.indexOf('}', at));
+function tokens(start: string, source = css): Record<string, string> {
+  const at = source.indexOf(start);
+  const block = at < 0 ? '' : source.slice(at, source.indexOf('}', at));
   return Object.fromEntries([...block.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6});/gi)].map((m) => [m[1], m[2].toLowerCase()]));
 }
 
 const screen = tokens(':root {');
+const light = tokens('html:root {', readFileSync('src/styles/light.css', 'utf8'));
 const print = tokens('@media print');
 
 function channels(hex: string): number[] {
@@ -30,17 +31,17 @@ function contrast(theme: Record<string, string>, a: string, b: string): number {
 }
 
 describe('colour tokens', () => {
-  it('have one accent colour, and every other colour stays grey', () => {
+  it.each([screen, light])('have one accent colour, and every other colour stays grey', (palette) => {
     const chroma = (hex: string) => Math.max(...channels(hex)) - Math.min(...channels(hex));
-    expect(Object.keys(screen).filter((name) => chroma(screen[name]) > 0.2)).toEqual(['accent']);
+    expect(Object.keys(palette).filter((name) => chroma(palette[name]) > 0.2)).toEqual(['accent']);
   });
 
-  it('keep text readable on the page and on every panel', () => {
+  it.each([screen, light])('keep text readable on the page and on every panel', (palette) => {
     for (const ground of ['bg', 'bg-raised', 'surface', 'surface-2']) {
-      expect(contrast(screen, 'text', ground), ground).toBeGreaterThanOrEqual(7);
-      expect(contrast(screen, 'text-2', ground), ground).toBeGreaterThanOrEqual(7);
-      expect(contrast(screen, 'muted', ground), ground).toBeGreaterThanOrEqual(4.5);
-      expect(contrast(screen, 'accent', ground), ground).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(palette, 'text', ground), ground).toBeGreaterThanOrEqual(7);
+      expect(contrast(palette, 'text-2', ground), ground).toBeGreaterThanOrEqual(7);
+      expect(contrast(palette, 'muted', ground), ground).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(palette, 'accent', ground), ground).toBeGreaterThanOrEqual(4.5);
     }
   });
 

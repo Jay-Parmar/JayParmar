@@ -183,7 +183,7 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     margin-top: 1.5rem;
     overflow: hidden;
     background:
-      radial-gradient(42rem 26rem at 0% 0%, rgb(110 161 255 / 0.07), transparent 70%),
+      radial-gradient(42rem 26rem at 0% 0%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 70%),
       var(--surface);
   }
 
@@ -362,7 +362,7 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
       inset: 0;
       z-index: -1;
       border-radius: inherit;
-      background: radial-gradient(24rem circle at var(--x, 50%) var(--y, 50%), rgb(110 161 255 / 0.08), transparent 65%);
+      background: radial-gradient(24rem circle at var(--x, 50%) var(--y, 50%), color-mix(in srgb, var(--accent) 8%, transparent), transparent 65%);
       opacity: 0;
       transition: opacity 0.35s;
       pointer-events: none;
