@@ -85,6 +85,9 @@ const target = (id: string) => (home ? id : undefined);
         menu.hidePopover();
       }
     });
+    matchMedia('(min-width: 48rem)').addEventListener('change', (event) => {
+      if (event.matches && menu?.matches(':popover-open')) menu.hidePopover();
+    });
     addEventListener('scroll', request, { passive: true });
     addEventListener('resize', request);
     update();
