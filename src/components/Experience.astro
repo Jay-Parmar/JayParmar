@@ -16,13 +16,12 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
           <li class="stop" id={role.id}>
             <span class="fill" aria-hidden="true" />
             <div class="head">
-              <p class="when">{period(role.start, role.end)}</p>
+              <p class="period">{period(role.start, role.end)}</p>
               <h3>{role.title}</h3>
-              <p class="where">
-                {role.company}, {role.place}
-              </p>
+              <p class="company">{role.company}</p>
+              <p class="place">{role.place}</p>
             </div>
-            <div class="body">
+            <div class="details">
               {role.groups.map((group) => (
                 <div class="group">
                   <h4>{names.get(group.line)}</h4>
@@ -39,9 +38,10 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
       }
       <li class="stop" id="education">
         <div class="head">
-          <p class="when">{period(education.start, education.end)}</p>
+          <p class="period">{period(education.start, education.end)}</p>
           <h3>{education.degree}</h3>
-          <p class="where">{education.school}, {education.place}</p>
+          <p class="company">{education.school}</p>
+          <p class="place">{education.place}</p>
         </div>
       </li>
     </ol>
@@ -139,31 +139,45 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
     background: var(--ink);
   }
 
-  .when {
-    font-weight: 500;
+  .period {
     color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 500;
+    line-height: 1.25rem;
+    font-variant-numeric: tabular-nums;
   }
 
   h3 {
-    margin-top: 0.15rem;
-    font-size: var(--step-3);
+    margin-top: 0.5rem;
+    font-size: var(--step-2);
+    line-height: 1.25;
   }
 
-  .where {
-    margin-top: 0.35rem;
-    font-size: var(--step-1);
+  .company {
+    margin-top: 0.5rem;
+    color: var(--text-2);
+    font-size: 0.9375rem;
+    line-height: 1.45;
   }
 
-  .group {
+  .place {
+    margin-top: 0.125rem;
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  .details {
+    display: grid;
+    gap: 2.25rem;
     max-width: var(--measure);
-    margin-top: 2.25rem;
+    margin-top: 2rem;
   }
 
   @media (min-width: 64rem) {
     .stop {
       display: grid;
       grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
-      column-gap: 3.5rem;
+      column-gap: clamp(2.5rem, 1rem + 3vw, 4.5rem);
       align-items: start;
     }
 
@@ -172,16 +186,8 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
       top: 6rem;
     }
 
-    h3 {
-      font-size: var(--step-2);
-    }
-
-    .where {
-      font-size: var(--step-0);
-    }
-
-    .body > .group:first-child {
-      margin-top: 0.35rem;
+    .details {
+      margin-top: 0;
     }
   }
 
