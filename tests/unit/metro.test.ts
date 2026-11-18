@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { nearest, pathData, polylineLength, trainTiming } from '../../src/lib/metro';
+import { nearest, offset, pathData, polylineLength, trainTiming } from '../../src/lib/metro';
 
 const corner = [
   [0, 0],
@@ -36,5 +36,18 @@ describe('metro geometry', () => {
       keyPoints: '0;0;0.5;0.5;1;1;0.5;0.5;0;0',
       keyTimes: '0;0.1;0.225;0.325;0.45;0.55;0.675;0.775;0.9;1',
     });
+  });
+
+  it('offsets a straight line to the right of travel', () => {
+    expect(offset([[0, 0], [10, 0]], 5)).toEqual([[0, 5], [10, 5]]);
+  });
+
+  it('keeps parallel lines apart around a bend', () => {
+    const [start, corner, end] = offset([[0, 100], [100, 0], [200, 0]], 10);
+    expect(start[0]).toBeCloseTo(7.071);
+    expect(start[1]).toBeCloseTo(107.071);
+    expect(corner[0]).toBeCloseTo(104.142);
+    expect(corner[1]).toBeCloseTo(10);
+    expect(end).toEqual([200, 10]);
   });
 });

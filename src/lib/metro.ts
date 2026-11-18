@@ -15,6 +15,22 @@ export function polylineLength(points: readonly Point[]): number {
   return total;
 }
 
+/** The polyline moved `distance` to the right of its direction of travel, with mitred corners. */
+export function offset(points: readonly Point[], distance: number): Point[] {
+  const normals = points.slice(1).map((point, i) => {
+    const dx = point[0] - points[i][0];
+    const dy = point[1] - points[i][1];
+    const length = Math.hypot(dx, dy);
+    return [-dy / length, dx / length] as const;
+  });
+  return points.map(([x, y], i) => {
+    const a = normals[Math.max(0, i - 1)];
+    const b = normals[Math.min(normals.length - 1, i)];
+    const scale = distance / (1 + a[0] * b[0] + a[1] * b[1]);
+    return [x + (a[0] + b[0]) * scale, y + (a[1] + b[1]) * scale] as const;
+  });
+}
+
 /** The closest place on the polyline to a point, as a share of the line's length. */
 export function nearest(points: readonly Point[], at: Point): { fraction: number; distance: number } {
   const total = polylineLength(points);
