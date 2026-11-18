@@ -66,6 +66,14 @@ describe('projects', () => {
     }
   });
 
+  it('lead on to the next project page, wrapping round at the end', () => {
+    const slugs = projects.filter((project) => project.page).map((project) => project.slug);
+    slugs.forEach((slug, i) => {
+      const next = slugs[(i + 1) % slugs.length];
+      expect(page(slug), slug).toMatch(new RegExp(`<a class="next[^"]*"[^>]*href="/JayParmar/projects/${next}/"`));
+    });
+  });
+
   it('list the projects with no page or public code together under Also built', () => {
     const also = html.slice(html.indexOf('id="also-title"'), html.indexOf('id="skills"'));
     for (const project of projects) {

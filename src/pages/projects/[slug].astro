@@ -17,6 +17,8 @@ interface Props {
 
 const { project } = Astro.props;
 const { what, how } = project.page!;
+const withPages = projects.filter((other) => other.page);
+const next = withPages[(withPages.indexOf(project) + 1) % withPages.length];
 
 /** The number a fact starts with, if any, and the rest of it. */
 const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ?? [undefined, fact];
@@ -75,6 +77,12 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
       <a class="button primary" href={project.code}>Code on GitHub</a>
       <a class="button" href={link('#projects')}>All projects</a>
     </p>
+
+    <a class="next panel" href={link(`projects/${next.slug}/`)}>
+      <span class="label">Next project</span>
+      <span class="name">{next.name}</span>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"></path></svg>
+    </a>
   </main>
 </Base>
 
@@ -112,7 +120,8 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
     color: var(--text);
   }
 
-  .back svg {
+  .back svg,
+  .next svg {
     width: 1rem;
     height: 1rem;
     fill: none;
@@ -265,5 +274,50 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: clamp(3rem, 2.5rem + 2vw, 4.5rem);
+  }
+
+  .next {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.35rem 1rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.25s;
+  }
+
+  .next:hover {
+    border-color: var(--border-2);
+  }
+
+  .next .label {
+    grid-column: 1;
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  .next .name {
+    grid-column: 1;
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .next svg {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--muted);
+    transition:
+      color 0.2s,
+      transform 0.2s var(--ease);
+  }
+
+  .next:hover svg {
+    color: var(--text);
+    transform: translateX(3px);
   }
 </style>
