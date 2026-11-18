@@ -215,6 +215,10 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
     line-height: 1.65;
   }
 
+  .group li strong {
+    white-space: nowrap;
+  }
+
   .group li::before {
     content: '';
     position: absolute;
