@@ -28,10 +28,10 @@ const trains = drawn.map(({ line, points }) => {
 ---
 
 <figure class="map">
+  <figcaption id="map-title" class="visually-hidden">
+    My work as a metro map. Each line is a set of skills, and each station is a job or a project where I used them.
+  </figcaption>
   <svg viewBox={`0 0 ${width} ${height}`} aria-labelledby="map-title">
-    <title id="map-title">
-      My work as a metro map. Each line is a set of skills, and each station is a job or a project where I used them.
-    </title>
     <g class="lines">
       {
         drawn.map(({ line, points, delay, duration }) => (

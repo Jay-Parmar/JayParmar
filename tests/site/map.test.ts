@@ -19,4 +19,11 @@ describe('hero map', () => {
     expect(stations).toBe(6);
     expect(html.match(/<g class="focus"/g)?.length).toBe(stations);
   });
+
+  it('describes itself in a caption, not a hover tooltip', () => {
+    const figure = html.slice(html.indexOf('<figure class="map"'), html.indexOf('</figure>'));
+    expect(figure).not.toContain('<title');
+    expect(figure).toMatch(/<figcaption id="map-title"[^>]*>[^<]*metro map/);
+    expect(figure).toContain('aria-labelledby="map-title"');
+  });
 });
