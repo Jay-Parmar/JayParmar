@@ -14,6 +14,10 @@ describe('contact', () => {
     expect(contact.replace(/<[^>]+>/g, '')).toContain(profile.email);
   });
 
+  it('makes the address itself the email link', () => {
+    expect(contact).toMatch(new RegExp(`<a class="email"[^>]*href="mailto:${profile.email}"`));
+  });
+
   it('ships the copy button hidden until a script finds a clipboard', () => {
     const button = contact.match(/<button[^>]*data-copy="([^"]*)"[^>]*>/);
     expect(button?.[1]).toBe(profile.email);

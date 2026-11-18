@@ -10,7 +10,7 @@ const [user, domain] = profile.email.split('@');
       <h2 class="title" id="contact-title">Get in touch</h2>
       <p class="note">Email is the quickest way to reach me.</p>
       <div class="address">
-        <span class="email">{user}@<wbr />{domain}</span>
+        <a class="email" href={`mailto:${profile.email}`}>{user}@<wbr />{domain}</a>
         <button class="button copy" type="button" data-copy={profile.email} aria-label="Copy email address" hidden>
           <svg viewBox="0 0 20 20" aria-hidden="true">
             <g class="sheets">
@@ -24,7 +24,6 @@ const [user, domain] = profile.email.split('@');
       </div>
       <p class="visually-hidden" aria-live="polite"></p>
       <div class="actions">
-        <a class="button primary" href={`mailto:${profile.email}`}>Email me</a>
         <a class="button" href={profile.linkedin}>LinkedIn</a>
         <a class="button" href={profile.github}>GitHub</a>
       </div>
@@ -132,7 +131,6 @@ const [user, domain] = profile.email.split('@');
     line-height: 1.2;
     letter-spacing: -0.03em;
     overflow-wrap: break-word;
-    user-select: all;
   }
 
   .copy {
@@ -185,10 +183,6 @@ const [user, domain] = profile.email.split('@');
     .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-    }
-
-    .primary {
-      grid-column: 1 / -1;
     }
   }
 
