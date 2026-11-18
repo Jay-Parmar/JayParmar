@@ -86,6 +86,16 @@ describe('projects', () => {
     }
   });
 
+  it('opens each featured workflow step at the matching case study paragraph', () => {
+    for (const project of projects.filter((project) => project.featured && project.page)) {
+      for (const step of project.page!.steps) {
+        const fragment = `step-${step.id}`;
+        expect(card(project.slug)).toContain(`href="/JayParmar/projects/${project.slug}/#${fragment}"`);
+        expect(page(project.slug)).toContain(`id="${fragment}"`);
+      }
+    }
+  });
+
   it('lead on to the next project page, wrapping round at the end', () => {
     const slugs = projects.filter((project) => project.page).map((project) => project.slug);
     slugs.forEach((slug, i) => {

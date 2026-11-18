@@ -1,5 +1,5 @@
 ---
-import { projects, type Project } from '../data/projects';
+import { projectSections, projects, type Project } from '../data/projects';
 import { splitFact } from '../lib/facts';
 import { link } from '../lib/url';
 import ProjectMeta from './ProjectMeta.astro';
@@ -13,15 +13,48 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
 <section class="section" id="projects" aria-labelledby="projects-title">
   <div class="wrap">
     <h2 class="title" id="projects-title">Projects</h2>
-    <p class="lead">Newest first. The first three are open source.</p>
 
     {
       featured.map((project) => (
         <article class="featured panel" id={`project-${project.slug}`}>
-          <div class="head">
-            <ProjectMeta project={project} />
-            <h3 style={morph(project)}>{project.name}</h3>
-            <p class="tagline">{project.tagline}</p>
+          <div class:list={['overview', { 'with-workflow': project.page?.steps.length }]}>
+            <div class="head">
+              <ProjectMeta project={project} />
+              <h3 style={morph(project)}>{project.name}</h3>
+              <p class="tagline">{project.tagline}</p>
+              <ul class="stack" role="list" aria-label="Built with">
+                {project.stack.map((tool) => (
+                  <li class="chip">{tool}</li>
+                ))}
+              </ul>
+              <p class="actions">
+                {project.page && (
+                  <a class="button primary" href={link(`projects/${project.slug}/`)} aria-label={`${project.name}, how it works`}>
+                    How it works
+                  </a>
+                )}
+                {project.code && (
+                  <a class="button" href={project.code} aria-label={`${project.name} code on GitHub`}>
+                    Code on GitHub
+                  </a>
+                )}
+              </p>
+            </div>
+            {project.page && project.page.steps.length > 0 && (
+              <nav class="workflow" aria-labelledby={`workflow-${project.slug}`}>
+                <h4 id={`workflow-${project.slug}`}>{projectSections.what}</h4>
+                <ol role="list">
+                  {project.page.steps.map((step) => (
+                    <li>
+                      <a href={link(`projects/${project.slug}/#step-${step.id}`)}>
+                        <span>{step.name}</span>
+                        {step.preview && <small>{step.preview}</small>}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )}
           </div>
           <ul class="stats" role="list">
             {project.facts.map((fact) => {
@@ -33,23 +66,6 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
               );
             })}
           </ul>
-          <ul class="stack" role="list" aria-label="Built with">
-            {project.stack.map((tool) => (
-              <li class="chip">{tool}</li>
-            ))}
-          </ul>
-          <p class="actions">
-            {project.page && (
-              <a class="button primary" href={link(`projects/${project.slug}/`)} aria-label={`${project.name}, how it works`}>
-                How it works
-              </a>
-            )}
-            {project.code && (
-              <a class="button" href={project.code} aria-label={`${project.name} code on GitHub`}>
-                Code on GitHub
-              </a>
-            )}
-          </p>
         </article>
       ))
     }
@@ -164,9 +180,7 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
 <style>
   .featured {
     --pad: var(--inset);
-    display: grid;
-    grid-template-areas: 'head' 'stats' 'stack' 'actions';
-    margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    margin-top: 1.5rem;
     overflow: hidden;
     background:
       radial-gradient(42rem 26rem at 0% 0%, rgb(110 161 255 / 0.07), transparent 70%),
@@ -174,8 +188,7 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
   }
 
   .head {
-    grid-area: head;
-    padding: var(--pad) var(--pad) 0;
+    padding: var(--pad);
   }
 
   h3 {
@@ -205,22 +218,24 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
   }
 
   .stats {
-    grid-area: stats;
-    margin: 2rem var(--pad) 0;
+    display: grid;
+    margin: 0;
     border-top: 1px solid var(--border);
+    background: var(--bg-raised);
   }
 
   .stats li {
     display: flex;
     align-items: baseline;
-    gap: 1rem;
-    padding-block: 0.9rem;
-    border-bottom: 1px solid var(--border);
+    gap: 0.75rem;
+    padding: 0.85rem var(--pad);
   }
+
+  .stats li + li { border-top: 1px solid var(--border); }
 
   .stats .num {
     flex: none;
-    min-width: 3.4em;
+    min-width: 3em;
     color: var(--text);
     font-size: var(--step-3);
     font-weight: 600;
@@ -245,58 +260,67 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
   }
 
   .featured .stack {
-    grid-area: stack;
-    margin: 0;
-    padding: 1.75rem var(--pad) 0;
+    margin-top: 1.25rem;
   }
 
   .actions {
-    grid-area: actions;
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    padding: 2rem var(--pad) var(--pad);
+    margin-top: 1.75rem;
   }
 
-  @media (min-width: 56rem) {
-    .featured {
-      grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem);
-      grid-template-rows: auto auto 1fr;
-      grid-template-areas:
-        'head stats'
-        'stack stats'
-        'actions stats';
+  .workflow {
+    padding: var(--pad);
+    border-top: 1px solid var(--border);
+  }
+
+  .workflow h4 {
+    margin-bottom: 0.55rem;
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 500;
+  }
+
+  .workflow li + li { border-top: 1px solid var(--border); }
+  .workflow a {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: 0.72rem;
+    color: var(--text);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .workflow a span {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-color: var(--border-2);
+  }
+
+  .workflow a:is(:hover, :focus-visible) span { text-decoration-color: var(--accent); }
+  .workflow small { color: var(--muted); font-size: var(--step--1); font-weight: 400; }
+
+  @media (min-width: 48rem) {
+    .with-workflow {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      align-items: center;
     }
 
-    .stats {
-      display: grid;
-      grid-auto-rows: 1fr;
-      margin: 0;
+    .workflow {
+      margin-block: var(--pad);
+      padding-block: 0;
       border-top: 0;
       border-left: 1px solid var(--border);
-      background: var(--bg-raised);
     }
 
-    .stats li {
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 0.5rem;
-      padding: 1.5rem 2rem;
-      border-bottom: 0;
-    }
-
-    .stats li + li {
-      border-top: 1px solid var(--border);
-    }
-
+    .stats { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+    .stats li { flex-wrap: wrap; }
+    .stats li + li { border-top: 0; border-left: 1px solid var(--border); }
     .stats .num {
       min-width: 0;
-      font-size: var(--step-4);
-    }
-
-    .actions {
-      align-self: end;
+      font-size: var(--step-3);
     }
   }
 

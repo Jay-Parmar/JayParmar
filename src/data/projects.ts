@@ -2,6 +2,7 @@ interface ProjectStep {
   id: string;
   name: string;
   text: string;
+  preview?: string;
 }
 
 export const projectSections = {
@@ -29,7 +30,7 @@ export const projects: Project[] = [
   {
     slug: 'hirejutsu',
     name: 'hirejutsu',
-    tagline: 'Finds the best job openings for your resume every morning, so you can apply to them yourself.',
+    tagline: 'Ranks job openings against your resume and explains the 10 closest matches each morning.',
     year: '2026',
     stack: ['Python', 'SQLite', 'pytest', 'Playwright'],
     facts: ['629 company career pages', '15 applicant tracking systems', '2,000+ tests'],
@@ -40,16 +41,19 @@ export const projects: Project[] = [
         {
           id: 'collect',
           name: 'Collect openings',
+          preview: 'Company sites and job boards',
           text: 'Reads 629 company career pages across 15 applicant tracking systems, including Greenhouse, Lever, Ashby and Workday. It also checks 9 remote job boards and Hacker News, and skips reposted, evergreen and closed listings.',
         },
         {
           id: 'rank',
           name: 'Rank matches',
+          preview: 'Six signals for each opening',
           text: 'Checks eligibility, including work permits, and scores each opening against your resume. Each morning you get the 10 best matches and a reason for each pick.',
         },
         {
           id: 'review',
           name: 'Review and apply',
+          preview: 'Forms you check before submitting',
           text: 'Fills Workday, Greenhouse, Lever and Ashby forms in a browser you control. You review and submit. It tracks applications, follow-ups and referrals, and prepares interview notes when you get an interview.',
         },
       ],
