@@ -20,7 +20,7 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
       <p class="name">Multi-server video platform</p>
       <p class="stat">25 to <strong>240+</strong> cameras</p>
     </div>
-    <svg viewBox="0 0 560 320" role="img" aria-labelledby="system-caption">
+    <svg viewBox="0 0 560 320" role="img" aria-label="Cameras feed three hosts run by one control plane, and the hosts serve the live view.">
       <g class="routes">
         {routes.map((d, i) => <path class="route" d={d} pathLength="1" style={`--i: ${i}`} />)}
       </g>
@@ -65,7 +65,7 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
       </g>
     </svg>
   </div>
-  <figcaption id="system-caption">
+  <figcaption>
     The architecture I designed at ESSI: a FastAPI control plane runs a fleet of video servers as one system.
   </figcaption>
 </figure>

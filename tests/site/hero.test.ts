@@ -10,12 +10,13 @@ describe('hero', () => {
     expect(html).toMatch(new RegExp(`<h1[^>]*>${profile.name}</h1>`));
   });
 
-  it('draws the system I designed, described by its caption', () => {
+  it('draws the system I designed, with a label of its own and a caption', () => {
     for (const part of ['Cameras', 'Control plane', 'host-01', 'host-02', 'host-03', 'Live view']) {
       expect(figure).toContain(`>${part}<`);
     }
-    expect(figure).toMatch(/<svg[^>]*role="img"[^>]*aria-labelledby="system-caption"/);
-    expect(figure).toMatch(/<figcaption[^>]*id="system-caption"[^>]*>[^<]*control plane/i);
+    const label = figure.match(/<svg[^>]*role="img"[^>]*aria-label="([^"]+)"/)?.[1] ?? '';
+    expect(label).toMatch(/cameras.*hosts.*live view/i);
+    expect(figure).toMatch(/<figcaption[^>]*>[^<]*control plane/i);
   });
 
   it('keeps each packet out of sight until it starts moving', () => {
