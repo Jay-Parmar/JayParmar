@@ -1,6 +1,5 @@
 export const profile = {
   name: 'Jay Parmar',
-  nameHindi: 'जय परमार',
   role: 'Software engineer',
   intro:
     "I've spent 3+ years designing backend systems, data pipelines and databases, and doing the AWS and DevOps work that ships them.",
