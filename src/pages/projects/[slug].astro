@@ -29,7 +29,7 @@ const facts = [...project.facts].sort((a, b) => Number(!split(a)[0]) - Number(!s
   <SiteNav current="projects" />
 
   <main id="main" class="wrap page">
-    <a class="back" href={link('#projects')}>
+    <a class="back" href={link(`#project-${project.slug}`)}>
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"></path></svg>
       All projects
     </a>
@@ -76,7 +76,7 @@ const facts = [...project.facts].sort((a, b) => Number(!split(a)[0]) - Number(!s
 
     <p class="actions">
       <a class="button primary" href={project.code}>Code on GitHub</a>
-      <a class="button" href={link('#projects')}>All projects</a>
+      <a class="button" href={link(`#project-${project.slug}`)}>All projects</a>
     </p>
 
     <a class="next panel" href={link(`projects/${next.slug}/`)}>

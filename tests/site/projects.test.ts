@@ -68,9 +68,9 @@ describe('projects', () => {
     for (const { project, name } of repeated) expect(name).toContain(project);
   });
 
-  it('lead back to the list from the top of their pages', () => {
+  it('lead back to their own card in the list from the top of their pages', () => {
     for (const project of projects.filter((project) => project.page)) {
-      expect(page(project.slug).match(/<a [^>]*href="([^"]+)"/)?.[1], project.slug).toBe('/JayParmar/#projects');
+      expect(page(project.slug).match(/<a [^>]*href="([^"]+)"/)?.[1], project.slug).toBe(`/JayParmar/#project-${project.slug}`);
     }
   });
 
