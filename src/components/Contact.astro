@@ -53,7 +53,10 @@ const [user, domain] = profile.email.split('@');
 
     button.hidden = false;
     button.addEventListener('click', () => {
-      navigator.clipboard.writeText(button.dataset.copy ?? '').then(copied, () => getSelection()?.selectAllChildren(email));
+      navigator.clipboard.writeText(button.dataset.copy ?? '').then(copied, () => {
+        getSelection()?.selectAllChildren(email);
+        status.textContent = "Couldn't copy. The address is selected instead.";
+      });
     });
   }
 </script>
