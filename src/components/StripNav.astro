@@ -13,7 +13,7 @@ const stops = [
 <header class="bar">
   <div class="wrap inner">
     <a class="home" href="#top">{profile.name}</a>
-    <span class="now" aria-hidden="true"></span>
+    <span class="now" aria-hidden="true">Sections</span>
     <nav class="strip" aria-label="Sections">
       <ol role="list">
         {
@@ -26,10 +26,55 @@ const stops = [
           ))
         }
       </ol>
+      <span class="train" aria-hidden="true"></span>
     </nav>
   </div>
 </header>
 
+<script>
+  const strip = document.querySelector<HTMLElement>('.strip');
+
+  if (strip) {
+    const links = [...strip.querySelectorAll<HTMLAnchorElement>('a[data-target]')];
+    const sections = links.map((link) => document.getElementById(link.dataset.target ?? ''));
+    const now = strip.closest('header')?.querySelector<HTMLElement>('.now');
+    const unnamed = now?.textContent ?? '';
+    const smooth = matchMedia('(prefers-reduced-motion: no-preference)');
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      const mark = innerHeight * 0.35;
+      const tops = sections.map((section) => (section ? section.getBoundingClientRect().top - mark : Infinity));
+      const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      const current = atEnd ? links.length - 1 : tops.findLastIndex((top) => top <= 0);
+
+      let position = Math.max(current, 0);
+      if (smooth.matches && current >= 0 && current < links.length - 1) {
+        position += Math.min(1, -tops[current] / (tops[current + 1] - tops[current]));
+      }
+
+      strip.style.setProperty('--p', String(position / (links.length - 1)));
+      strip.classList.toggle('is-running', current >= 0);
+      links.forEach((link, i) => {
+        link.classList.toggle('is-passed', i < current);
+        if (i === current) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+      if (now) now.textContent = current >= 0 ? (links[current].textContent ?? '').trim() : unnamed;
+    };
+
+    const request = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    addEventListener('scroll', request, { passive: true });
+    addEventListener('resize', request);
+    update();
+  }
+</script>
 
 <style>
   .bar {
@@ -56,8 +101,11 @@ const stops = [
 
   .now {
     display: none;
+    flex: none;
+    width: 4.75rem;
     font-size: var(--step--1);
     font-weight: 500;
+    white-space: nowrap;
     color: var(--muted);
   }
 
@@ -122,6 +170,29 @@ const stops = [
     background: var(--ink);
   }
 
+  .train {
+    display: none;
+  }
+
+  :global(.js) .train {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    top: calc(0.6rem + var(--dot) / 2 - 5px);
+    left: calc(10% + var(--p, 0) * 80%);
+    width: 1.5rem;
+    height: 10px;
+    margin-left: -0.75rem;
+    border: 2px solid var(--paper);
+    border-radius: 99px;
+    background: var(--backend);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .strip.is-running .train {
+    opacity: 1;
+  }
 
   @media (max-width: 40rem) {
     .now {
