@@ -27,6 +27,7 @@
   --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 2.5rem);
   --section: clamp(5rem, 3.75rem + 5vw, 8.5rem);
   --radius: 14px;
+  --inset: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
