@@ -1,5 +1,6 @@
 ---
 import LineMark from '../../components/LineMark.astro';
+import SiteNav from '../../components/SiteNav.astro';
 import { profile } from '../../data/profile';
 import { projects, type Project } from '../../data/projects';
 import Base from '../../layouts/Base.astro';
@@ -20,12 +21,7 @@ const { what, how } = project.page!;
 ---
 
 <Base title={`${project.name}, a project by ${profile.name}`} description={project.tagline}>
-  <header class="bar">
-    <div class="wrap inner">
-      <a class="home" href={link()}>{profile.name}</a>
-      <a href={link('#projects')}>All projects</a>
-    </div>
-  </header>
+  <SiteNav />
 
   <main id="main" class="wrap page">
     <LineMark ids={project.lines} />
@@ -59,23 +55,6 @@ const { what, how } = project.page!;
 </Base>
 
 <style>
-  .bar {
-    border-bottom: 1px solid var(--track);
-  }
-
-  .inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 4rem;
-    font-weight: 500;
-  }
-
-  .home {
-    font-weight: 800;
-    text-decoration: none;
-  }
-
   .page {
     max-width: 52rem;
     padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);

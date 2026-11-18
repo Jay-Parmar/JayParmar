@@ -1,15 +1,12 @@
 ---
+import SiteNav from '../components/SiteNav.astro';
 import { profile } from '../data/profile';
 import Base from '../layouts/Base.astro';
 import { link } from '../lib/url';
 ---
 
 <Base title={`Page not found, ${profile.name}`} description="This page isn't on the map.">
-  <header class="bar">
-    <div class="wrap inner">
-      <a class="home" href={link()}>{profile.name}</a>
-    </div>
-  </header>
+  <SiteNav />
 
   <main id="main" class="wrap lost">
     <svg class="closed" viewBox="0 0 360 60" aria-hidden="true">
@@ -28,21 +25,6 @@ import { link } from '../lib/url';
 </Base>
 
 <style>
-  .bar {
-    border-bottom: 1px solid var(--track);
-  }
-
-  .inner {
-    display: flex;
-    align-items: center;
-    min-height: 4rem;
-  }
-
-  .home {
-    font-weight: 800;
-    text-decoration: none;
-  }
-
   .lost {
     max-width: 44rem;
     padding-block: clamp(4rem, 2rem + 8vw, 9rem);

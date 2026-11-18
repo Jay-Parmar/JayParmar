@@ -1,0 +1,260 @@
+---
+import { profile } from '../data/profile';
+import { link } from '../lib/url';
+
+interface Props {
+  home?: boolean;
+}
+
+const { home = false } = Astro.props;
+const sections = [
+  { id: 'results', name: 'Impact' },
+  { id: 'experience', name: 'Experience' },
+  { id: 'projects', name: 'Projects' },
+  { id: 'skills', name: 'Skills' },
+];
+const to = (id: string) => (home ? `#${id}` : link(`#${id}`));
+const target = (id: string) => (home ? id : undefined);
+---
+
+<header class="nav">
+  <div class="wrap inner">
+    <a class="brand" href={home ? '#top' : link()}>
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="0.5" y="0.5" width="31" height="31" rx="8"></rect>
+        <path d="M13 9v10a4 4 0 0 1-8 0M18 23V9h4a4.5 4.5 0 0 1 0 9h-4"></path>
+      </svg>
+      {profile.name}
+    </a>
+    <nav aria-label="Sections">
+      <button class="toggle" type="button" popovertarget="sections">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7h14M3 13h14"></path></svg>
+        <span class="visually-hidden">Menu</span>
+      </button>
+      <ul class="links" id="sections" role="list" popover>
+        {
+          sections.map((section) => (
+            <li>
+              <a href={to(section.id)} data-target={target(section.id)}>
+                {section.name}
+              </a>
+            </li>
+          ))
+        }
+        <li class="cta">
+          <a class="button primary" href={to('contact')} data-target={target('contact')}>Get in touch</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('header.nav');
+
+  if (nav) {
+    const menu = nav.querySelector<HTMLElement>('#sections');
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[data-target]')];
+    const sections = links.map((link) => document.getElementById(link.dataset.target ?? ''));
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      nav.classList.toggle('is-scrolled', scrollY > 4);
+      if (!links.length) return;
+      const mark = innerHeight * 0.35;
+      const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      const current = atEnd
+        ? links.length - 1
+        : sections.findLastIndex((section) => section !== null && section.getBoundingClientRect().top <= mark);
+      links.forEach((link, i) => {
+        if (i === current) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+
+    const request = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    menu?.addEventListener('click', (event) => {
+      if (event.target instanceof Element && event.target.closest('a') && menu.matches(':popover-open')) {
+        menu.hidePopover();
+      }
+    });
+    addEventListener('scroll', request, { passive: true });
+    addEventListener('resize', request);
+    update();
+  }
+</script>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--border);
+    background: rgb(11 13 18 / 0.78);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
+  }
+
+  :global(.js) .nav:not(.is-scrolled) {
+    border-bottom-color: transparent;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--text);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  .mark {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .mark rect {
+    fill: var(--surface-2);
+    stroke: var(--border-2);
+  }
+
+  .mark path {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    overflow: visible;
+    position: static;
+    inset: auto;
+  }
+
+  .links a:not(.button) {
+    display: block;
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      color 0.2s,
+      background-color 0.2s;
+  }
+
+  .links a:not(.button):hover {
+    color: var(--text);
+  }
+
+  .links a[aria-current]:not(.button) {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .cta {
+    margin-left: 0.75rem;
+  }
+
+  .cta .button {
+    min-height: 2.25rem;
+    padding-inline: 0.95rem;
+  }
+
+  .toggle {
+    display: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--border-2);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .toggle path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  @media (max-width: 47.99rem) {
+    .toggle {
+      display: grid;
+    }
+
+    .links {
+      display: none;
+    }
+
+    .links:popover-open {
+      position: fixed;
+      inset: 4.25rem var(--gutter) auto auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.15rem;
+      width: min(18rem, calc(100vw - 2 * var(--gutter)));
+      padding: 0.5rem;
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
+    }
+
+    .links:popover-open a:not(.button) {
+      padding: 0.7rem 0.85rem;
+      color: var(--text-2);
+      font-size: var(--step-0);
+    }
+
+    .links:popover-open .cta {
+      margin: 0.35rem 0 0;
+    }
+
+    .links:popover-open .cta .button {
+      width: 100%;
+      min-height: 2.75rem;
+    }
+  }
+</style>
