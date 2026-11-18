@@ -1,12 +1,12 @@
-export type LineId = 'backend' | 'data' | 'cloud' | 'ml' | 'frontend';
+export type AreaId = 'backend' | 'data' | 'cloud' | 'ml' | 'frontend';
 
-export interface Line {
-  id: LineId;
+export interface Area {
+  id: AreaId;
   name: string;
   skills: string[];
 }
 
-export const lines: Line[] = [
+export const areas: Area[] = [
   {
     id: 'backend',
     name: 'Backend',

@@ -1,4 +1,4 @@
-import type { LineId } from './lines';
+import type { AreaId } from './skills';
 
 export interface Role {
   id: string;
@@ -7,7 +7,7 @@ export interface Role {
   place: string;
   start: string;
   end: string;
-  groups: { line: LineId; points: string[] }[];
+  groups: { area: AreaId; points: string[] }[];
 }
 
 /** Newest first. Text between ** marks is shown in bold. */
@@ -21,7 +21,7 @@ export const roles: Role[] = [
     end: 'Present',
     groups: [
       {
-        line: 'backend',
+        area: 'backend',
         points: [
           "Designed the multi-server architecture of a video platform for a state police network: a FastAPI control plane that runs a fleet of servers as one system, assigns work to hosts and generates each host's Compose and nginx config. Scaled it from 25 to **240+ cameras**.",
           'Load tested that fleet with **100 operators** and 70 live viewers on a harness I wrote, moved health checks off the request path so a failed server costs nothing, and cut live-view stalls from up to 19 s to **about 1 s**.',
@@ -30,7 +30,7 @@ export const roles: Role[] = [
         ],
       },
       {
-        line: 'cloud',
+        area: 'cloud',
         points: [
           'Managed AWS for several products: HTTPS behind Cloudflare with Origin CA certificates, security groups open only to the office and Cloudflare, and CloudFormation changes that keep instances in place.',
           'Built a gated release path for an ERSS-112 command centre where a pull agent on EC2 deploys only commits that pass every test and security gate, after a backup and with no inbound access.',
@@ -38,13 +38,13 @@ export const roles: Role[] = [
         ],
       },
       {
-        line: 'data',
+        area: 'data',
         points: [
           'Designed a detection pipeline: Kafka consumers write events to PostgreSQL, with pgvector face search and a pg_trgm prefilter for an OCR-aware Damerau-Levenshtein plate matcher over **11,000 plates**.',
         ],
       },
       {
-        line: 'ml',
+        area: 'ml',
         points: [
           'Audited the analytics models: found a TensorRT export bug forcing a PyTorch fallback, and showed SigLIP 2 with a trained head scores **95%** on 100 labelled vehicle crops, against 81% for the deployed model.',
         ],
@@ -60,7 +60,7 @@ export const roles: Role[] = [
     end: 'Aug 2023',
     groups: [
       {
-        line: 'backend',
+        area: 'backend',
         points: [
           'Core developer on a recruitment platform with **200k+ daily users**. Owned Django REST endpoints and PostgreSQL schema work, and kept it responsive with pagination and query tuning.',
           'Led a team of 4 through feature deliveries and handled releases with the product and client teams.',
@@ -77,7 +77,7 @@ export const roles: Role[] = [
     end: 'Jun 2022',
     groups: [
       {
-        line: 'frontend',
+        area: 'frontend',
         points: ["Built reusable web components and shipped production features using the team's CI and testing setup."],
       },
     ],

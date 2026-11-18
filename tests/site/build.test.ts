@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { roles } from '../../src/data/experience';
-import { lines } from '../../src/data/lines';
+import { areas } from '../../src/data/skills';
 import { profile } from '../../src/data/profile';
 import { projects } from '../../src/data/projects';
 import { results } from '../../src/data/results';
@@ -90,7 +90,7 @@ describe('home page', () => {
     }
   });
 
-  it('shows every role, project, result and line', () => {
+  it('shows every role, project, result and skill area', () => {
     for (const role of roles) {
       expect(html).toContain(`id="${role.id}"`);
       expect(text).toContain(role.title);
@@ -100,7 +100,7 @@ describe('home page', () => {
       expect(text).toContain(project.name);
     }
     for (const result of results) expect(text).toContain(result.label);
-    for (const line of lines) expect(text).toContain(line.name);
+    for (const area of areas) expect(text).toContain(area.name);
   });
 
   it('turns ** marks into bold text', () => {

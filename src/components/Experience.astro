@@ -1,8 +1,8 @@
 ---
 import { education, roles } from '../data/experience';
-import { lines } from '../data/lines';
+import { areas } from '../data/skills';
 
-const names = new Map(lines.map((line) => [line.id, line.name]));
+const names = new Map(areas.map((area) => [area.id, area.name]));
 const period = (start: string, end: string) => `${start} to ${end === 'Present' ? 'now' : end}`;
 const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
 ---
@@ -25,7 +25,7 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
             <div class="details">
               {role.groups.map((group) => (
                 <div class="group">
-                  <h4>{names.get(group.line)}</h4>
+                  <h4>{names.get(group.area)}</h4>
                   <ul role="list">
                     {group.points.map((point) => (
                       <li>{parts(point).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>

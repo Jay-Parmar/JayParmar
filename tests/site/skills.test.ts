@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { languages, lines } from '../../src/data/lines';
+import { areas, languages } from '../../src/data/skills';
 
 const html = readFileSync('dist/index.html', 'utf8');
 const skills = html.slice(html.indexOf('id="skills"'), html.indexOf('id="contact"'));
-const groups = [{ name: 'Languages', skills: languages }, ...lines];
+const groups = [{ name: 'Languages', skills: languages }, ...areas];
 
 describe('skills', () => {
   it('shows every group with each of its skills as a chip', () => {
