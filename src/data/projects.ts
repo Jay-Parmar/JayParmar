@@ -1,11 +1,8 @@
-import type { LineId } from './lines';
-
 export interface Project {
   slug: string;
   name: string;
   tagline: string;
   year: string;
-  lines: LineId[];
   stack: string[];
   facts: string[];
   where?: string;
@@ -20,7 +17,6 @@ export const projects: Project[] = [
     name: 'hirejutsu',
     tagline: 'Finds the best job openings for your resume every morning, so you can apply to them yourself.',
     year: '2026',
-    lines: ['backend', 'data'],
     stack: ['Python', 'SQLite', 'pytest', 'Playwright'],
     facts: ['629 company career pages', '15 applicant tracking systems', '2,000+ tests'],
     code: 'https://github.com/Jay-Parmar/hirejutsu',
@@ -47,7 +43,6 @@ export const projects: Project[] = [
     name: 'Hold My Files',
     tagline: 'Turns an Android phone into a temporary, read-only file server for people on the same Wi-Fi or hotspot.',
     year: '2026',
-    lines: ['frontend', 'backend'],
     stack: ['Kotlin', 'Ktor', 'Coroutines', 'Jetpack Compose', 'JUnit', 'Espresso'],
     facts: ['146 tests', 'No cloud, no internet', 'Guests need only a browser'],
     code: 'https://github.com/Jay-Parmar/HoldMyFiles',
@@ -71,7 +66,6 @@ export const projects: Project[] = [
     name: 'FoodHub Sniffer',
     tagline: "Puts a cafe's Zomato and Swiggy orders on one board, with an alarm that keeps ringing until someone sees a new order.",
     year: '2026',
-    lines: ['frontend', 'cloud'],
     stack: ['Kotlin', 'Android', 'JUnit', 'GitHub Actions'],
     facts: ['Both apps on one board', '36 tests', 'CI on every push'],
     code: 'https://github.com/Jay-Parmar/FoodHub',
@@ -94,7 +88,6 @@ export const projects: Project[] = [
     name: 'ENS Meeting Bridge',
     tagline: 'Video meetings that start from an alert.',
     year: '2026',
-    lines: ['backend'],
     stack: ['FastAPI', 'SQLAlchemy', 'LiveKit', 'Redis'],
     facts: [
       'Moved blocking lookups off the event loop',
@@ -108,7 +101,6 @@ export const projects: Project[] = [
     name: 'Poker Planner',
     tagline: 'Real-time rooms where a team votes on Jira ticket estimates together and sees the spread as votes land.',
     year: '2021',
-    lines: ['backend', 'frontend'],
     stack: ['Django REST', 'AngularJS', 'PostgreSQL'],
     facts: [],
   },

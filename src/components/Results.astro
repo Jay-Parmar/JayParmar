@@ -4,39 +4,37 @@ import { results } from '../data/results';
 
 <section class="section" id="results" aria-labelledby="results-title">
   <div class="wrap">
-    <h2 class="title" id="results-title">Results</h2>
+    <h2 class="title" id="results-title">Impact</h2>
     <p class="lead">Measured on systems I worked on.</p>
-    <ul class="list" role="list">
+    <ul class="panel cells" role="list">
       {
         results.map((result) => {
           const top = Math.max(result.before, result.after);
           const moves = result.kind === 'change';
           return (
-            <li class="result" style={`--c: var(--${result.line})`}>
-              <div class="top">
-                <span class="stroke" aria-hidden="true" />
-                {result.delta && <span class="badge">{result.delta}</span>}
-              </div>
+            <li
+              class="result"
+              data-start={moves ? result.before : undefined}
+              data-end={moves ? result.after : undefined}
+              data-from={moves ? result.before / top : undefined}
+            >
               <h3>{result.label}</h3>
+              <div class="stat">
+                <span class="number" aria-hidden="true">
+                  {result.afterText
+                    .split(/(\d+\S*)/)
+                    .map((part, i) => (i % 2 ? <span class="figure">{part}</span> : part && <span class="unit">{part}</span>))}
+                </span>
+                {result.delta && <span class="delta">{result.delta}</span>}
+              </div>
               <dl class="bars">
-                <div class="bar before" style={`--w: ${result.before / top}`}>
+                <div class="bar" style={`--w: ${result.before / top}`}>
                   <dt>{result.beforeName}</dt>
-                  <dd>
-                    <span class="fill" />
-                    <span class="value">{result.beforeText}</span>
-                  </dd>
+                  <dd>{result.beforeText}</dd>
                 </div>
-                <div
-                  class="bar after"
-                  style={`--w: ${result.after / top}`}
-                  data-from={moves ? result.before / top : undefined}
-                  data-start={moves ? result.before : undefined}
-                  data-end={moves ? result.after : undefined}
-                  data-unit={moves ? result.unit : undefined}
-                >
+                <div class="bar after" style={`--w: ${result.after / top}`}>
                   <dt>{result.afterName}</dt>
                   <dd>
-                    <span class="fill" />
                     <span class="value" aria-hidden="true">{result.afterText}</span>
                     <span class="visually-hidden">{result.afterText}</span>
                   </dd>
@@ -52,38 +50,44 @@ import { results } from '../data/results';
 </section>
 
 <script>
-  const bars = [...document.querySelectorAll<HTMLElement>('.result .after[data-start]')];
+  const cells = [...document.querySelectorAll<HTMLElement>('.result[data-start]')];
 
-  if (bars.length && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  if (cells.length && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
     const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
-    const show = (unit: string, value: number) => `${Math.round(value)}${unit === '%' ? '%' : unit ? ` ${unit}` : ''}`;
-    const label = (bar: HTMLElement) => bar.querySelector<HTMLElement>('.value')!;
-    const targets = new Map(bars.map((bar) => [bar, bar.style.getPropertyValue('--w')]));
-    const finals = new Map(bars.map((bar) => [bar, label(bar).textContent ?? '']));
+    const parts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.stat, .bars')];
+    const after = (cell: HTMLElement) => cell.querySelector<HTMLElement>('.after')!;
+    const counts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.figure, .after .value')];
+    const widths = new Map(cells.map((cell) => [cell, after(cell).style.getPropertyValue('--w')]));
+    const finals = new Map(cells.flatMap(counts).map((count) => [count, count.textContent ?? '']));
+    const started = new Set<HTMLElement>();
     const done = new Set<HTMLElement>();
 
-    const finish = (bar: HTMLElement) => {
-      done.add(bar);
-      observer.unobserve(bar);
-      bar.classList.remove('is-moving');
-      bar.style.setProperty('--w', targets.get(bar)!);
-      label(bar).textContent = finals.get(bar)!;
+    const show = (cell: HTMLElement, value: string) => {
+      for (const count of counts(cell)) count.textContent = finals.get(count)!.replace(/\d+/, value);
     };
 
-    const run = (bar: HTMLElement) => {
-      const start = Number(bar.dataset.start);
-      const end = Number(bar.dataset.end);
+    const finish = (cell: HTMLElement) => {
+      done.add(cell);
+      for (const part of parts(cell)) observer.unobserve(part);
+      cell.classList.remove('is-pending', 'is-moving');
+      after(cell).style.setProperty('--w', widths.get(cell)!);
+      for (const count of counts(cell)) count.textContent = finals.get(count)!;
+    };
+
+    const run = (cell: HTMLElement) => {
+      const start = Number(cell.dataset.start);
+      const end = Number(cell.dataset.end);
       const began = performance.now();
 
-      void bar.offsetWidth;
-      bar.classList.add('is-moving');
-      bar.style.setProperty('--w', targets.get(bar)!);
+      void cell.offsetWidth;
+      cell.classList.add('is-moving');
+      after(cell).style.setProperty('--w', widths.get(cell)!);
 
       const tick = (now: number) => {
-        if (done.has(bar)) return;
+        if (done.has(cell)) return;
         const t = Math.min(1, (now - began) / 1400);
-        if (t === 1) return finish(bar);
-        label(bar).textContent = show(bar.dataset.unit ?? '', start + (end - start) * ease(t));
+        if (t === 1) return finish(cell);
+        show(cell, String(Math.round(start + (end - start) * ease(t))));
         requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
@@ -92,128 +96,168 @@ import { results } from '../data/results';
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          observer.unobserve(entry.target);
-          run(entry.target as HTMLElement);
+          const cell = entry.target.closest<HTMLElement>('.result')!;
+          if (!entry.isIntersecting || started.has(cell)) continue;
+          started.add(cell);
+          for (const part of parts(cell)) observer.unobserve(part);
+          run(cell);
         }
       },
       { threshold: 1, rootMargin: '0px 0px -15% 0px' },
     );
 
-    for (const bar of bars) {
-      bar.style.setProperty('--w', bar.dataset.from ?? '1');
-      label(bar).textContent = show(bar.dataset.unit ?? '', Number(bar.dataset.start));
-      observer.observe(bar);
+    for (const cell of cells) {
+      cell.classList.add('is-pending');
+      after(cell).style.setProperty('--w', cell.dataset.from ?? '1');
+      show(cell, cell.dataset.start ?? '');
+      for (const part of parts(cell)) observer.observe(part);
     }
 
-    addEventListener('beforeprint', () => bars.forEach(finish));
+    addEventListener('beforeprint', () => cells.forEach(finish));
   }
 </script>
 
 <style>
-  .list {
+  .cells {
     display: grid;
-    gap: 3rem 4.5rem;
-    margin-top: 3rem;
+    gap: 1px;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    overflow: hidden;
+    background: var(--border);
   }
 
-  @media (min-width: 52rem) {
-    .list {
+  @media (min-width: 44rem) {
+    .cells {
       grid-template-columns: 1fr 1fr;
     }
   }
 
-  .top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 1.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .stroke {
-    width: 3rem;
-    height: var(--line);
-    border-radius: 99px;
-    background: var(--c);
+  .result {
+    padding: var(--inset);
+    background: var(--surface);
   }
 
   h3 {
-    font-size: var(--step-1);
-    font-weight: 700;
+    color: var(--text-2);
+    font-size: var(--step--1);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  .stat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.875rem;
+    margin-top: 0.75rem;
+  }
+
+  .number {
+    color: var(--text);
+    font-size: clamp(2.75rem, 2.4rem + 1vw, 3rem);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    white-space: nowrap;
+  }
+
+  .unit {
+    color: var(--text-2);
+    font-size: 0.5em;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .delta {
+    padding: 0.2rem 0.65rem;
+    border: 1px solid rgb(110 161 255 / 0.25);
+    border-radius: 999px;
+    background: rgb(110 161 255 / 0.08);
+    color: var(--accent);
+    font-size: var(--step--2);
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
   }
 
   .bars {
     display: grid;
-    gap: 0.6rem;
-    margin: 1.25rem 0 0;
+    gap: 1rem;
+    margin-top: 1.75rem;
   }
 
   .bar {
-    display: grid;
-    grid-template-columns: 7.5rem 1fr;
-    align-items: center;
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
     gap: 1rem;
+    padding-bottom: 0.8125rem;
+    color: var(--muted);
+    font-size: var(--step--2);
+    line-height: 1.4;
   }
 
-  dt {
-    font-size: var(--step--1);
-    color: var(--muted);
+  .bar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: calc(100% * var(--w));
+    min-width: 4px;
+    height: 6px;
+    border-radius: 0 3px 3px 0;
+    background: var(--muted);
+    opacity: 0.55;
+  }
+
+  .after::after {
+    background: var(--accent);
+    opacity: 1;
   }
 
   dd {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0;
-  }
-
-  .fill {
-    flex: none;
-    width: calc((100% - 6rem) * var(--w));
-    min-width: 0.75rem;
-    height: 0.875rem;
-    border-radius: 99px;
-    background: var(--track);
-  }
-
-  .after .fill {
-    background: var(--c);
-  }
-
-  .after.is-moving .fill {
-    transition: width 1.4s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-
-  .value {
-    font-weight: 700;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
 
-  .after .value {
-    font-size: var(--step-1);
-    font-weight: 800;
-    line-height: 1.2;
-    color: var(--c);
-  }
-
-  .before .value {
-    font-weight: 500;
-    color: var(--muted);
-  }
-
   .context {
-    max-width: 48ch;
-    margin-top: 1rem;
-    font-size: var(--step--1);
+    max-width: 52ch;
+    margin-top: 1.5rem;
     color: var(--muted);
+    font-size: var(--step--1);
   }
 
-  @media (max-width: 30rem) {
-    .bar {
-      grid-template-columns: 1fr;
-      gap: 0.2rem;
+  @media (prefers-reduced-motion: no-preference) {
+    .is-moving .after::after {
+      transition: width 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .delta {
+      transition:
+        opacity 0.5s var(--ease),
+        transform 0.5s var(--ease);
+    }
+
+    .is-pending .delta {
+      opacity: 0;
+      transform: translateX(-0.375rem);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .result {
+      outline: 1px solid CanvasText;
+    }
+
+    .bar::after {
+      background: CanvasText;
+    }
+
+    .after::after {
+      background: Highlight;
     }
   }
 </style>

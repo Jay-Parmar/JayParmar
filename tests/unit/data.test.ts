@@ -1,23 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { education, roles } from '../../src/data/experience';
-import { languages, lines } from '../../src/data/lines';
+import { areas, languages } from '../../src/data/skills';
 import { profile } from '../../src/data/profile';
 import { projects } from '../../src/data/projects';
 import { results } from '../../src/data/results';
 
-const lineIds = new Set<string>(lines.map((line) => line.id));
+const areaIds = new Set<string>(areas.map((area) => area.id));
 
 describe('content data', () => {
-  it('uses only lines that exist', () => {
-    const used = [
-      ...results.map((result) => result.line),
-      ...roles.flatMap((role) => role.groups.map((group) => group.line)),
-      ...projects.flatMap((project) => project.lines),
-    ];
-    expect(used.filter((id) => !lineIds.has(id))).toEqual([]);
+  it('uses only skill areas that exist', () => {
+    const used = roles.flatMap((role) => role.groups.map((group) => group.area));
+    expect(used.filter((id) => !areaIds.has(id))).toEqual([]);
   });
 
-  it('keeps every line from the resume, newest role first', () => {
+  it('keeps every point from the resume, newest role first', () => {
     expect(roles.map((role) => role.id)).toEqual(['essi', 'josh', 'josh-intern']);
     const points = Object.fromEntries(roles.map((role) => [role.id, role.groups.flatMap((g) => g.points).length]));
     expect(points).toEqual({ essi: 9, josh: 2, 'josh-intern': 1 });
@@ -56,8 +52,8 @@ describe('content data', () => {
     });
   });
 
-  it('lists skills on every line and the languages', () => {
-    expect(lines.every((line) => line.skills.length > 0)).toBe(true);
+  it('lists skills in every area and the languages', () => {
+    expect(areas.every((area) => area.skills.length > 0)).toBe(true);
     expect(languages.length).toBeGreaterThan(0);
   });
 

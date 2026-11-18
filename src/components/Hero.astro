@@ -1,163 +1,159 @@
 ---
-import { lines } from '../data/lines';
-import { drawn } from '../data/map';
 import { profile } from '../data/profile';
-import { seconds } from '../lib/metro';
-
-// Each band segment lights as its line sets off on the map.
-const setsOff = new Map(drawn.map(({ line, delay }) => [line, seconds(delay)]));
+import SystemDiagram from './SystemDiagram.astro';
 ---
 
 <section class="hero" id="top" aria-labelledby="name">
   <div class="wrap grid">
     <div class="text">
       <h1 id="name">{profile.name}</h1>
-      <p class="hindi" lang="hi">{profile.nameHindi}</p>
-      <div class="band" aria-hidden="true">
-        {
-          lines.map((line) => (
-            <span class="segment" style={`--c: var(--${line.id}); --delay: ${setsOff.get(line.id)}`} />
-          ))
-        }
-      </div>
       <p class="role">{profile.role}</p>
       <p class="intro">{profile.intro}</p>
-      <p class="approach">{profile.approach}</p>
-      <p class="now">
-        {profile.current}<br />
-        {profile.location}
-      </p>
       <div class="actions">
         <a class="button primary" href={`mailto:${profile.email}`}>Email me</a>
         <a class="button" href={profile.linkedin}>LinkedIn</a>
         <a class="button" href={profile.github}>GitHub</a>
       </div>
+      <dl class="facts">
+        <div>
+          <dt>Now</dt>
+          <dd>{profile.current}</dd>
+        </div>
+        <div>
+          <dt>Based in</dt>
+          <dd>{profile.location}</dd>
+        </div>
+      </dl>
     </div>
-    <slot />
+    <SystemDiagram />
   </div>
 </section>
 
 <style>
   .hero {
-    padding-top: clamp(3rem, 1.5rem + 6vw, 7rem);
+    position: relative;
+    isolation: isolate;
+    margin-top: -4rem;
+    padding-top: calc(4rem + clamp(3.5rem, 1.5rem + 6vw, 7rem));
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+    background-position: center top;
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 75% 65% at 50% 0%, #000 35%, transparent 100%);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -15%;
+    z-index: -1;
+    width: 75%;
+    height: 110%;
+    background: radial-gradient(closest-side, rgb(110 161 255 / 0.12), transparent);
+    pointer-events: none;
   }
 
   .grid {
     display: grid;
-    gap: 3rem;
+    gap: clamp(3rem, 2rem + 4vw, 4.5rem);
     align-items: center;
   }
 
-  @media (min-width: 62rem) {
+  @media (min-width: 64rem) {
     .grid {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.2fr);
     }
   }
 
   h1 {
-    font-size: var(--step-5);
+    font-size: clamp(3rem, 1.6rem + 4.6vw, 4.75rem);
     line-height: 0.95;
-    letter-spacing: -0.025em;
-  }
-
-  .hindi {
-    margin-top: 0.5rem;
-    font-size: var(--step-2);
-    font-weight: 500;
-    line-height: 1.2;
-    color: var(--muted);
-  }
-
-  .band {
-    display: flex;
-    gap: 5px;
-    margin-block: 1.75rem 1.5rem;
-  }
-
-  .segment {
-    width: 2.5rem;
-    height: var(--line);
-    border-radius: 99px;
-    background: var(--c);
+    letter-spacing: -0.045em;
   }
 
   .role {
-    font-size: var(--step-2);
-    font-weight: 700;
+    margin-top: 0.85rem;
+    color: var(--text-2);
+    font-size: var(--step-3);
+    font-weight: 500;
     line-height: 1.2;
+    letter-spacing: -0.02em;
   }
 
   .intro {
-    max-width: 36ch;
-    margin-top: 0.75rem;
+    max-width: 38ch;
+    margin-top: 1.25rem;
+    color: var(--text-2);
     font-size: var(--step-1);
-    line-height: 1.45;
-  }
-
-  .approach {
-    max-width: 46ch;
-    margin-top: 1rem;
-    color: var(--muted);
-  }
-
-  .now {
-    margin-top: 1.5rem;
-    font-weight: 500;
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
   .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 2rem;
+    margin-top: 2.25rem;
+  }
+
+  .facts {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: var(--step--1);
+  }
+
+  .facts div {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 1rem;
+  }
+
+  dt {
+    color: var(--muted);
+  }
+
+  dd {
+    color: var(--text-2);
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .segment {
-      transform-origin: left;
-      animation: light 0.5s cubic-bezier(0.3, 0, 0.2, 1) var(--delay) both;
-    }
-
-    .text > :not(.band) {
-      animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rise, 0s) both;
-    }
-
-    .hindi {
-      --rise: 0.06s;
+    .text > * {
+      animation: rise 0.7s var(--ease) var(--rise, 0s) both;
     }
 
     .role {
-      --rise: 0.2s;
+      --rise: 0.08s;
     }
 
     .intro {
-      --rise: 0.28s;
-    }
-
-    .approach {
-      --rise: 0.36s;
-    }
-
-    .now {
-      --rise: 0.44s;
+      --rise: 0.16s;
     }
 
     .actions {
-      --rise: 0.52s;
+      --rise: 0.24s;
     }
-  }
 
-  @keyframes light {
-    from {
-      transform: scaleX(0);
+    .facts {
+      --rise: 0.32s;
     }
   }
 
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(0.6rem);
+      transform: translateY(0.75rem);
     }
   }
 </style>

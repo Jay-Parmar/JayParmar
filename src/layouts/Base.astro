@@ -1,8 +1,6 @@
 ---
-import '@fontsource/mukta/400.css';
-import '@fontsource/mukta/500.css';
-import '@fontsource/mukta/700.css';
-import '@fontsource/mukta/800.css';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
 import '../styles/global.css';
 import { profile } from '../data/profile';
 import { link } from '../lib/url';
@@ -26,8 +24,7 @@ const shareImage = new URL(link('og.png'), Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={link('favicon.svg')} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={link('apple-touch-icon.png')} />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0e1628" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0b0d12" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -35,7 +32,7 @@ const shareImage = new URL(link('og.png'), Astro.site);
     <meta property="og:image" content={shareImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${profile.name}, software engineer, beside a metro map of his work`} />
+    <meta property="og:image:alt" content={`${profile.name}, ${profile.role.toLowerCase()}, beside a diagram of a video platform's architecture`} />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>

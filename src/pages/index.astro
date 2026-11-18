@@ -1,12 +1,11 @@
 ---
 import Contact from '../components/Contact.astro';
 import Hero from '../components/Hero.astro';
-import MetroMap from '../components/MetroMap.astro';
 import Projects from '../components/Projects.astro';
 import Experience from '../components/Experience.astro';
 import Results from '../components/Results.astro';
 import Skills from '../components/Skills.astro';
-import StripNav from '../components/StripNav.astro';
+import SiteNav from '../components/SiteNav.astro';
 import Base from '../layouts/Base.astro';
 ---
 
@@ -14,11 +13,9 @@ import Base from '../layouts/Base.astro';
   title="Jay Parmar, software engineer"
   description="Jay Parmar designs backend systems, data pipelines and databases, and does the AWS and DevOps work that ships them."
 >
-  <StripNav />
+  <SiteNav home />
   <main id="main">
-    <Hero>
-      <MetroMap />
-    </Hero>
+    <Hero />
     <Results />
     <Experience />
     <Projects />
