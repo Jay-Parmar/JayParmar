@@ -241,4 +241,18 @@ import { results } from '../data/results';
       transform: translateX(-0.375rem);
     }
   }
+
+  @media (forced-colors: active) {
+    .result {
+      outline: 1px solid CanvasText;
+    }
+
+    .bar::after {
+      background: CanvasText;
+    }
+
+    .after::after {
+      background: Highlight;
+    }
+  }
 </style>
