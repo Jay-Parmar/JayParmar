@@ -7,13 +7,13 @@ const css = readdirSync(assets)
   .filter((name) => name.endsWith('.css'))
   .map((name) => readFileSync(join(assets, name), 'utf8'))
   .join('\n');
-const layer = (rule: RegExp) => Number(css.match(rule)?.[1].match(/z-index:(\d+)/)?.[1]);
+const layer = (body = '') => Number(body.match(/z-index:(\d+)/)?.[1] ?? 0);
 
 describe('accessibility', () => {
-  it('shows the skip link above the sticky header', () => {
-    const skip = layer(/\.skip\{([^}]*)\}/);
-    const header = layer(/\{([^}]*position:sticky[^}]*)\}/);
-    expect(header).toBeGreaterThan(0);
-    expect(skip).toBeGreaterThan(header);
+  it('shows the skip link above everything sticky', () => {
+    const skip = layer(css.match(/\.skip\{([^}]*)\}/)?.[1]);
+    const sticky = [...css.matchAll(/\{([^}]*position:sticky[^}]*)\}/g)].map((rule) => layer(rule[1]));
+    expect(Math.max(...sticky)).toBeGreaterThan(0);
+    expect(skip).toBeGreaterThan(Math.max(...sticky));
   });
 });

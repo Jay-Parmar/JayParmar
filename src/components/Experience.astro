@@ -15,30 +15,36 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
         roles.map((role) => (
           <li class="stop" id={role.id}>
             <span class="fill" aria-hidden="true" />
-            <p class="when">{period(role.start, role.end)}</p>
-            <h3>{role.title}</h3>
-            <p class="where">
-              {role.company}, {role.place}
-            </p>
-            {role.groups.map((group) => (
-              <div class="group" style={`--c: var(--${group.line})`}>
-                <h4>
-                  <span class="badge">{names.get(group.line)}</span>
-                </h4>
-                <ul role="list">
-                  {group.points.map((point) => (
-                    <li>{parts(point).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <div class="head">
+              <p class="when">{period(role.start, role.end)}</p>
+              <h3>{role.title}</h3>
+              <p class="where">
+                {role.company}, {role.place}
+              </p>
+            </div>
+            <div class="body">
+              {role.groups.map((group) => (
+                <div class="group" style={`--c: var(--${group.line})`}>
+                  <h4>
+                    <span class="badge">{names.get(group.line)}</span>
+                  </h4>
+                  <ul role="list">
+                    {group.points.map((point) => (
+                      <li>{parts(point).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </li>
         ))
       }
       <li class="stop" id="education">
-        <p class="when">{period(education.start, education.end)}</p>
-        <h3>{education.degree}</h3>
-        <p class="where">{education.school}, {education.place}</p>
+        <div class="head">
+          <p class="when">{period(education.start, education.end)}</p>
+          <h3>{education.degree}</h3>
+          <p class="where">{education.school}, {education.place}</p>
+        </div>
       </li>
     </ol>
   </div>
@@ -155,6 +161,32 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
     margin-top: 1.75rem;
     padding-left: clamp(0.85rem, 0.5rem + 1.5vw, 1.25rem);
     border-left: 4px solid var(--c);
+  }
+
+  @media (min-width: 64rem) {
+    .stop {
+      display: grid;
+      grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
+      column-gap: 3.5rem;
+      align-items: start;
+    }
+
+    .head {
+      position: sticky;
+      top: 6rem;
+    }
+
+    h3 {
+      font-size: var(--step-2);
+    }
+
+    .where {
+      font-size: var(--step-0);
+    }
+
+    .body > .group:first-child {
+      margin-top: 0.35rem;
+    }
   }
 
   h4 {
