@@ -104,7 +104,7 @@ describe('home page', () => {
   });
 
   it('turns ** marks into bold text', () => {
-    expect(html).not.toContain('**');
+    expect(html.replace(/<script[\s\S]*?<\/script>/g, '')).not.toContain('**');
     expect(html).toMatch(/<strong[^>]*>240\+ cameras<\/strong>/);
   });
 

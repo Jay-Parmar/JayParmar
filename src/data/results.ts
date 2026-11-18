@@ -2,6 +2,8 @@ import type { LineId } from './lines';
 
 export interface Result {
   id: string;
+  /** A change I made, or two things I compared side by side. */
+  kind: 'change' | 'comparison';
   label: string;
   context: string;
   line: LineId;
@@ -17,6 +19,7 @@ export interface Result {
 export const results: Result[] = [
   {
     id: 'latency',
+    kind: 'change',
     label: 'API response time, 95th percentile',
     context: 'While preparing a product for STQC certification and VAPT.',
     line: 'backend',
@@ -30,6 +33,7 @@ export const results: Result[] = [
   },
   {
     id: 'stalls',
+    kind: 'change',
     label: 'Live-view stalls under load',
     context: 'Load test with 100 operators and 70 live viewers, on a harness I wrote.',
     line: 'backend',
@@ -43,6 +47,7 @@ export const results: Result[] = [
   },
   {
     id: 'cameras',
+    kind: 'change',
     label: 'Cameras on one video platform',
     context: 'Scaled with the multi-server architecture I designed.',
     line: 'cloud',
@@ -56,6 +61,7 @@ export const results: Result[] = [
   },
   {
     id: 'accuracy',
+    kind: 'comparison',
     label: 'Vehicle classification accuracy',
     context: 'On 100 labelled vehicle crops: the deployed model against SigLIP 2 with a trained head.',
     line: 'ml',
