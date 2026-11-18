@@ -18,7 +18,7 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
   <div class="window">
     <div class="bar">
       <p class="name">Multi-server video platform</p>
-      <p class="stat">25 to 240+ cameras</p>
+      <p class="stat">25 to <strong>240+</strong> cameras</p>
     </div>
     <svg viewBox="0 0 560 320" role="img" aria-labelledby="system-caption">
       <g class="routes">
@@ -28,8 +28,8 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
         {
           packets.map(({ path, begin }) => (
             <g class="packet" visibility="hidden">
-              <circle class="halo" r="7" />
-              <circle class="core" r="2.75" />
+              <circle class="halo" r="9" />
+              <circle class="core" r="3.5" />
               <set attributeName="visibility" to="visible" begin={begin} fill="freeze" />
               <animateMotion dur="3.2s" begin={begin} repeatCount="indefinite" path={path} />
             </g>
@@ -53,8 +53,8 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
             <circle class="pulse" cx="214" cy={y + 28} r="3.5" />
             <circle class="status" cx="214" cy={y + 28} r="3.5" />
             <text class="host" x="228" y={y + 32}>{name}</text>
-            <rect class="track" x="292" y={y + 26} width="56" height="4" rx="2" />
-            <rect class="load" x="292" y={y + 26} width={56 * load} height="4" rx="2" style={`--pace: ${pace}`} />
+            <rect class="track" x="300" y={y + 26} width="48" height="4" rx="2" />
+            <rect class="load" x="300" y={y + 26} width={48 * load} height="4" rx="2" style={`--pace: ${pace}`} />
           </g>
         ))
       }
@@ -113,9 +113,14 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
   }
 
   .stat {
-    color: var(--muted);
+    color: var(--text-2);
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--step--1);
+  }
+
+  .stat strong {
+    color: var(--accent);
+    font-weight: 500;
   }
 
   svg {
@@ -131,7 +136,7 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
 
   .halo {
     fill: var(--accent);
-    opacity: 0.22;
+    opacity: 0.3;
   }
 
   .core {
@@ -155,20 +160,20 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
 
   .label {
     fill: var(--text);
-    font-size: 13.5px;
+    font-size: 15px;
     font-weight: 500;
   }
 
   .sub {
     fill: var(--muted);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12.5px;
   }
 
   .host {
     fill: var(--text);
     font-family: var(--mono);
-    font-size: 12.5px;
+    font-size: 13.5px;
   }
 
   .status {
@@ -197,11 +202,11 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
 
   @media (max-width: 40rem) {
     .label {
-      font-size: 17px;
+      font-size: 20px;
     }
 
     .host {
-      font-size: 15px;
+      font-size: 18px;
     }
 
     .sub,
