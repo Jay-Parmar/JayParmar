@@ -1,135 +1,113 @@
 ---
-import { lines } from '../data/lines';
 import { profile } from '../data/profile';
 ---
 
-<section class="contact night" id="contact" aria-labelledby="contact-title">
+<section class="section contact" id="contact" aria-labelledby="contact-title">
   <div class="wrap">
-    <div class="arrival">
-      <div class="terminus" aria-hidden="true">
-        <div class="tracks">
-          {lines.map((line, i) => <span style={`--c: var(--${line.id}); --i: ${i}`} />)}
-        </div>
-        <span class="stop" />
+    <div class="panel card">
+      <h2 class="title" id="contact-title">Get in touch</h2>
+      <p class="note">Email is the quickest way to reach me.</p>
+      <p class="address">
+        <span class="email">{profile.email}</span>
+      </p>
+      <div class="actions">
+        <a class="button primary" href={`mailto:${profile.email}`}>Email me</a>
+        <a class="button" href={profile.linkedin}>LinkedIn</a>
+        <a class="button" href={profile.github}>GitHub</a>
       </div>
-      <h2 class="title" id="contact-title">Contact</h2>
     </div>
-    <p class="note">Email is the quickest way to reach me.</p>
-    <a class="email" href={`mailto:${profile.email}`}>{profile.email}</a>
-    <ul class="links" role="list">
-      <li><a href={profile.linkedin}>LinkedIn</a></li>
-      <li><a href={profile.github}>GitHub</a></li>
-    </ul>
   </div>
 </section>
 
-<script>
-  const terminus = document.querySelector<HTMLElement>('.terminus');
-
-  if (terminus && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-    terminus.classList.add('is-waiting');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        observer.disconnect();
-        void terminus.offsetWidth;
-        terminus.classList.replace('is-waiting', 'is-arriving');
-      },
-      { threshold: 0.5 },
-    );
-    observer.observe(terminus);
-  }
-</script>
-
 <style>
   .contact {
-    padding-block: var(--section);
-    overflow-x: clip;
-    background: var(--band);
-    color: var(--band-ink);
+    padding-bottom: var(--section);
   }
 
-  .contact :focus-visible {
-    outline-color: var(--band-ink);
+  .card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(3.5rem, 2rem + 5vw, 6rem) clamp(1.25rem, 0.5rem + 3vw, 3rem);
+    background:
+      radial-gradient(ellipse 55% 75% at 50% 0%, rgb(110 161 255 / 0.15), transparent 70%),
+      var(--surface);
+    text-align: center;
   }
 
-  .arrival {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0 18% auto;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgb(110 161 255 / 0.65), transparent);
   }
 
-  .terminus {
-    --bleed: calc(50vw - 50%);
-    display: flex;
-    flex: none;
-    align-items: center;
-    width: calc(var(--bleed) + clamp(3rem, 12vw, 9rem));
-    margin-left: calc(-1 * var(--bleed));
-  }
-
-  .tracks {
-    display: grid;
-    flex: 1;
-    gap: 3px;
-  }
-
-  .tracks span {
-    display: block;
-    height: var(--line);
-    border-radius: 0 99px 99px 0;
-    background: var(--c);
-    transform-origin: left;
-  }
-
-  .stop {
-    flex: none;
-    width: 1.4rem;
-    height: calc(5 * var(--line) + 4 * 3px + 0.9rem);
-    margin-left: -0.7rem;
-    border: 4px solid var(--band-ink);
-    border-radius: 99px;
-    background: var(--band);
-  }
-
-  .is-waiting .tracks span {
-    transform: scaleX(0);
-  }
-
-  .is-waiting .stop {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-
-  .is-arriving .tracks span {
-    transition: transform 1s cubic-bezier(0.3, 0, 0.2, 1) calc(var(--i) * 90ms);
-  }
-
-  .is-arriving .stop {
-    transition:
-      transform 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) 1.2s,
-      opacity 0.2s 1.2s;
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+    background-position: center top;
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 60% 85% at 50% 0%, #000 25%, transparent 80%);
   }
 
   .note {
-    margin-top: 0.75rem;
+    margin-top: 0.85rem;
+    color: var(--muted);
     font-size: var(--step-1);
-    color: var(--band-muted);
+    text-wrap: balance;
+  }
+
+  .address {
+    margin-top: clamp(2rem, 1.5rem + 2vw, 2.75rem);
   }
 
   .email {
-    display: inline-block;
-    margin-top: 2rem;
-    font-size: clamp(1.25rem, 6.8vw, 2.25rem);
-    font-weight: 700;
-    overflow-wrap: break-word;
+    color: var(--text);
+    font-size: clamp(1.375rem, 0.85rem + 2.6vw, 2.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+    user-select: all;
   }
 
-  .links {
+  .actions {
     display: flex;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-    font-size: var(--step-1);
-    font-weight: 500;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  }
+
+  @media (max-width: 29.99rem) {
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .primary {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media print {
+    .contact {
+      padding-bottom: 0;
+    }
+
+    .card {
+      background: none;
+    }
+
+    .card::before,
+    .card::after {
+      display: none;
+    }
   }
 </style>
