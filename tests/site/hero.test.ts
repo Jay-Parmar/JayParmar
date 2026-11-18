@@ -4,7 +4,9 @@ import { roles } from '../../src/data/experience';
 import { profile } from '../../src/data/profile';
 
 const html = readFileSync('dist/index.html', 'utf8');
-const figure = html.slice(html.indexOf('<figure class="system"'), html.indexOf('</figure>'));
+const hero = html.match(/<section[^>]*id="top"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+const study = html.slice(html.indexOf('id="architecture"'), html.indexOf('id="results"'));
+const figure = study.match(/<figure class="system"[^>]*>[\s\S]*?<\/figure>/)?.[0] ?? '';
 
 describe('hero', () => {
   it('leads with the name', () => {
@@ -19,11 +21,17 @@ describe('hero', () => {
   });
 
   it('links directly to the project list and current role from the introduction', () => {
-    const hero = html.slice(html.indexOf('id="top"'), html.indexOf('id="results"'));
     const current = roles.find((role) => role.end === 'Present')!;
     expect(hero).toMatch(/<a[^>]*href="#projects"[^>]*>View projects<\/a>/);
     expect(hero).toContain(`href="#${current.id}"`);
     expect(hero).toContain(`href="mailto:${profile.email}"`);
+  });
+
+  it('introduces the full stack practice and puts the platform in a separate case study', () => {
+    for (const label of ['Interfaces', 'Services and data', 'Infrastructure']) expect(hero).toContain(label);
+    expect(hero).not.toContain('Multi-server video platform');
+    expect(study).toContain('Multi-server video platform');
+    for (const view of ['overview', 'allocation', 'playback']) expect(study).toContain(`id="chapter-${view}"`);
   });
 
   it('draws the system I designed, with a label of its own and a caption', () => {

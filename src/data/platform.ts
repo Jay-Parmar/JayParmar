@@ -1,4 +1,7 @@
 export const platform = {
+  section: 'Architecture',
+  headline: 'Scaling a system across servers',
+  introduction: 'At ESSI, I designed the architecture for a video platform that grew from 25 to 240+ cameras. Three decisions shaped how it runs.',
   title: 'Multi-server video platform',
   description: 'Cameras feed video hosts managed by a FastAPI control plane. The hosts serve the live view to operators.',
   cameras: 'Cameras',
@@ -13,16 +16,22 @@ export const platform = {
     {
       id: 'overview',
       label: 'Overview',
+      heading: 'Give the fleet one control plane',
+      detail: 'Operators needed a single system as the installation grew. I designed a FastAPI service to coordinate the servers.',
       note: 'I designed the control plane at ESSI to run a fleet of video servers as one system.',
     },
     {
       id: 'allocation',
       label: 'Work allocation',
+      heading: 'Give each host its own workload',
+      detail: 'The control plane generates the Docker Compose and nginx configuration for each host from its assigned work.',
       note: 'The control plane assigns work to each host and generates its Docker Compose and nginx configuration.',
     },
     {
       id: 'playback',
       label: 'Live view',
+      heading: 'Keep slow hosts off the request path',
+      detail: 'I built a load harness for 100 operators and 70 live viewers. With health checks off the request path, live-view stalls fell from up to 19 seconds to about one.',
       note: 'The hosts serve streams to operators. I load tested the system with 100 operators and 70 live viewers.',
     },
   ],

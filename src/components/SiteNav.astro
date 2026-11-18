@@ -9,9 +9,10 @@ interface Props {
 
 const { home = false, current } = Astro.props;
 const sections = [
+  { id: 'architecture', name: 'Architecture' },
   { id: 'results', name: 'Impact' },
-  { id: 'experience', name: 'Experience' },
   { id: 'projects', name: 'Projects' },
+  { id: 'experience', name: 'Experience' },
   { id: 'skills', name: 'Skills' },
 ];
 const to = (id: string) => (home ? `#${id}` : link(`#${id}`));

@@ -13,4 +13,11 @@ export const heroLabels = {
   projects: 'View projects',
   email: 'Email me',
   current: 'Current role',
+  practice: 'My full stack practice',
 };
+
+export const practice = [
+  { name: 'Interfaces', tools: 'React, TypeScript', target: 'skills-frontend' },
+  { name: 'Services and data', tools: 'Python, PostgreSQL', target: 'skills-backend' },
+  { name: 'Infrastructure', tools: 'AWS, Docker', target: 'skills-cloud' },
+];

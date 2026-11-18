@@ -4,7 +4,7 @@ import { results } from '../../src/data/results';
 
 const html = readFileSync('dist/index.html', 'utf8');
 const section = html
-  .slice(html.indexOf('id="results"'), html.indexOf('id="experience"'))
+  .slice(html.indexOf('id="results"'), html.indexOf('id="projects"'))
   .replace(/<script[\s\S]*?<\/script>/g, '');
 
 describe('results', () => {
@@ -35,7 +35,7 @@ describe('results', () => {
 
   it('links each measurement to one entry in the work history', () => {
     const rows = section.split('<li class="result"').slice(1);
-    const experience = html.slice(html.indexOf('id="experience"'), html.indexOf('id="projects"'));
+    const experience = html.slice(html.indexOf('id="experience"'), html.indexOf('id="skills"'));
     for (const result of results) {
       const row = rows.find((text) => text.includes(result.label)) ?? '';
       const target = row.match(/href="#(work-[^"]+)"/)?.[1];

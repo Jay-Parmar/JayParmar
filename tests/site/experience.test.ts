@@ -8,7 +8,7 @@ const between = (from: string, to: string) => html.slice(html.indexOf(from), htm
 
 describe('experience', () => {
   it('heads each group with its name', () => {
-    const experience = between('id="experience"', 'id="projects"');
+    const experience = between('id="experience"', 'id="skills"');
     const names = new Map(areas.map((area) => [area.id, area.name]));
     const groups = roles.flatMap((role) => role.groups);
     const headings = [...experience.matchAll(/<h4[^>]*>([^<]*)<\/h4>/g)].map((m) => m[1].trim());
