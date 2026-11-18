@@ -10,6 +10,10 @@ describe('contact', () => {
     expect(contact).toMatch(/<h2[^>]*id="contact-title"[^>]*>Get in touch<\/h2>/);
   });
 
+  it('shows the address in full', () => {
+    expect(contact.replace(/<[^>]+>/g, '')).toContain(profile.email);
+  });
+
   it('ships the copy button hidden until a script finds a clipboard', () => {
     const button = contact.match(/<button[^>]*data-copy="([^"]*)"[^>]*>/);
     expect(button?.[1]).toBe(profile.email);

@@ -1,5 +1,7 @@
 ---
 import { profile } from '../data/profile';
+
+const [user, domain] = profile.email.split('@');
 ---
 
 <section class="section contact" id="contact" aria-labelledby="contact-title">
@@ -8,7 +10,7 @@ import { profile } from '../data/profile';
       <h2 class="title" id="contact-title">Get in touch</h2>
       <p class="note">Email is the quickest way to reach me.</p>
       <div class="address">
-        <span class="email">{profile.email}</span>
+        <span class="email">{user}@<wbr />{domain}</span>
         <button class="button copy" type="button" data-copy={profile.email} aria-label="Copy email address" hidden>
           <svg viewBox="0 0 20 20" aria-hidden="true">
             <g class="sheets">
@@ -125,11 +127,11 @@ import { profile } from '../data/profile';
 
   .email {
     color: var(--text);
-    font-size: clamp(1.375rem, 0.85rem + 2.6vw, 2.25rem);
+    font-size: clamp(1.125rem, 5.6vw, 2.25rem);
     font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.03em;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     user-select: all;
   }
 
