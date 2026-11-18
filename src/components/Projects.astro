@@ -26,7 +26,11 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
               <li>{fact}</li>
             ))}
           </ul>
-          <p class="stack">{project.stack.join(', ')}</p>
+          <ul class="stack" role="list" aria-label="Built with">
+            {project.stack.map((tool) => (
+              <li class="chip">{tool}</li>
+            ))}
+          </ul>
           <p class="links">
             {project.page && (
               <a class="button primary" href={link(`projects/${project.slug}/`)}>
@@ -58,7 +62,11 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
                 ))}
               </ul>
             )}
-            <p class="stack">{project.stack.join(', ')}</p>
+            <ul class="stack" role="list" aria-label="Built with">
+              {project.stack.map((tool) => (
+                <li class="chip">{tool}</li>
+              ))}
+            </ul>
             {(project.page || project.code) && (
               <p class="links">
                 {project.page && <a href={link(`projects/${project.slug}/`)}>How it works</a>}
@@ -143,9 +151,10 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
   }
 
   .stack {
-    margin-top: 1rem;
-    font-size: var(--step--1);
-    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
   }
 
   .links {

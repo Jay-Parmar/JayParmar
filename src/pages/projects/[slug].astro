@@ -46,7 +46,12 @@ const { what, how } = project.page!;
       </ul>
     </section>
 
-    <p class="stack">Built with {project.stack.join(', ')}.</p>
+    <section aria-labelledby="stack">
+      <h2 id="stack">Built with</h2>
+      <ul class="stack" role="list">
+        {project.stack.map((tool) => <li class="chip">{tool}</li>)}
+      </ul>
+    </section>
     <p class="actions">
       <a class="button primary" href={project.code}>Code on GitHub</a>
       <a class="button" href={link('#projects')}>All projects</a>
@@ -112,19 +117,19 @@ const { what, how } = project.page!;
     font-size: var(--step-3);
   }
 
-  section ul {
+  section ul:not(.stack) {
     display: grid;
     gap: 0.85rem;
     max-width: var(--measure);
     margin-top: 1.25rem;
   }
 
-  section li {
+  section li:not(.chip) {
     position: relative;
     padding-left: 1.25rem;
   }
 
-  section li::before {
+  section li:not(.chip)::before {
     content: '';
     position: absolute;
     left: 0;
@@ -136,14 +141,16 @@ const { what, how } = project.page!;
   }
 
   .stack {
-    margin-top: 3rem;
-    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
   }
 
   .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1.5rem;
+    margin-top: 3rem;
   }
 </style>
