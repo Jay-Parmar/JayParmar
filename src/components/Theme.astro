@@ -1,0 +1,49 @@
+---
+import lightPalette from '../styles/light.css?inline';
+---
+
+<meta id="light-theme-color" name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0b0d12" />
+<style is:inline id="light-palette" media="screen and (prefers-color-scheme: light)" set:html={lightPalette}></style>
+<script is:inline>
+  (() => {
+    const palette = document.getElementById('light-palette');
+    const themeColor = document.getElementById('light-theme-color');
+    const system = matchMedia('(prefers-color-scheme: light)');
+    const key = 'jay-parmar-theme';
+    let choice;
+    let button;
+
+    function paint() {
+      const light = choice === 'light' || (choice !== 'dark' && system.matches);
+      palette.media = light ? 'screen' : 'not all';
+      themeColor.media = palette.media;
+      if (button) button.setAttribute('aria-pressed', String(!light));
+    }
+
+    function restore() {
+      try { choice = localStorage.getItem(key); } catch {}
+      paint();
+    }
+
+    restore();
+    system.addEventListener('change', paint);
+    addEventListener('storage', (event) => {
+      if (event.key === key || event.key === null) restore();
+    });
+    addEventListener('pageshow', (event) => {
+      if (event.persisted) restore();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      button = document.getElementById('theme-switch');
+      if (!button) return;
+      paint();
+      button.hidden = false;
+      button.addEventListener('click', () => {
+        choice = button.getAttribute('aria-pressed') === 'true' ? 'light' : 'dark';
+        paint();
+        try { localStorage.setItem(key, choice); } catch {}
+      });
+    });
+  })();
+</script>

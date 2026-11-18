@@ -9,7 +9,7 @@
   --text-2: #b4bbc8;
   --muted: #8a93a3;
   --accent: #6ea1ff;
-  --glow: rgb(110 161 255 / 0.14);
+  --glow: color-mix(in srgb, var(--accent) 14%, transparent);
 
   --font: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'Geist Mono Variable', ui-monospace, 'Cascadia Mono', monospace;
@@ -121,7 +121,7 @@ a:hover {
 }
 
 ::selection {
-  background: rgb(110 161 255 / 0.35);
+  background: color-mix(in srgb, var(--accent) 26%, var(--bg));
   color: var(--text);
 }
 
@@ -207,7 +207,7 @@ svg {
 }
 
 .button:hover {
-  border-color: #3d4455;
+  border-color: var(--muted);
   background: var(--surface-2);
 }
 
@@ -218,8 +218,8 @@ svg {
 }
 
 .button.primary:hover {
-  border-color: #ffffff;
-  background: #ffffff;
+  border-color: var(--text-2);
+  background: var(--text-2);
 }
 
 .chip {
@@ -289,6 +289,7 @@ svg {
 
 @media print {
   :root {
+    color-scheme: light;
     --bg: #ffffff;
     --bg-raised: #ffffff;
     --surface: #ffffff;

@@ -8,6 +8,17 @@ const header = (path: string) => {
 };
 
 describe('site nav', () => {
+  it('ships a system light palette and an accessible theme switch on every layout', () => {
+    for (const path of ['dist/index.html', 'dist/projects/hirejutsu/index.html', 'dist/404.html']) {
+      const html = readFileSync(path, 'utf8');
+      expect(html).toMatch(/<style[^>]*id="light-palette"[^>]*media="screen and \(prefers-color-scheme: light\)"/);
+      const button = header(path).match(/<button[^>]*id="theme-switch"[^>]*>/)?.[0] ?? '';
+      expect(button).toContain('type="button"');
+      expect(button).toContain('aria-label="Dark mode"');
+      expect(button).toMatch(/\bhidden\b/);
+    }
+  });
+
   it('folds the sections into a menu on phones without needing a script', () => {
     const nav = header('dist/index.html');
     expect(nav).toMatch(/<button[^>]*popovertarget="sections"/);

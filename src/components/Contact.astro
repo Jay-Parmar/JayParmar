@@ -72,7 +72,7 @@ const [user, domain] = profile.email.split('@');
     overflow: hidden;
     padding: clamp(3.5rem, 2rem + 5vw, 6rem) clamp(1.25rem, 0.5rem + 3vw, 3rem);
     background:
-      radial-gradient(ellipse 55% 75% at 50% 0%, rgb(110 161 255 / 0.15), transparent 70%),
+      radial-gradient(ellipse 55% 75% at 50% 0%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 70%),
       var(--surface);
     text-align: center;
   }
@@ -82,7 +82,7 @@ const [user, domain] = profile.email.split('@');
     position: absolute;
     inset: 0 18% auto;
     height: 1px;
-    background: linear-gradient(to right, transparent, rgb(110 161 255 / 0.65), transparent);
+    background: linear-gradient(to right, transparent, color-mix(in srgb, var(--accent) 65%, transparent), transparent);
   }
 
   .card::after {
@@ -91,8 +91,8 @@ const [user, domain] = profile.email.split('@');
     inset: 0;
     z-index: -1;
     background-image:
-      linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+      linear-gradient(to right, color-mix(in srgb, var(--text) 3.5%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--text) 3.5%, transparent) 1px, transparent 1px);
     background-position: center top;
     background-size: 48px 48px;
     mask-image: radial-gradient(ellipse 60% 85% at 50% 0%, #000 25%, transparent 80%);
@@ -163,7 +163,7 @@ const [user, domain] = profile.email.split('@');
   }
 
   .copy.is-copied {
-    border-color: rgb(110 161 255 / 0.45);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
   }
 
   .is-copied .sheets {

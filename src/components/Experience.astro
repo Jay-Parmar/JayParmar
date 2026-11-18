@@ -130,7 +130,7 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
   .fill {
     display: none;
     background: var(--accent);
-    box-shadow: 0 0 6px rgb(110 161 255 / 0.5);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 50%, transparent);
     transform: scaleY(var(--f, 0));
     transform-origin: top;
   }

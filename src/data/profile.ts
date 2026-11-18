@@ -21,3 +21,5 @@ export const practice = [
   { name: 'Services and data', tools: 'Python, PostgreSQL', target: 'skills-backend' },
   { name: 'Infrastructure', tools: 'AWS, Docker', target: 'skills-cloud' },
 ];
+
+export const themeLabel = 'Dark mode';

@@ -1,0 +1,13 @@
+html:root {
+  color-scheme: light;
+  --bg: #f5f6f8;
+  --bg-raised: #eff1f5;
+  --surface: #ffffff;
+  --surface-2: #e8ecf2;
+  --border: #d7dce4;
+  --border-2: #bac3d0;
+  --text: #18202d;
+  --text-2: #354255;
+  --muted: #566175;
+  --accent: #2456b1;
+}
