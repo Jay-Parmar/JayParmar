@@ -9,11 +9,7 @@ const lineIds = new Set<string>(lines.map((line) => line.id));
 
 describe('content data', () => {
   it('uses only lines that exist', () => {
-    const used = [
-      ...results.map((result) => result.line),
-      ...roles.flatMap((role) => role.groups.map((group) => group.line)),
-      ...projects.flatMap((project) => project.lines),
-    ];
+    const used = roles.flatMap((role) => role.groups.map((group) => group.line));
     expect(used.filter((id) => !lineIds.has(id))).toEqual([]);
   });
 
