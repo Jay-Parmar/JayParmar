@@ -14,6 +14,8 @@ export interface Result {
   afterText: string;
   beforeName: string;
   afterName: string;
+  /** The change in a few words, when the ratio is exact enough to say. */
+  delta?: string;
 }
 
 export const results: Result[] = [
@@ -30,6 +32,7 @@ export const results: Result[] = [
     afterText: '125 ms',
     beforeName: 'Before',
     afterName: 'After',
+    delta: '6× faster',
   },
   {
     id: 'stalls',
@@ -58,6 +61,7 @@ export const results: Result[] = [
     afterText: '240+',
     beforeName: 'Before',
     afterName: 'After',
+    delta: 'nearly 10× more',
   },
   {
     id: 'accuracy',
@@ -72,5 +76,6 @@ export const results: Result[] = [
     afterText: '95%',
     beforeName: 'Deployed model',
     afterName: 'SigLIP 2 head',
+    delta: '+14 points',
   },
 ];

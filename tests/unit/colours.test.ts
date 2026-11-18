@@ -41,7 +41,7 @@ describe('colour tokens', () => {
 
     it(`keep every line visible and its badge readable in the ${name} theme`, () => {
       for (const id of lineIds) {
-        expect(contrast(theme[id], theme.paper), id).toBeGreaterThanOrEqual(3);
+        expect(contrast(theme[id], theme.paper), id).toBeGreaterThanOrEqual(4.5);
         expect(contrast(theme['on-line'], theme[id]), id).toBeGreaterThanOrEqual(4.5);
       }
     });

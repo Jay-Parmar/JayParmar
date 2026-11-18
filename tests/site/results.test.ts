@@ -18,4 +18,8 @@ describe('results', () => {
     expect(accuracy).not.toContain('data-start');
     expect(rows.filter((row) => row.includes('data-start'))).toHaveLength(3);
   });
+
+  it('shows each summary as a badge', () => {
+    expect(section.match(/<span class="badge"[^>]*>[^<]+<\/span>/g)).toHaveLength(3);
+  });
 });

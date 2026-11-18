@@ -46,6 +46,16 @@ describe('content data', () => {
     }
   });
 
+  it('sums up each result that has a clear ratio', () => {
+    const deltas = Object.fromEntries(results.map((result) => [result.id, result.delta]));
+    expect(deltas).toEqual({
+      latency: '6× faster',
+      stalls: undefined,
+      cameras: 'nearly 10× more',
+      accuracy: '+14 points',
+    });
+  });
+
   it('lists skills on every line and the languages', () => {
     expect(lines.every((line) => line.skills.length > 0)).toBe(true);
     expect(languages.length).toBeGreaterThan(0);
