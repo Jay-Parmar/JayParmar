@@ -1,6 +1,11 @@
 ---
 import { lines } from '../data/lines';
+import { drawn } from '../data/map';
 import { profile } from '../data/profile';
+import { seconds } from '../lib/metro';
+
+// Each band segment lights as its line sets off on the map.
+const setsOff = new Map(drawn.map(({ line, delay }) => [line, seconds(delay)]));
 ---
 
 <section class="hero" id="top" aria-labelledby="name">
@@ -9,7 +14,11 @@ import { profile } from '../data/profile';
       <h1 id="name">{profile.name}</h1>
       <p class="hindi" lang="hi">{profile.nameHindi}</p>
       <div class="band" aria-hidden="true">
-        {lines.map((line) => <span style={`--c: var(--${line.id})`}></span>)}
+        {
+          lines.map((line) => (
+            <span class="segment" style={`--c: var(--${line.id}); --delay: ${setsOff.get(line.id)}`} />
+          ))
+        }
       </div>
       <p class="role">{profile.role}</p>
       <p class="intro">{profile.intro}</p>
@@ -41,7 +50,7 @@ import { profile } from '../data/profile';
 
   @media (min-width: 62rem) {
     .grid {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     }
   }
 
@@ -65,7 +74,7 @@ import { profile } from '../data/profile';
     margin-block: 1.75rem 1.5rem;
   }
 
-  .band span {
+  .segment {
     width: 2.5rem;
     height: var(--line);
     border-radius: 99px;
@@ -102,5 +111,53 @@ import { profile } from '../data/profile';
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 2rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .segment {
+      transform-origin: left;
+      animation: light 0.5s cubic-bezier(0.3, 0, 0.2, 1) var(--delay) both;
+    }
+
+    .text > :not(.band) {
+      animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rise, 0s) both;
+    }
+
+    .hindi {
+      --rise: 0.06s;
+    }
+
+    .role {
+      --rise: 0.2s;
+    }
+
+    .intro {
+      --rise: 0.28s;
+    }
+
+    .approach {
+      --rise: 0.36s;
+    }
+
+    .now {
+      --rise: 0.44s;
+    }
+
+    .actions {
+      --rise: 0.52s;
+    }
+  }
+
+  @keyframes light {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.6rem);
+    }
   }
 </style>
