@@ -68,7 +68,7 @@ import { results } from '../data/results';
     const finish = (cell: HTMLElement) => {
       done.add(cell);
       observer.unobserve(stat(cell));
-      cell.classList.remove('is-moving');
+      cell.classList.remove('is-pending', 'is-moving');
       after(cell).style.setProperty('--w', widths.get(cell)!);
       for (const count of counts(cell)) count.textContent = finals.get(count)!;
     };
@@ -104,6 +104,7 @@ import { results } from '../data/results';
     );
 
     for (const cell of cells) {
+      cell.classList.add('is-pending');
       after(cell).style.setProperty('--w', cell.dataset.from ?? '1');
       show(cell, cell.dataset.start ?? '');
       observer.observe(stat(cell));
@@ -227,6 +228,17 @@ import { results } from '../data/results';
   @media (prefers-reduced-motion: no-preference) {
     .is-moving .after::after {
       transition: width 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .delta {
+      transition:
+        opacity 0.5s var(--ease),
+        transform 0.5s var(--ease);
+    }
+
+    .is-pending .delta {
+      opacity: 0;
+      transform: translateX(-0.375rem);
     }
   }
 </style>
