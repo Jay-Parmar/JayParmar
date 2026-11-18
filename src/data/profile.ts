@@ -14,6 +14,8 @@ export const heroLabels = {
   email: 'Email me',
   current: 'Current role',
   practice: 'My full stack practice',
+  pauseWeave: 'Pause weave animation',
+  resumeWeave: 'Resume weave animation',
 };
 
 export const practice = [

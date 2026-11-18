@@ -114,7 +114,7 @@ import SystemDiagram from './SystemDiagram.astro';
   @media screen and (min-height: 42rem) and (prefers-reduced-motion: no-preference) {
     [data-guided] .stage {
       position: sticky;
-      top: 5.5rem;
+      top: var(--stage-top, 4rem);
       z-index: 2;
       align-self: start;
     }
@@ -135,8 +135,16 @@ import SystemDiagram from './SystemDiagram.astro';
       transform-origin: left;
     }
 
+    @media (min-width: 57rem) {
+      [data-guided] .study { --stage-top: 5.5rem; }
+      [data-guided] .chapters {
+        /* Keep the diagram pinned until the last chapter clears the reading line. */
+        padding-bottom: max(0px, calc(var(--stage-top) + var(--stage-height, 0px) - 50dvh));
+      }
+    }
+
     @media (max-width: 56.99rem) {
-      [data-guided] .stage { top: 4rem; background: var(--bg-raised); }
+      [data-guided] .stage { background: var(--bg-raised); }
       [data-guided] .stage :global(.bar) { padding: 0.55rem 0.9rem; column-gap: 0.5rem; }
       [data-guided] .stage :global(.drawing svg) { max-height: 23svh; }
       [data-guided] .chapters li {

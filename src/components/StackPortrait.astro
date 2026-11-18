@@ -1,34 +1,8 @@
 ---
 import { heroLabels, practice } from '../data/profile';
+import { weavePaths } from '../lib/weave';
 
-const samples = Array.from({ length: 21 }, (_, i) => i / 20);
-
-function surface(across: boolean) {
-  const point = (u: number, v: number) => {
-    const bend = across
-      ? Math.cos(Math.PI * u) * Math.sin(Math.PI * v)
-      : Math.sin(Math.PI * u) * Math.cos(Math.PI * v);
-    const x = 10 + 210 * u + 138 * v;
-    const y = 94 + 78 * u - 58 * v - 52 * bend;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  };
-  const edge = [
-    ...samples.map((u) => point(u, 0)), ...samples.map((v) => point(1, v)),
-    ...samples.map((u) => point(1 - u, 1)), ...samples.map((v) => point(0, 1 - v)),
-  ];
-  const lines = samples.flatMap((t) => [
-    samples.map((u) => point(u, t)),
-    samples.map((v) => point(t, v)),
-  ]);
-  return {
-    skin: `M${edge.join(' ')}Z`,
-    mesh: lines.map((line) => `M${line.join(' ')}`).join(' '),
-    selvedge: `M${samples.map((u) => point(u, 0)).join(' ')}`,
-  };
-}
-
-const rest = surface(false);
-const turned = surface(true);
+const rest = weavePaths(0);
 ---
 
 <div class="portrait" role="group" aria-label={heroLabels.practice}>
@@ -36,7 +10,7 @@ const turned = surface(true);
     <defs>
       <g id="woven-sheet">
         {(['skin', 'mesh', 'selvedge'] as const).map((part) => (
-          <path class={part} d={rest[part]} style={`--turned: path('${turned[part]}')`} />
+          <path class={part} d={rest[part]} />
         ))}
       </g>
     </defs>
@@ -54,7 +28,87 @@ const turned = surface(true);
       <span>{layer.tools}</span>
     </a>
   ))}
+  <button type="button" class="motion-control" data-weave-control data-resume={heroLabels.resumeWeave}
+    aria-label={heroLabels.pauseWeave} title={heroLabels.pauseWeave} hidden>
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path class="pause" d="M5 3v10m6-10v10" />
+      <path class="play" d="m5 3 7 5-7 5z" />
+    </svg>
+  </button>
 </div>
+
+<script>
+  import { weavePaths } from '../lib/weave';
+
+  const portrait = document.querySelector<HTMLElement>('.portrait')!;
+  const hero = portrait.closest<HTMLElement>('.hero')!;
+  const skin = portrait.querySelector('.skin')!;
+  const mesh = portrait.querySelector('.mesh')!;
+  const edge = portrait.querySelector('.selvedge')!;
+  const button = portrait.querySelector<HTMLButtonElement>('[data-weave-control]')!;
+  const pauseLabel = button.title;
+  const motion = matchMedia('screen and (prefers-reduced-motion: no-preference)');
+  let visible = false;
+  let paused = false;
+  let frame = 0;
+  let previous = 0;
+  let phase = 0;
+  let turn = 0;
+  let targetTurn = 0;
+
+  function draw(angle: number) {
+    const paths = weavePaths(angle);
+    skin.setAttribute('d', paths.skin);
+    mesh.setAttribute('d', paths.mesh);
+    edge.setAttribute('d', paths.selvedge);
+  }
+
+  function readScroll() {
+    if (!visible || !motion.matches) return;
+    const rect = hero.getBoundingClientRect();
+    const exit = Math.max(0, Math.min(1, -rect.top / (rect.height * 0.65)));
+    targetTurn = exit * Math.PI / 2;
+  }
+
+  function tick(now: number) {
+    const elapsed = previous ? Math.min(now - previous, 100) : 0;
+    previous = now;
+    phase = (phase + elapsed * 2 * Math.PI / 9000) % (2 * Math.PI);
+    turn += (targetTurn - turn) * (1 - Math.exp(-elapsed / 100));
+    draw(phase + turn);
+    frame = requestAnimationFrame(tick);
+  }
+
+  function sync() {
+    cancelAnimationFrame(frame);
+    previous = 0;
+    button.hidden = !motion.matches;
+    if (!motion.matches) {
+      phase = 0;
+      turn = 0;
+      draw(0);
+    } else if (visible && !paused && !document.hidden) {
+      readScroll();
+      frame = requestAnimationFrame(tick);
+    }
+  }
+
+  button.addEventListener('click', () => {
+    paused = !paused;
+    button.toggleAttribute('data-paused', paused);
+    button.title = paused ? button.dataset.resume! : pauseLabel;
+    button.setAttribute('aria-label', button.title);
+    sync();
+  });
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    sync();
+  }).observe(portrait);
+  motion.addEventListener('change', sync);
+  document.addEventListener('visibilitychange', sync);
+  addEventListener('scroll', readScroll, { passive: true });
+  addEventListener('resize', readScroll);
+</script>
 
 <style>
   .portrait {
@@ -71,7 +125,7 @@ const turned = surface(true);
     background: radial-gradient(ellipse, var(--glow), transparent 68%);
   }
 
-  svg { width: 100%; height: auto; overflow: visible; }
+  .portrait > svg { width: 100%; height: auto; overflow: visible; }
   .skin { fill: var(--bg-raised); stroke: currentColor; stroke-width: 1; }
   .mesh { fill: none; stroke: currentColor; stroke-width: 0.68; opacity: 0.75; }
   .selvedge { fill: none; stroke: currentColor; stroke-width: 1.4; }
@@ -105,32 +159,34 @@ const turned = surface(true);
   }
 
   @media (max-width: 32rem) {
-    svg { width: 88%; height: 16.5rem; }
+    .portrait > svg { width: 88%; height: 16.5rem; }
     a { left: 63%; font-size: 0.85rem; }
     a span { font-size: 0.75rem; }
   }
 
   @media (max-width: 22rem) {
-    svg { width: 76%; height: 18.5rem; }
+    .portrait > svg { width: 76%; height: 18.5rem; }
     a { left: 54.5%; }
   }
 
-  @media screen and (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: view()) and (d: path('M0 0L1 1')) {
-      :global(.hero) {
-        view-timeline-name: --stack-exit;
-        view-timeline-inset: 0;
-      }
-
-      #woven-sheet path {
-        animation: turn-weave auto linear both;
-        animation-timeline: --stack-exit;
-        animation-range: exit 0% exit 65%;
-      }
-    }
+  .motion-control {
+    position: absolute;
+    right: 0;
+    bottom: -0.25rem;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--border-2);
+    border-radius: 50%;
+    background: var(--bg-raised);
+    color: var(--muted);
+    cursor: pointer;
   }
 
-  @keyframes turn-weave {
-    to { d: var(--turned); }
-  }
+  .motion-control:hover { color: var(--text); }
+  .motion-control svg { width: 0.875rem; height: 0.875rem; fill: none; stroke: currentColor; stroke-width: 1.6; }
+  .motion-control[hidden], .play, [data-paused] .pause { display: none; }
+  [data-paused] .play { display: inline; }
 </style>
