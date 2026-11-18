@@ -1,8 +1,34 @@
 ---
-import { mapLines, mapStations, viewBox } from '../data/map';
-import { pathData } from '../lib/metro';
+import type { LineId } from '../data/lines';
+import { mapLines, mapStations, viewBox, type MapStation } from '../data/map';
+import { nearest, pathData, polylineLength, type Point } from '../lib/metro';
 
 const [width, height] = viewBox;
+
+// The pen draws the backend trunk from college, and every other line sets off
+// from its first station as the trunk reaches it. Pace is in map units per second.
+const pace = 380;
+const trunk = mapLines.find(({ line }) => line === 'backend')!.points;
+const trunkTime = polylineLength(trunk) / pace;
+const lag: Partial<Record<LineId, number>> = { frontend: 0.1 };
+const drawn = mapLines.map(({ line, points }) => ({
+  line,
+  points,
+  delay: nearest(trunk, points[0]).fraction * trunkTime + (lag[line] ?? 0),
+  duration: polylineLength(points) / pace,
+}));
+
+const middle = ({ ends: [[x1, y1], [x2, y2]] }: MapStation): Point => [(x1 + x2) / 2, (y1 + y2) / 2];
+
+/** When the first of a station's lines reaches it while drawing. */
+const arrival = (station: MapStation) =>
+  Math.min(
+    ...drawn
+      .filter(({ line }) => station.lines.includes(line))
+      .map(({ points, delay, duration }) => delay + nearest(points, middle(station)).fraction * duration),
+  );
+
+const seconds = (value: number) => `${value.toFixed(2)}s`;
 ---
 
 <figure class="map">
@@ -12,8 +38,14 @@ const [width, height] = viewBox;
     </title>
     <g class="lines">
       {
-        mapLines.map(({ line, points }) => (
-          <path id={`line-${line}`} class="line" d={pathData(points)} style={`--c: var(--${line})`} />
+        drawn.map(({ line, points, delay, duration }) => (
+          <path
+            id={`line-${line}`}
+            class="line"
+            d={pathData(points)}
+            pathLength="1"
+            style={`--c: var(--${line}); --delay: ${seconds(delay)}; --duration: ${seconds(duration)}`}
+          />
         ))
       }
     </g>
@@ -23,7 +55,12 @@ const [width, height] = viewBox;
           const [[x1, y1], [x2, y2]] = station.ends;
           const { x, y, anchor } = station.label;
           return (
-            <a class="station" href={station.href} aria-label={`${station.name}, ${station.year}`}>
+            <a
+              class="station"
+              href={station.href}
+              aria-label={`${station.name}, ${station.year}`}
+              style={`--arrive: ${seconds(arrival(station))}`}
+            >
               {x1 === x2 && y1 === y2 ? (
                 <circle class="marker" cx={x1} cy={y1} r="8" />
               ) : (
@@ -118,6 +155,45 @@ const [width, height] = viewBox;
   .station:focus-visible .ring,
   .station:focus-visible circle.marker {
     stroke: var(--backend);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .line {
+      stroke-dasharray: 1 2;
+      animation: draw var(--duration) linear var(--delay) both;
+    }
+
+    .station {
+      animation: appear 0.4s ease-out var(--arrive) both;
+    }
+
+    .marker {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) var(--arrive) both;
+    }
+  }
+
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 1.05;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes pop {
+    from {
+      transform: scale(0.4);
+    }
   }
 
   @media (max-width: 40rem) {
