@@ -1,3 +1,17 @@
+interface ProjectStep {
+  id: string;
+  name: string;
+  text: string;
+}
+
+export const projectSections = {
+  what: 'Workflow',
+  how: "How it's built",
+  stack: 'Built with',
+};
+
+export const contentsLabel = 'On this page';
+
 export interface Project {
   slug: string;
   name: string;
@@ -8,7 +22,7 @@ export interface Project {
   where?: string;
   code?: string;
   featured?: boolean;
-  page?: { what: string[]; how: string[] };
+  page?: { steps: ProjectStep[]; how: string[] };
 }
 
 export const projects: Project[] = [
@@ -22,12 +36,22 @@ export const projects: Project[] = [
     code: 'https://github.com/Jay-Parmar/hirejutsu',
     featured: true,
     page: {
-      what: [
-        'Reads jobs from 629 company career pages on Greenhouse, Lever, Ashby, Workday and 11 more applicant tracking systems, plus 9 remote job boards and Hacker News.',
-        'Scores each job against your resume and shows the 10 best each morning, with the reason for every pick.',
-        "Skips reposted, evergreen and taken down postings, and jobs you can't get, like ones that need a work permit you don't have.",
-        'Fills Workday, Greenhouse, Lever and Ashby application forms in a browser window you control. You check them and submit.',
-        'Tracks applications, follow-ups and referrals, and writes an interview prep pack when an application turns into an interview.',
+      steps: [
+        {
+          id: 'collect',
+          name: 'Collect openings',
+          text: 'Reads 629 company career pages across 15 applicant tracking systems, including Greenhouse, Lever, Ashby and Workday. It also checks 9 remote job boards and Hacker News, and skips reposted, evergreen and closed listings.',
+        },
+        {
+          id: 'rank',
+          name: 'Rank matches',
+          text: 'Checks eligibility, including work permits, and scores each opening against your resume. Each morning you get the 10 best matches and a reason for each pick.',
+        },
+        {
+          id: 'review',
+          name: 'Review and apply',
+          text: 'Fills Workday, Greenhouse, Lever and Ashby forms in a browser you control. You review and submit. It tracks applications, follow-ups and referrals, and prepares interview notes when you get an interview.',
+        },
       ],
       how: [
         'Ranking is a weighted mix of six parts: skills (rarer ones count more), TF-IDF similarity to the resume, title, seniority, freshness and location.',
@@ -47,10 +71,22 @@ export const projects: Project[] = [
     facts: ['146 tests', 'No cloud, no internet', 'Guests need only a browser'],
     code: 'https://github.com/Jay-Parmar/HoldMyFiles',
     page: {
-      what: [
-        "The owner picks folders with Android's own folder picker, starts sharing and gives guests a local address and a PIN.",
-        "Guests browse and download in any browser. They can't see anything the owner didn't pick, and they can't change anything.",
-        'Stopping the server closes the listener and ends every session at once.',
+      steps: [
+        {
+          id: 'share',
+          name: 'Choose folders',
+          text: "The owner picks folders with Android's folder picker, starts sharing and gives guests a local address and a PIN.",
+        },
+        {
+          id: 'browse',
+          name: 'Browse and download',
+          text: 'Guests enter the PIN in a browser. They can download files from the selected folders with read-only access.',
+        },
+        {
+          id: 'stop',
+          name: 'Stop sharing',
+          text: 'Stopping the server closes the listener and ends every guest session at once.',
+        },
       ],
       how: [
         "An embedded Ktor server runs in a foreground service, so sharing keeps going when the app's screen is closed.",
@@ -70,11 +106,22 @@ export const projects: Project[] = [
     facts: ['Both apps on one board', '36 tests', 'CI on every push'],
     code: 'https://github.com/Jay-Parmar/FoodHub',
     page: {
-      what: [
-        'Reads the order notifications the Zomato and Swiggy partner apps already post on the cafe phone, since their order APIs are open only to partners.',
-        "Shows one card per order from both apps, with its status, amount and a count of today's orders.",
-        'Rings a loud alarm for up to 2 minutes when a new order arrives, once per order, until someone stops it.',
-        'Captures and exports everything inside those notifications, to learn which order fields exist before building a bigger product.',
+      steps: [
+        {
+          id: 'capture',
+          name: 'Read notifications',
+          text: 'The Zomato and Swiggy order APIs are restricted to partners. The app reads the notifications their partner apps already post on the cafe phone and can export the captured fields for inspection.',
+        },
+        {
+          id: 'board',
+          name: 'Combine orders',
+          text: "Shows orders from both apps on one board, with a card for each order's status and amount and a count of today's orders.",
+        },
+        {
+          id: 'alert',
+          name: 'Alert the counter',
+          text: 'Each new order triggers one audible alarm. It rings until someone stops it or two minutes pass.',
+        },
       ],
       how: [
         'A notification listener service saves notifications from the apps you pick to a JSON Lines store.',

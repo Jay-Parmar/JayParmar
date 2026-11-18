@@ -74,6 +74,18 @@ describe('projects', () => {
     }
   });
 
+  it('give each case study a reading index and linkable workflow steps', () => {
+    for (const project of projects.filter((project) => project.page)) {
+      const body = page(project.slug);
+      const index = body.match(/<nav[^>]*aria-label="On this page"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
+      const links = [...index.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]);
+      expect(links, project.name).toEqual(['what', 'how', 'stack']);
+      const steps = [...body.matchAll(/<li[^>]*id="(step-[^"]+)"/g)].map((match) => match[1]);
+      expect(steps.length, project.name).toBeGreaterThan(1);
+      expect(new Set(steps).size, project.name).toBe(steps.length);
+    }
+  });
+
   it('lead on to the next project page, wrapping round at the end', () => {
     const slugs = projects.filter((project) => project.page).map((project) => project.slug);
     slugs.forEach((slug, i) => {
