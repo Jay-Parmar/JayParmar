@@ -1,5 +1,6 @@
 ---
 import { projects, type Project } from '../data/projects';
+import { splitFact } from '../lib/facts';
 import { link } from '../lib/url';
 
 const featured = projects.filter((project) => project.featured);
@@ -7,9 +8,6 @@ const cards = projects.filter((project) => !project.featured && (project.page ||
 const also = projects.filter((project) => !project.featured && !project.page && !project.code);
 const meta = (project: Project) => [project.year, project.where].filter(Boolean).join(', ');
 const morph = (project: Project) => (project.page ? `view-transition-name: project-${project.slug}` : undefined);
-
-/** The number a fact starts with, if any, and the rest of it. */
-const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ?? [undefined, fact];
 ---
 
 <section class="section" id="projects" aria-labelledby="projects-title">
@@ -30,7 +28,7 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
           </div>
           <ul class="stats" role="list">
             {project.facts.map((fact) => {
-              const [num, label] = split(fact);
+              const [num, label] = splitFact(fact);
               return (
                 <li>
                   {num && <span class="num">{num}</span>} <span class="label">{label}</span>
@@ -72,7 +70,7 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
             {project.facts.length > 0 && (
               <ul class="facts" role="list">
                 {project.facts.map((fact) => {
-                  const [num, label] = split(fact);
+                  const [num, label] = splitFact(fact);
                   return (
                     <li>
                       {num && <span class="num">{num}</span>} {label}
@@ -122,7 +120,7 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
                 {project.facts.length > 0 && (
                   <ul class="facts" role="list">
                     {project.facts.map((fact) => {
-                      const [num, label] = split(fact);
+                      const [num, label] = splitFact(fact);
                       return (
                         <li>
                           {num && <span class="num">{num}</span>} {label}

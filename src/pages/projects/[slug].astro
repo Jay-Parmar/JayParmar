@@ -3,6 +3,7 @@ import SiteNav from '../../components/SiteNav.astro';
 import { profile } from '../../data/profile';
 import { projects, type Project } from '../../data/projects';
 import Base from '../../layouts/Base.astro';
+import { splitFact } from '../../lib/facts';
 import { link } from '../../lib/url';
 
 export function getStaticPaths() {
@@ -20,9 +21,7 @@ const { what, how } = project.page!;
 const withPages = projects.filter((other) => other.page);
 const next = withPages[(withPages.indexOf(project) + 1) % withPages.length];
 
-/** The number a fact starts with, if any, and the rest of it. */
-const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ?? [undefined, fact];
-const facts = [...project.facts].sort((a, b) => Number(!split(a)[0]) - Number(!split(b)[0]));
+const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Number(!splitFact(b)[0]));
 ---
 
 <Base title={`${project.name}, a project by ${profile.name}`} description={project.tagline}>
@@ -43,7 +42,7 @@ const facts = [...project.facts].sort((a, b) => Number(!split(a)[0]) - Number(!s
     <ul class="stats panel" role="list">
       {
         facts.map((fact) => {
-          const [num, label] = split(fact);
+          const [num, label] = splitFact(fact);
           return (
             <li>
               {num && <span class="num">{num}</span>} <span class="label">{label}</span>
