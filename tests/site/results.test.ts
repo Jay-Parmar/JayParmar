@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { results } from '../../src/data/results';
 
 const html = readFileSync('dist/index.html', 'utf8');
 const section = html
@@ -25,5 +26,10 @@ describe('results', () => {
 
   it('shows each summary as a pill', () => {
     expect(section.match(/<span class="delta"[^>]*>[^<]+<\/span>/g) ?? []).toHaveLength(3);
+  });
+
+  it('ships every final figure and no pending state, so it reads without a script', () => {
+    expect(section).not.toContain('is-pending');
+    for (const result of results) expect(section).toContain(result.afterText);
   });
 });
