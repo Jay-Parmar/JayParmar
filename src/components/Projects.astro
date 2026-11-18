@@ -1,10 +1,12 @@
 ---
 import { projects, type Project } from '../data/projects';
+import { link } from '../lib/url';
 import LineMark from './LineMark.astro';
 
 const featured = projects.filter((project) => project.featured);
 const others = projects.filter((project) => !project.featured);
 const meta = (project: Project) => [project.year, project.where].filter(Boolean).join(', ');
+const morph = (project: Project) => (project.page ? `view-transition-name: project-${project.slug}` : undefined);
 ---
 
 <section class="section" id="projects" aria-labelledby="projects-title">
@@ -17,7 +19,7 @@ const meta = (project: Project) => [project.year, project.where].filter(Boolean)
         <article class="project featured" id={`project-${project.slug}`}>
           <LineMark ids={project.lines} />
           <p class="meta">{meta(project)}</p>
-          <h3>{project.name}</h3>
+          <h3 style={morph(project)}>{project.name}</h3>
           <p class="tagline">{project.tagline}</p>
           <ul class="facts" role="list">
             {project.facts.map((fact) => (
@@ -25,13 +27,18 @@ const meta = (project: Project) => [project.year, project.where].filter(Boolean)
             ))}
           </ul>
           <p class="stack">{project.stack.join(', ')}</p>
-          {project.code && (
-            <p class="links">
+          <p class="links">
+            {project.page && (
+              <a class="button primary" href={link(`projects/${project.slug}/`)}>
+                How it works
+              </a>
+            )}
+            {project.code && (
               <a class="button" href={project.code}>
                 Code on GitHub
               </a>
-            </p>
-          )}
+            )}
+          </p>
         </article>
       ))
     }
@@ -42,7 +49,7 @@ const meta = (project: Project) => [project.year, project.where].filter(Boolean)
           <article class="project" id={`project-${project.slug}`}>
             <LineMark ids={project.lines} />
             <p class="meta">{meta(project)}</p>
-            <h3>{project.name}</h3>
+            <h3 style={morph(project)}>{project.name}</h3>
             <p class="tagline">{project.tagline}</p>
             {project.facts.length > 0 && (
               <ul class="facts" role="list">
@@ -52,9 +59,10 @@ const meta = (project: Project) => [project.year, project.where].filter(Boolean)
               </ul>
             )}
             <p class="stack">{project.stack.join(', ')}</p>
-            {project.code && (
+            {(project.page || project.code) && (
               <p class="links">
-                <a href={project.code}>Code on GitHub</a>
+                {project.page && <a href={link(`projects/${project.slug}/`)}>How it works</a>}
+                {project.code && <a href={project.code}>Code on GitHub</a>}
               </p>
             )}
           </article>
@@ -86,6 +94,7 @@ const meta = (project: Project) => [project.year, project.where].filter(Boolean)
   }
 
   h3 {
+    width: fit-content;
     margin-top: 0.15rem;
     font-size: var(--step-3);
   }
@@ -140,6 +149,10 @@ const meta = (project: Project) => [project.year, project.where].filter(Boolean)
   }
 
   .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
     margin-top: 1.25rem;
     font-weight: 700;
   }

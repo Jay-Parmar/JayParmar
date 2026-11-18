@@ -125,3 +125,28 @@ describe('section nav', () => {
     expect(targets).toEqual(['results', 'experience', 'projects', 'skills', 'contact']);
   });
 });
+
+describe('project pages', () => {
+  const withPages = projects.filter((project) => project.page);
+
+  it('exist for every project with public code', () => {
+    expect(withPages.map((project) => project.slug)).toEqual(['hirejutsu', 'hold-my-files', 'foodhub-sniffer']);
+    for (const project of withPages) {
+      expect(existsSync(join(dist, 'projects', project.slug, 'index.html'))).toBe(true);
+    }
+  });
+
+  it('link back to the projects and out to the code', () => {
+    for (const project of withPages) {
+      const html = read(join(dist, 'projects', project.slug, 'index.html'));
+      expect(html).toContain(`href="${base}/#projects"`);
+      expect(html).toContain(`href="${project.code}"`);
+      expect(html).toContain(project.page!.how[0].split("'")[0]);
+    }
+  });
+
+  it('are linked from the home page', () => {
+    const home = read(join(dist, 'index.html'));
+    for (const project of withPages) expect(home).toContain(`href="${base}/projects/${project.slug}/"`);
+  });
+});
