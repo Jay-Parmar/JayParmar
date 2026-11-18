@@ -26,6 +26,16 @@ describe('site nav', () => {
     expect(nav.match(/<a[^>]*aria-current="true"[^>]*>([^<]+)</)?.[1]?.trim()).toBe('Projects');
   });
 
+  it('lets the phone menu scroll when the screen is short', () => {
+    const css = readdirSync('dist/_astro')
+      .filter((name) => name.endsWith('.css'))
+      .map((name) => readFileSync(join('dist/_astro', name), 'utf8'))
+      .join('\n');
+    const open = css.match(/\.links(?:\[[^\]]*\])?:popover-open\{([^}]*)\}/)?.[1] ?? '';
+    expect(open).toMatch(/max-height:/);
+    expect(open).toMatch(/overflow-y:auto/);
+  });
+
   it('blurs the page behind it in every browser, not only Safari', () => {
     const css = readdirSync('dist/_astro')
       .filter((name) => name.endsWith('.css'))
