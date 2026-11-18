@@ -80,14 +80,16 @@ const target = (id: string) => (home ? id : undefined);
       requestAnimationFrame(update);
     };
 
-    menu?.addEventListener('click', (event) => {
-      if (event.target instanceof Element && event.target.closest('a') && menu.matches(':popover-open')) {
-        menu.hidePopover();
-      }
-    });
-    matchMedia('(min-width: 48rem)').addEventListener('change', (event) => {
-      if (event.matches && menu?.matches(':popover-open')) menu.hidePopover();
-    });
+    if (menu && CSS.supports('selector(:popover-open)')) {
+      menu.addEventListener('click', (event) => {
+        if (event.target instanceof Element && event.target.closest('a') && menu.matches(':popover-open')) {
+          menu.hidePopover();
+        }
+      });
+      matchMedia('(min-width: 48rem)').addEventListener('change', (event) => {
+        if (event.matches && menu.matches(':popover-open')) menu.hidePopover();
+      });
+    }
     addEventListener('scroll', request, { passive: true });
     addEventListener('resize', request);
     update();
@@ -245,45 +247,60 @@ const target = (id: string) => (home ? id : undefined);
     background: rgb(11 13 18 / 0.55);
   }
 
-  @media (max-width: 47.99rem) {
-    .toggle {
-      display: grid;
-    }
+  @supports selector(:popover-open) {
+    @media (max-width: 47.99rem) {
+      .toggle {
+        display: grid;
+      }
 
-    .links {
-      display: none;
-    }
+      .links {
+        display: none;
+      }
 
-    .links:popover-open {
-      position: fixed;
-      inset: 4.25rem var(--gutter) auto auto;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.15rem;
-      width: min(18rem, calc(100vw - 2 * var(--gutter)));
-      max-height: calc(100dvh - 5rem);
-      overflow-y: auto;
-      padding: 0.5rem;
-      border: 1px solid var(--border-2);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
-    }
+      .links:popover-open {
+        position: fixed;
+        inset: 4.25rem var(--gutter) auto auto;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.15rem;
+        width: min(18rem, calc(100vw - 2 * var(--gutter)));
+        max-height: calc(100dvh - 5rem);
+        overflow-y: auto;
+        padding: 0.5rem;
+        border: 1px solid var(--border-2);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
+      }
 
-    .links:popover-open a:not(.button) {
-      padding: 0.7rem 0.85rem;
-      color: var(--text-2);
-      font-size: var(--step-0);
-    }
+      .links:popover-open a:not(.button) {
+        padding: 0.7rem 0.85rem;
+        color: var(--text-2);
+        font-size: var(--step-0);
+      }
 
-    .links:popover-open .cta {
-      margin: 0.35rem 0 0;
-    }
+      .links:popover-open .cta {
+        margin: 0.35rem 0 0;
+      }
 
-    .links:popover-open .cta .button {
-      width: 100%;
-      min-height: 2.75rem;
+      .links:popover-open .cta .button {
+        width: 100%;
+        min-height: 2.75rem;
+      }
+    }
+  }
+
+  @supports not selector(:popover-open) {
+    @media (max-width: 47.99rem) {
+      .inner {
+        flex-wrap: wrap;
+        padding-block: 0.75rem;
+      }
+
+      .links {
+        flex-wrap: wrap;
+      }
     }
   }
 </style>
