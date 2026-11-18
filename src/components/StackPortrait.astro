@@ -1,32 +1,43 @@
 ---
 import { heroLabels, practice } from '../data/profile';
 
-const samples = Array.from({ length: 23 }, (_, i) => i / 22);
-const point = (u: number, v: number) => {
-  const fold = 52 * Math.sin(Math.PI * u) * Math.cos(Math.PI * v);
-  const x = 10 + 210 * u + 138 * v;
-  const y = 94 + 78 * u - 58 * v - fold;
-  return `${x.toFixed(1)},${y.toFixed(1)}`;
-};
-const edge = [
-  ...samples.map((u) => point(u, 0)),
-  ...samples.map((v) => point(1, v)),
-  ...samples.map((u) => point(1 - u, 1)),
-  ...samples.map((v) => point(0, 1 - v)),
-];
-const mesh = samples.flatMap((t) => [
-  samples.map((u) => point(u, t)),
-  samples.map((v) => point(t, v)),
-]);
+const samples = Array.from({ length: 21 }, (_, i) => i / 20);
+
+function surface(across: boolean) {
+  const point = (u: number, v: number) => {
+    const bend = across
+      ? Math.cos(Math.PI * u) * Math.sin(Math.PI * v)
+      : Math.sin(Math.PI * u) * Math.cos(Math.PI * v);
+    const x = 10 + 210 * u + 138 * v;
+    const y = 94 + 78 * u - 58 * v - 52 * bend;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  };
+  const edge = [
+    ...samples.map((u) => point(u, 0)), ...samples.map((v) => point(1, v)),
+    ...samples.map((u) => point(1 - u, 1)), ...samples.map((v) => point(0, 1 - v)),
+  ];
+  const lines = samples.flatMap((t) => [
+    samples.map((u) => point(u, t)),
+    samples.map((v) => point(t, v)),
+  ]);
+  return {
+    skin: `M${edge.join(' ')}Z`,
+    mesh: lines.map((line) => `M${line.join(' ')}`).join(' '),
+    selvedge: `M${samples.map((u) => point(u, 0)).join(' ')}`,
+  };
+}
+
+const rest = surface(false);
+const turned = surface(true);
 ---
 
 <div class="portrait" role="group" aria-label={heroLabels.practice}>
   <svg viewBox="0 0 550 328" preserveAspectRatio="none" aria-hidden="true">
     <defs>
       <g id="woven-sheet">
-        <path class="skin" d={`M${edge.join(' ')}Z`} />
-        <path class="mesh" d={mesh.map((line) => `M${line.join(' ')}`).join(' ')} />
-        <path class="selvedge" d={`M${samples.map((u) => point(u, 0)).join(' ')}`} />
+        {(['skin', 'mesh', 'selvedge'] as const).map((part) => (
+          <path class={part} d={rest[part]} style={`--turned: path('${turned[part]}')`} />
+        ))}
       </g>
     </defs>
     {[2, 1, 0].map((index) => (
@@ -84,6 +95,8 @@ const mesh = samples.flatMap((t) => [
   }
 
   a:hover strong, a:focus-visible strong { color: var(--accent); }
+  .portrait:has(a:nth-of-type(2):is(:hover, :focus-visible)) .level-1,
+  .portrait:has(a:nth-of-type(3):is(:hover, :focus-visible)) .level-2 { color: var(--accent); }
   a span {
     margin-top: 0.25rem;
     color: var(--muted);
@@ -95,5 +108,29 @@ const mesh = samples.flatMap((t) => [
     svg { width: 88%; height: 16.5rem; }
     a { left: 63%; font-size: 0.85rem; }
     a span { font-size: 0.75rem; }
+  }
+
+  @media (max-width: 22rem) {
+    svg { width: 76%; height: 18.5rem; }
+    a { left: 54.5%; }
+  }
+
+  @media screen and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) and (d: path('M0 0L1 1')) {
+      :global(.hero) {
+        view-timeline-name: --stack-exit;
+        view-timeline-inset: 0;
+      }
+
+      #woven-sheet path {
+        animation: turn-weave auto linear both;
+        animation-timeline: --stack-exit;
+        animation-range: exit 0% exit 65%;
+      }
+    }
+  }
+
+  @keyframes turn-weave {
+    to { d: var(--turned); }
   }
 </style>
