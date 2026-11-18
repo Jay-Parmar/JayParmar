@@ -98,6 +98,30 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
   </div>
 </section>
 
+<script>
+  if (matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches) {
+    for (const card of document.querySelectorAll<HTMLElement>('#projects .card')) {
+      let last: PointerEvent | null = null;
+
+      const paint = () => {
+        const box = card.getBoundingClientRect();
+        card.style.setProperty('--x', `${last!.clientX - box.left}px`);
+        card.style.setProperty('--y', `${last!.clientY - box.top}px`);
+        last = null;
+      };
+
+      card.addEventListener(
+        'pointermove',
+        (event) => {
+          if (!last) requestAnimationFrame(paint);
+          last = event;
+        },
+        { passive: true },
+      );
+    }
+  }
+</script>
+
 <style>
   .featured {
     --pad: clamp(1.5rem, 0.9rem + 2.4vw, 3rem);
@@ -284,9 +308,36 @@ const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ??
 
   .card {
     --pad: clamp(1.25rem, 0.9rem + 1.2vw, 1.75rem);
+    position: relative;
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     padding: var(--pad);
+    transition: border-color 0.25s;
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      border-color: var(--border-2);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: radial-gradient(24rem circle at var(--x, 50%) var(--y, 50%), rgb(110 161 255 / 0.08), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.35s;
+      pointer-events: none;
+    }
+
+    :global(.js) .card:hover::before {
+      opacity: 1;
+    }
   }
 
   .facts {
