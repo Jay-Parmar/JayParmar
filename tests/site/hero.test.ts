@@ -34,6 +34,13 @@ describe('hero', () => {
     for (const view of ['overview', 'allocation', 'playback']) expect(study).toContain(`id="chapter-${view}"`);
   });
 
+  it('ships a still weave and reveals its pause control when motion is available', () => {
+    expect(hero).toMatch(/<path class="mesh"[^>]* d="M[^"]+"/);
+    const control = hero.match(/<button\b[^>]*data-weave-control[^>]*>/)?.[0] ?? '';
+    expect(control).toContain('aria-label="Pause weave animation"');
+    expect(control).toMatch(/\shidden(?=[\s>=])/);
+  });
+
   it('draws the system I designed, with a label of its own and a caption', () => {
     for (const part of ['Cameras', 'Control plane', 'host-01', 'host-02', 'host-03', 'Live view']) {
       expect(figure).toContain(`>${part}<`);
