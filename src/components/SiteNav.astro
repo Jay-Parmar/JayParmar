@@ -29,7 +29,7 @@ const target = (id: string) => (home ? id : undefined);
     </a>
     <nav aria-label="Sections">
       <button class="toggle" type="button" popovertarget="sections">
-        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7h14M3 13h14"></path></svg>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path class="top" d="M3 7h14"></path><path class="bottom" d="M3 13h14"></path></svg>
         <span class="visually-hidden">Menu</span>
       </button>
       <ul class="links" id="sections" role="list" popover>
@@ -215,6 +215,25 @@ const target = (id: string) => (home ? id : undefined);
     stroke: currentColor;
     stroke-width: 1.6;
     stroke-linecap: round;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.25s var(--ease);
+  }
+
+  .nav:has(.links:popover-open) .toggle {
+    background: var(--surface-2);
+  }
+
+  .nav:has(.links:popover-open) .top {
+    transform: translateY(3px) rotate(45deg);
+  }
+
+  .nav:has(.links:popover-open) .bottom {
+    transform: translateY(-3px) rotate(-45deg);
+  }
+
+  .links::backdrop {
+    background: rgb(11 13 18 / 0.55);
   }
 
   @media (max-width: 47.99rem) {
