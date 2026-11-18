@@ -139,6 +139,11 @@ a:hover {
   text-decoration-thickness: 0.14em;
 }
 
+::selection {
+  background: var(--data);
+  color: var(--on-line);
+}
+
 :focus-visible {
   outline: 3px solid var(--ink);
   outline-offset: 3px;
