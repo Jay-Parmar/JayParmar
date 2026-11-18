@@ -6,6 +6,9 @@ const featured = projects.filter((project) => project.featured);
 const others = projects.filter((project) => !project.featured);
 const meta = (project: Project) => [project.year, project.where].filter(Boolean).join(', ');
 const morph = (project: Project) => (project.page ? `view-transition-name: project-${project.slug}` : undefined);
+
+/** The number a fact starts with, if any, and the rest of it. */
+const split = (fact: string) => fact.match(/^(\d[\d,.]*\+?) (.+)$/)?.slice(1) ?? [undefined, fact];
 ---
 
 <section class="section" id="projects" aria-labelledby="projects-title">
@@ -15,24 +18,31 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
 
     {
       featured.map((project) => (
-        <article class="project featured" id={`project-${project.slug}`}>
-          <p class="meta">
-            <span>{meta(project)}</span>
-            {project.code && <span class="open">Open source</span>}
-          </p>
-          <h3 style={morph(project)}>{project.name}</h3>
-          <p class="tagline">{project.tagline}</p>
-          <ul class="facts" role="list">
-            {project.facts.map((fact) => (
-              <li>{fact}</li>
-            ))}
+        <article class="featured panel" id={`project-${project.slug}`}>
+          <div class="head">
+            <p class="meta">
+              <span>{meta(project)}</span>
+              {project.code && <span class="open">Open source</span>}
+            </p>
+            <h3 style={morph(project)}>{project.name}</h3>
+            <p class="tagline">{project.tagline}</p>
+          </div>
+          <ul class="stats" role="list">
+            {project.facts.map((fact) => {
+              const [num, label] = split(fact);
+              return (
+                <li>
+                  {num && <span class="num">{num}</span>} <span class="label">{label}</span>
+                </li>
+              );
+            })}
           </ul>
           <ul class="stack" role="list" aria-label="Built with">
             {project.stack.map((tool) => (
               <li class="chip">{tool}</li>
             ))}
           </ul>
-          <p class="links">
+          <p class="actions">
             {project.page && (
               <a class="button primary" href={link(`projects/${project.slug}/`)} aria-label={`${project.name}, how it works`}>
                 How it works
@@ -84,17 +94,20 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
 </section>
 
 <style>
-  .project {
-    padding-top: 1.5rem;
-    border-top: 2px solid var(--track);
+  .featured {
+    --pad: clamp(1.5rem, 0.9rem + 2.4vw, 3rem);
+    display: grid;
+    grid-template-areas: 'head' 'stats' 'stack' 'actions';
+    margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    overflow: hidden;
+    background:
+      radial-gradient(42rem 26rem at 0% 0%, rgb(110 161 255 / 0.07), transparent 70%),
+      var(--surface);
   }
 
-  .featured {
-    margin-top: 3rem;
-    padding: clamp(1.5rem, 1rem + 2.5vw, 2.75rem);
-    border-top: 0;
-    border-radius: 12px;
-    background: var(--wash);
+  .head {
+    grid-area: head;
+    padding: var(--pad) var(--pad) 0;
   }
 
   .meta {
@@ -131,12 +144,16 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
 
   h3 {
     width: fit-content;
-    margin-top: 0.15rem;
+    margin-top: 0.75rem;
     font-size: var(--step-3);
+    letter-spacing: -0.025em;
   }
 
   .featured h3 {
-    font-size: var(--step-4);
+    margin-top: 1.25rem;
+    font-size: clamp(2.5rem, 1.75rem + 2.4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
   }
 
   .tagline {
@@ -145,8 +162,112 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
   }
 
   .featured .tagline {
+    max-width: 40ch;
+    margin-top: 1rem;
     font-size: var(--step-1);
-    line-height: 1.45;
+    line-height: 1.5;
+  }
+
+  .stats {
+    grid-area: stats;
+    margin: 2rem var(--pad) 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .stats li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .num {
+    flex: none;
+    min-width: 3.4em;
+    color: var(--text);
+    font-size: var(--step-3);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .label {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  .label:only-child {
+    color: var(--text-2);
+    font-size: var(--step-0);
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+  }
+
+  .featured .stack {
+    grid-area: stack;
+    margin: 0;
+    padding: 1.75rem var(--pad) 0;
+  }
+
+  .actions {
+    grid-area: actions;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 2rem var(--pad) var(--pad);
+  }
+
+  @media (min-width: 56rem) {
+    .featured {
+      grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem);
+      grid-template-rows: auto auto 1fr;
+      grid-template-areas:
+        'head stats'
+        'stack stats'
+        'actions stats';
+    }
+
+    .stats {
+      display: grid;
+      grid-auto-rows: 1fr;
+      margin: 0;
+      border-top: 0;
+      border-left: 1px solid var(--border);
+      background: var(--bg-raised);
+    }
+
+    .stats li {
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 1.5rem 2rem;
+      border-bottom: 0;
+    }
+
+    .stats li + li {
+      border-top: 1px solid var(--border);
+    }
+
+    .num {
+      min-width: 0;
+      font-size: var(--step-4);
+    }
+
+    .actions {
+      align-self: end;
+    }
+  }
+
+  .project {
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--track);
   }
 
   .facts {
@@ -155,11 +276,6 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     gap: 0.4rem 1.5rem;
     margin-top: 1rem;
     font-weight: 700;
-  }
-
-  .featured .facts {
-    margin-top: 1.5rem;
-    font-size: var(--step-1);
   }
 
   .facts li {
@@ -176,13 +292,6 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     border: 2px solid var(--ink);
     border-radius: 50%;
     transform: translateY(-0.1em);
-  }
-
-  .stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 1.25rem;
   }
 
   .links {

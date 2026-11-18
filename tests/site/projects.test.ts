@@ -12,6 +12,7 @@ const page = (slug: string) => {
   return text.slice(text.indexOf('<main'), text.indexOf('</main>'));
 };
 const chips = (text: string) => [...text.matchAll(/class="chip"[^>]*>([^<]+)</g)].map((m) => m[1].trim());
+const nums = (text: string) => [...text.matchAll(/class="num"[^>]*>([^<]+)</g)].map((m) => m[1].trim());
 const repeated = projects
   .flatMap((project) =>
     [...card(project.slug).matchAll(/<a\b([^>]*)>([^<]+)<\/a>/g)].map(([, attrs, text]) => ({
@@ -31,6 +32,10 @@ describe('projects', () => {
     for (const project of projects.filter((project) => project.page)) {
       expect(chips(page(project.slug)), project.slug).toEqual(project.stack);
     }
+  });
+
+  it('pull out the number that leads each fact', () => {
+    expect(nums(card('hirejutsu'))).toEqual(['629', '15', '2,000+']);
   });
 
   it('mark the projects with public code as open source', () => {
