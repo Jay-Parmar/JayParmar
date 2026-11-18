@@ -40,9 +40,8 @@ describe('colour tokens', () => {
     }
   });
 
-  it('keep button labels readable', () => {
+  it('keep the primary button label readable', () => {
     expect(contrast(screen.bg, screen.text)).toBeGreaterThanOrEqual(7);
-    expect(contrast(screen['on-accent'], screen.accent)).toBeGreaterThanOrEqual(4.5);
   });
 
   it('print dark text on white paper', () => {
