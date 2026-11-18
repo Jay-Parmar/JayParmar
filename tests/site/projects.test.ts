@@ -47,6 +47,14 @@ describe('projects', () => {
     expect(nums(page('foodhub-sniffer'))).toEqual(['36']);
   });
 
+  it('lead the stats on their pages with the facts that have numbers', () => {
+    for (const project of projects.filter((project) => project.page)) {
+      const stats = page(project.slug).match(/<ul class="stats[\s\S]*?<\/ul>/)?.[0] ?? '';
+      const numbered = stats.split('<li').slice(1).map((item) => item.includes('class="num"'));
+      expect(numbered, project.slug).toEqual([...numbered].sort((a, b) => Number(b) - Number(a)));
+    }
+  });
+
   it('mark the projects with public code as open source', () => {
     const open = ['hirejutsu', 'hold-my-files', 'foodhub-sniffer'];
     const marked = projects.filter((project) => card(project.slug).includes('>Open source<'));
