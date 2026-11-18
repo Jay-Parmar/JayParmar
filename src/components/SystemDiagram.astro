@@ -213,16 +213,16 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
 
   @media (prefers-reduced-motion: no-preference) {
     .window {
-      animation: rise 0.8s var(--ease) 0.15s both;
+      animation: window-in 0.8s var(--ease) 0.15s both;
     }
 
     .route {
       stroke-dasharray: 1 1;
-      animation: draw 0.9s var(--ease) calc(0.6s + var(--i) * 0.12s) both;
+      animation: trace 0.9s var(--ease) calc(0.6s + var(--i) * 0.12s) both;
     }
 
     .part {
-      animation: appear 0.6s var(--ease) var(--at) both;
+      animation: part-in 0.6s var(--ease) var(--at) both;
     }
 
     .packet {
@@ -242,14 +242,14 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
     }
   }
 
-  @keyframes rise {
+  @keyframes window-in {
     from {
       opacity: 0;
       transform: translateY(1rem) scale(0.98);
     }
   }
 
-  @keyframes draw {
+  @keyframes trace {
     from {
       stroke-dashoffset: 1;
     }
@@ -259,7 +259,7 @@ const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `$
     }
   }
 
-  @keyframes appear {
+  @keyframes part-in {
     from {
       opacity: 0;
     }
