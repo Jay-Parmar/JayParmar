@@ -1,0 +1,39 @@
+---
+import { lines, type LineId } from '../data/lines';
+
+interface Props {
+  ids: LineId[];
+}
+
+const { ids } = Astro.props;
+const names = new Map(lines.map((line) => [line.id, line.name]));
+---
+
+<ul class="marks" role="list" aria-label="Skill lines">
+  {ids.map((id) => <li style={`--c: var(--${id})`}>{names.get(id)}</li>)}
+</ul>
+
+<style>
+  .marks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  li::before {
+    content: '';
+    width: 1.75rem;
+    height: var(--line);
+    border-radius: 99px;
+    background: var(--c);
+  }
+</style>

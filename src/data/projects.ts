@@ -101,7 +101,7 @@ export const projects: Project[] = [
       'Batched queries that drained the DB pool',
       "Bounded WebSocket sends so one dead socket can't wedge the API",
     ],
-    where: 'Built at ESSI',
+    where: 'built at ESSI',
   },
   {
     slug: 'poker-planner',
