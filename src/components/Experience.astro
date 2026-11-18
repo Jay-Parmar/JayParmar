@@ -259,4 +259,17 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
       break-inside: avoid;
     }
   }
+
+  @media (forced-colors: active) {
+    .entry:not(:last-child)::before,
+    h4::after,
+    .group li::before {
+      background: CanvasText;
+    }
+
+    .fill,
+    .is-reached .node {
+      background: Highlight;
+    }
+  }
 </style>
