@@ -1,4 +1,4 @@
-import { offset, type Point } from '../lib/metro';
+import { nearest, offset, polylineLength, type Point } from '../lib/metro';
 import type { LineId } from './lines';
 
 export interface MapLine {
@@ -132,3 +132,16 @@ export const mapStations: MapStation[] = [
     label: { x: 592, y: 302, anchor: 'end' },
   },
 ];
+
+// The pen draws the backend trunk from college, and every other line sets off
+// from its first station as the trunk reaches it. Pace is in map units per second.
+const pace = 380;
+const backend = mapLines.find(({ line }) => line === 'backend')!.points;
+const lag: Partial<Record<LineId, number>> = { frontend: 0.1 };
+
+export const drawn = mapLines.map(({ line, points }) => ({
+  line,
+  points,
+  delay: (nearest(backend, points[0]).fraction * polylineLength(backend)) / pace + (lag[line] ?? 0),
+  duration: polylineLength(points) / pace,
+}));

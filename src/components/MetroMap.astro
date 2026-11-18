@@ -1,22 +1,8 @@
 ---
-import type { LineId } from '../data/lines';
-import { mapLines, mapStations, viewBox, type MapStation } from '../data/map';
-import { nearest, pathData, polylineLength, trainTiming, type Point } from '../lib/metro';
+import { drawn, mapStations, viewBox, type MapStation } from '../data/map';
+import { nearest, pathData, polylineLength, seconds, trainTiming, type Point } from '../lib/metro';
 
 const [width, height] = viewBox;
-
-// The pen draws the backend trunk from college, and every other line sets off
-// from its first station as the trunk reaches it. Pace is in map units per second.
-const pace = 380;
-const trunk = mapLines.find(({ line }) => line === 'backend')!.points;
-const trunkTime = polylineLength(trunk) / pace;
-const lag: Partial<Record<LineId, number>> = { frontend: 0.1 };
-const drawn = mapLines.map(({ line, points }) => ({
-  line,
-  points,
-  delay: nearest(trunk, points[0]).fraction * trunkTime + (lag[line] ?? 0),
-  duration: polylineLength(points) / pace,
-}));
 
 const middle = ({ ends: [[x1, y1], [x2, y2]] }: MapStation): Point => [(x1 + x2) / 2, (y1 + y2) / 2];
 
@@ -39,7 +25,6 @@ const trains = drawn.map(({ line, points }) => {
   return { line, loop, ...trainTiming(stops, 0.8 / loop) };
 });
 
-const seconds = (value: number) => `${value.toFixed(2)}s`;
 ---
 
 <figure class="map">

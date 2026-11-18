@@ -73,3 +73,6 @@ export function trainTiming(stops: readonly number[], dwell: number): { keyPoint
   const join = (values: number[]) => values.map((value) => round(value, 4)).join(';');
   return { keyPoints: join(points), keyTimes: join(times) };
 }
+
+/** A duration for CSS or SMIL, like 1.25s. */
+export const seconds = (value: number) => `${value.toFixed(2)}s`;
