@@ -33,12 +33,12 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
           </ul>
           <p class="links">
             {project.page && (
-              <a class="button primary" href={link(`projects/${project.slug}/`)}>
+              <a class="button primary" href={link(`projects/${project.slug}/`)} aria-label={`${project.name}, how it works`}>
                 How it works
               </a>
             )}
             {project.code && (
-              <a class="button" href={project.code}>
+              <a class="button" href={project.code} aria-label={`${project.name} code on GitHub`}>
                 Code on GitHub
               </a>
             )}
@@ -69,8 +69,8 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
             </ul>
             {(project.page || project.code) && (
               <p class="links">
-                {project.page && <a href={link(`projects/${project.slug}/`)}>How it works</a>}
-                {project.code && <a href={project.code}>Code on GitHub</a>}
+                {project.page && <a href={link(`projects/${project.slug}/`)} aria-label={`${project.name}, how it works`}>How it works</a>}
+                {project.code && <a href={project.code} aria-label={`${project.name} code on GitHub`}>Code on GitHub</a>}
               </p>
             )}
           </article>

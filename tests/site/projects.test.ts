@@ -13,6 +13,15 @@ const page = (slug: string) => {
   return text.slice(text.indexOf('<main'), text.indexOf('</main>'));
 };
 const chips = (text: string) => [...text.matchAll(/class="chip"[^>]*>([^<]+)</g)].map((m) => m[1].trim());
+const repeated = projects
+  .flatMap((project) =>
+    [...card(project.slug).matchAll(/<a\b([^>]*)>([^<]+)<\/a>/g)].map(([, attrs, text]) => ({
+      project: project.name,
+      text: text.trim(),
+      name: attrs.match(/aria-label="([^"]+)"/)?.[1] ?? text.trim(),
+    })),
+  )
+  .filter(({ text }) => ['How it works', 'Code on GitHub'].includes(text));
 
 describe('projects', () => {
   it('mark the lines of every project', () => {
@@ -28,5 +37,15 @@ describe('projects', () => {
     for (const project of projects.filter((project) => project.page)) {
       expect(chips(page(project.slug)), project.slug).toEqual(project.stack);
     }
+  });
+
+  it('give every How it works and Code on GitHub link a name of its own', () => {
+    expect(repeated).toHaveLength(6);
+    expect(new Set(repeated.map(({ name }) => name)).size).toBe(repeated.length);
+    for (const { project, name } of repeated) expect(name).toContain(project);
+  });
+
+  it('keep the words you see in the name of each link', () => {
+    for (const { text, name } of repeated) expect(name.toLowerCase()).toContain(text.toLowerCase());
   });
 });
