@@ -95,7 +95,7 @@ const target = (id: string) => (home ? id : undefined);
           menu.hidePopover();
         }
       });
-      matchMedia('(min-width: 48rem)').addEventListener('change', (event) => {
+      matchMedia('(min-width: 56rem)').addEventListener('change', (event) => {
         if (event.matches && menu.matches(':popover-open')) menu.hidePopover();
       });
     }
@@ -167,6 +167,7 @@ const target = (id: string) => (home ? id : undefined);
   }
 
   .brand {
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 0.65rem;
@@ -289,7 +290,7 @@ const target = (id: string) => (home ? id : undefined);
   }
 
   @supports selector(:popover-open) {
-    @media (max-width: 47.99rem) {
+    @media (max-width: 55.99rem) {
       .toggle {
         display: grid;
       }
@@ -333,7 +334,7 @@ const target = (id: string) => (home ? id : undefined);
   }
 
   @supports not selector(:popover-open) {
-    @media (max-width: 47.99rem) {
+    @media (max-width: 55.99rem) {
       .inner {
         flex-wrap: wrap;
         padding-block: 0.75rem;
