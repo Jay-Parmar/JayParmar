@@ -23,7 +23,21 @@ describe('hero', () => {
     }
     const label = figure.match(/<svg[^>]*role="img"[^>]*aria-label="([^"]+)"/)?.[1] ?? '';
     expect(label).toMatch(/cameras.*hosts.*live view/i);
-    expect(figure).toMatch(/<figcaption[^>]*>[^<]*control plane/i);
+    const caption = figure.slice(figure.indexOf('<figcaption')).replace(/<[^>]+>/g, ' ');
+    expect(caption).toMatch(/control plane/i);
+  });
+
+  it('ships three labelled diagram views with a description for each', () => {
+    const choices = figure.match(/<input\b[^>]*type="radio"[^>]*>/g) ?? [];
+    expect(choices).toHaveLength(3);
+    expect(choices.filter((choice) => choice.includes(' checked'))).toHaveLength(1);
+    for (const [i, choice] of choices.entries()) {
+      const id = choice.match(/\bid="([^"]+)"/)?.[1];
+      const note = choice.match(/aria-describedby="([^"]+)"/)?.[1];
+      const label = ['Overview', 'Work allocation', 'Live view'][i];
+      expect(figure).toMatch(new RegExp(`<label[^>]*for="${id}"[^>]*>${label}</label>`));
+      expect(figure).toMatch(new RegExp(`<span[^>]*id="${note}"[^>]*>[^<]{20,}</span>`));
+    }
   });
 
   it('keeps each packet out of sight until it starts moving', () => {

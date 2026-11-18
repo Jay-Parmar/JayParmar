@@ -1,298 +1,320 @@
 ---
-const hosts = [
-  { name: 'host-01', y: 68, load: 0.62, pace: '5.2s' },
-  { name: 'host-02', y: 140, load: 0.44, pace: '6.4s' },
-  { name: 'host-03', y: 212, load: 0.78, pace: '4.6s' },
+import { platform } from '../data/platform';
+import { results } from '../data/results';
+
+const scale = results.find((result) => result.id === 'cameras')!;
+const shelves = platform.hosts.map((name, index) => ({ name, y: 110 + index * 38 })).reverse();
+const streams = [
+  { path: 'M80 184l37 18 44-22 31 15 35-17', begin: '0.3s' },
+  { path: 'M343 194l43 22 41-20 23 11 51-25', begin: '0.9s' },
 ];
-
-// Cameras feed every host, and every host serves the live view.
-const routes = hosts.map(({ y }) => {
-  const mid = y + 28;
-  return `M140 160C168 160 168 ${mid} 196 ${mid}H364C392 ${mid} 392 160 420 160`;
-});
-
-const packets = routes.flatMap((path, i) => [0, 1].map((k) => ({ path, begin: `${(1.4 + i * 0.55 + k * 1.6).toFixed(2)}s` })));
 ---
 
 <figure class="system">
-  <div class="window">
-    <div class="bar">
-      <p class="name">Multi-server video platform</p>
-      <p class="stat">25 to <strong>240+</strong> cameras</p>
-    </div>
-    <svg viewBox="0 0 560 320" role="img" aria-label="Cameras feed three hosts run by one control plane, and the hosts serve the live view.">
-      <g class="routes">
-        {routes.map((d, i) => <path class="route" d={d} pathLength="1" style={`--i: ${i}`} />)}
-      </g>
-      <g class="packets">
-        {
-          packets.map(({ path, begin }) => (
+  <div class="bar">
+    <p class="name">{platform.title}</p>
+    <p class="scale">{scale.beforeText} to <strong>{scale.afterText}</strong> {platform.cameras.toLowerCase()}</p>
+  </div>
+  <div class="drawing">
+    <svg viewBox="0 0 570 278" role="img" aria-label={platform.description}>
+      <defs>
+        <pattern id="floor-grid" width="40" height="20" patternUnits="userSpaceOnUse">
+          <path d="M0 0l40 20M0 20L40 0" fill="none" stroke="var(--border-2)" stroke-width="0.7" />
+        </pattern>
+        <radialGradient id="floor-fade">
+          <stop offset="0.2" stop-color="white" />
+          <stop offset="1" stop-color="black" />
+        </radialGradient>
+        <mask id="floor-mask"><rect width="570" height="278" fill="url(#floor-fade)" /></mask>
+        <linearGradient id="rack-lid" x2="1" y2="1">
+          <stop class="lid-light" />
+          <stop offset="1" class="lid-dark" />
+        </linearGradient>
+        <linearGradient id="control-lid" x2="0.8" y2="1">
+          <stop class="control-light" />
+          <stop offset="1" class="control-dark" />
+        </linearGradient>
+      </defs>
+
+      <rect width="570" height="278" fill="url(#floor-grid)" mask="url(#floor-mask)" />
+      <path class="base" d="M171 204l113-56 113 56v5l-113 56-113-56z" />
+      <path class="base-edge" d="M171 204l113 56 113-56m-113 56v5" />
+
+      <g class="streams">
+        {streams.map(({ path, begin }) => (
+          <g>
+            <path class="conduit" d={path} />
+            <path class="wire" d={path} />
             <g class="packet" visibility="hidden">
-              <circle class="halo" r="9" />
-              <circle class="core" r="3.5" />
+              <circle class="halo" r="6" />
+              <circle class="core" r="2.4" />
               <set attributeName="visibility" to="visible" begin={begin} fill="freeze" />
-              <animateMotion dur="3.2s" begin={begin} repeatCount="indefinite" path={path} />
+              <animateMotion dur="2.8s" begin={begin} repeatCount="indefinite" path={path} />
             </g>
-          ))
-        }
-      </g>
-      <g class="part" style="--at: 0.35s">
-        <rect class="box" x="16" y="128" width="124" height="64" rx="12" />
-        <text class="label" x="32" y="157">Cameras</text>
-        <text class="sub" x="32" y="177">RTSP, ONVIF</text>
-      </g>
-      <g class="part" style="--at: 0.45s">
-        <rect class="plane" x="180" y="20" width="200" height="280" rx="16" />
-        <text class="label" x="196" y="49">Control plane</text>
-        <text class="sub" x="364" y="49" text-anchor="end">FastAPI</text>
-      </g>
-      {
-        hosts.map(({ name, y, load, pace }, i) => (
-          <g class="part" style={`--at: ${(0.55 + i * 0.08).toFixed(2)}s`}>
-            <rect class="box" x="196" y={y} width="168" height="56" rx="10" />
-            <circle class="pulse" cx="214" cy={y + 28} r="3.5" />
-            <circle class="status" cx="214" cy={y + 28} r="3.5" />
-            <text class="host" x="228" y={y + 32}>{name}</text>
-            <rect class="track" x="300" y={y + 26} width="48" height="4" rx="2" />
-            <rect class="load" x="300" y={y + 26} width={48 * load} height="4" rx="2" style={`--pace: ${pace}`} />
           </g>
-        ))
-      }
-      <g class="part" style="--at: 0.8s">
-        <rect class="box" x="420" y="128" width="124" height="64" rx="12" />
-        <text class="label" x="436" y="157">Live view</text>
-        <text class="sub" x="436" y="177">Operators</text>
+        ))}
+      </g>
+
+      <g class="endpoints">
+        <g transform="translate(76 177)">
+          <path class="pad" d="M-40 0L0-20 40 0v6L0 26-40 6z" />
+          <path class="rim" d="M-40 0L0 20 40 0M0 20v6" />
+          <path class="stand" d="M-10-5v9l-12 6" />
+          <path class="metal" d="M-26-22l17-9 33 15-17 9z" />
+          <path class="side" d="M-26-22L7-7V8L-26-7z" />
+          <path class="glass" d="M7-7l17-9v15L7 8z" />
+          <ellipse class="lens" cx="15" cy="-4" rx="3.3" ry="4.5" transform="rotate(24 15 -4)" />
+          <path class="rim" d="M-21-14l10 5" />
+        </g>
+        <g transform="translate(494 177)">
+          <path class="pad" d="M-40 0L0-20 40 0v6L0 26-40 6z" />
+          <path class="rim" d="M-40 0L0 20 40 0M0 20v6" />
+          <path class="stand" d="M0-11V2m-10 5L10-3" />
+          <path class="metal" d="M-24-28l44-22 4 2v33l-44 22-4-2z" />
+          <path class="glass" d="M-20-26L24-48v33L-20 7z" />
+          <path class="screen" d="M-15-24L19-41v23L-15-1zM2-32.5v23m-17-3L19-29" />
+        </g>
+        <text class="node-name" x="76" y="227">{platform.cameras}</text>
+        <text class="detail" x="76" y="247">{platform.protocols}</text>
+        <text class="node-name" x="494" y="227">{platform.output}</text>
+        <text class="detail" x="494" y="247">{platform.audience}</text>
+      </g>
+
+      <path class="bus" d="M214 69l-24 12v99l16 8m-16-46 16 8m-16-46 16 8" />
+      {shelves.map(({ name, y }) => (
+        <g transform={`translate(284 ${y})`}>
+          <path class="metal" d="M-84 0L0-42 84 0 0 42z" />
+          <path class="side" d="M-84 0L0 42v21l-84-42z" />
+          <path class="front" d="M0 42L84 0v21L0 63z" />
+          <path class="etch" d="M-69 0l69 34 69-34M-42-1l38 19m-29-23L5 14m-29-23L14 10" />
+          <g transform="matrix(1 .5 0 1 -76 9)">
+            <circle class="lamp" cy="3.5" r="2" />
+            <text class="host" x="8" y="7">{name}</text>
+          </g>
+          <g class="ports" transform="matrix(1 -.5 0 1 10 44)">
+            <path d="M0 1h16v5H0zM21 1h16v5H21z" />
+            <path class="vents" d="M45 0v7m4-7v7m4-7v7m4-7v7m4-7v7" />
+          </g>
+        </g>
+      ))}
+
+      <g class="controller">
+        <g transform="translate(284 65)">
+          <path class="cap-side" d="M-86 0L0 43l86-43v12L0 55-86 12z" />
+          <path class="cap" d="M-86 0L0-43 86 0 0 43z" />
+          <path class="etch" d="M-72 0L0-36 72 0 0 36z" />
+          <g transform="matrix(1 .5 -1 .5 0 0)">
+            <path class="pins" d="M-13-26v7m8-7v7m9-7v7m9-7v7m-26 38v7m8-7v7m9-7v7m9-7v7M-26-13h7m-7 8h7m-7 9h7m-7 9h7m38-26h7m-7 8h7m-7 9h7m-7 9h7" />
+            <rect class="die" x="-19" y="-19" width="38" height="38" rx="3" />
+            <rect class="circuit" x="-12" y="-12" width="24" height="24" rx="2" />
+          </g>
+          <path class="seam" d="M-77 8L0 46l77-38" />
+        </g>
+        <path class="leader" d="M345 53l43-22h16" />
+        <circle class="lamp" cx="345" cy="53" r="2" />
+        <text class="callout" x="414" y="35">{platform.control}</text>
+        <text class="callout-detail" x="414" y="54">{platform.framework}</text>
       </g>
     </svg>
   </div>
+  <fieldset class="views">
+    <legend class="visually-hidden">{platform.viewLabel}</legend>
+    {platform.views.map((view, i) => (
+      <div>
+        <input class="visually-hidden" type="radio" name="platform-view" id={`view-${view.id}`}
+          aria-describedby={`note-${view.id}`} checked={i === 0} />
+        <label for={`view-${view.id}`}>{view.label}</label>
+      </div>
+    ))}
+  </fieldset>
   <figcaption>
-    The architecture I designed at ESSI: a FastAPI control plane runs a fleet of video servers as one system.
+    {platform.views.map((view) => <span id={`note-${view.id}`}>{view.note}</span>)}
   </figcaption>
 </figure>
 
 <style>
   .system {
-    position: relative;
-  }
-
-  .system::before {
-    content: '';
-    position: absolute;
-    inset: -12% -8%;
-    z-index: -1;
-    background: radial-gradient(closest-side, rgb(110 161 255 / 0.13), transparent);
-    pointer-events: none;
-  }
-
-  .window {
     overflow: hidden;
     border: 1px solid var(--border-2);
-    border-radius: 16px;
-    background: rgb(18 21 28 / 0.86);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.04),
-      0 40px 80px -32px rgb(0 0 0 / 0.7);
-    backdrop-filter: blur(6px);
+    border-radius: var(--radius);
+    background: var(--bg-raised);
+    box-shadow: 0 24px 60px -42px rgb(0 0 0 / 0.7);
   }
 
   .bar {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 0.2rem 1rem;
-    padding: 0.8rem 1.1rem;
+    gap: 0.15rem 1rem;
+    padding: 0.85rem var(--inset);
     border-bottom: 1px solid var(--border);
-    font-size: var(--step--2);
-    white-space: nowrap;
   }
 
   .name {
-    color: var(--text-2);
-    font-weight: 500;
-  }
-
-  .stat {
-    color: var(--text-2);
-    font-family: var(--mono);
+    color: var(--text);
     font-size: var(--step--1);
+    font-weight: 550;
   }
 
-  .stat strong {
-    color: var(--accent);
-    font-weight: 500;
+  .scale, .detail, .callout-detail, .host {
+    font-family: var(--mono);
+  }
+
+  .scale {
+    color: var(--muted);
+    font-size: var(--step--2);
+  }
+
+  .scale strong {
+    color: var(--text-2);
+  }
+
+  .drawing {
+    padding: 0.35rem 0;
+    background: radial-gradient(ellipse at 50% 48%, var(--glow), transparent 69%);
   }
 
   svg {
     width: 100%;
     height: auto;
+    stroke-linejoin: round;
+    stroke-linecap: round;
   }
 
-  .route {
+  .lid-light { stop-color: color-mix(in srgb, var(--accent) 19%, var(--surface-2)); }
+  .lid-dark { stop-color: var(--surface-2); }
+  .control-light { stop-color: color-mix(in srgb, var(--accent) 56%, var(--surface)); }
+  .control-dark { stop-color: color-mix(in srgb, var(--accent) 19%, var(--surface)); }
+
+  .base, .pad {
+    fill: var(--surface);
+    stroke: var(--border-2);
+  }
+
+  .base-edge, .etch, .rim, .leader {
     fill: none;
-    stroke: var(--border-2);
-    stroke-width: 1.25;
+    stroke: var(--muted);
+    stroke-opacity: 0.55;
   }
 
-  .halo {
-    fill: var(--accent);
-    opacity: 0.3;
+  .base-edge, .etch { stroke-opacity: 0.32; }
+  .base-edge { stroke: var(--accent); }
+  .metal { fill: url(#rack-lid); }
+  .side { fill: var(--surface-2); }
+  .front { fill: var(--surface); }
+  .metal, .side, .front, .stand { stroke: color-mix(in srgb, var(--muted) 42%, var(--border)); }
+  .stand { fill: none; stroke-width: 2.5; }
+  .glass, .ports { fill: var(--bg); stroke: var(--muted); }
+  .ports, .vents { stroke-width: 0.8; }
+  .screen { fill: var(--glow); stroke: var(--accent); }
+  .lens, .lamp, .core { fill: var(--accent); }
+
+  .bus, .wire, .conduit, .seam {
+    fill: none;
+    stroke: var(--accent);
   }
 
-  .core {
-    fill: #dbe7ff;
-  }
+  .bus { stroke-dasharray: 3 4; stroke-opacity: 0.6; }
+  .conduit { stroke: var(--border-2); stroke-width: 4; }
+  .wire { stroke-opacity: 0.82; stroke-width: 1.4; }
+  .halo { fill: var(--accent); opacity: 0.22; }
+  .packet { display: none; }
+  .cap { fill: url(#control-lid); stroke: var(--accent); }
+  .cap-side { fill: color-mix(in srgb, var(--accent) 16%, var(--surface)); stroke: var(--accent); }
+  .pins, .circuit { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+  .die { fill: var(--surface); stroke: var(--accent); }
+  .circuit { fill: var(--glow); }
+  .seam { stroke-opacity: 0.6; }
 
-  .packet {
-    display: none;
-  }
-
-  .box {
-    fill: var(--surface-2);
-    stroke: var(--border-2);
-  }
-
-  .plane {
-    fill: rgb(110 161 255 / 0.04);
-    stroke: rgb(110 161 255 / 0.4);
-    stroke-dasharray: 4 5;
-  }
-
-  .label {
+  .node-name, .callout {
     fill: var(--text);
     font-size: 15px;
+    font-weight: 550;
+  }
+
+  .node-name, .detail { text-anchor: middle; }
+  .detail, .callout-detail { fill: var(--muted); font-size: 12px; }
+  .host { fill: var(--text-2); font-size: 12px; }
+
+  .views {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    gap: 2px;
+    margin: 0 var(--inset);
+    padding: 3px;
+    border: 1px solid var(--border-2);
+    border-radius: 0.65rem;
+    background: var(--bg);
+  }
+
+  .views label {
+    display: grid;
+    min-height: 2.25rem;
+    align-content: center;
+    padding-inline: 0.85rem;
+    border-radius: 0.4rem;
+    color: var(--muted);
+    font-size: var(--step--2);
     font-weight: 500;
+    cursor: pointer;
   }
 
-  .sub {
-    fill: var(--muted);
-    font-family: var(--mono);
-    font-size: 12.5px;
-  }
-
-  .host {
-    fill: var(--text);
-    font-family: var(--mono);
-    font-size: 13.5px;
-  }
-
-  .status {
-    fill: var(--accent);
-  }
-
-  .pulse {
-    fill: var(--accent);
-    opacity: 0;
-  }
-
-  .track {
-    fill: var(--border-2);
-  }
-
-  .load {
-    fill: var(--accent);
-  }
+  .views label:hover { color: var(--text); }
+  input:checked + label { color: var(--text); background: var(--surface-2); }
+  input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 1px; }
 
   figcaption {
-    max-width: 52ch;
-    margin-top: 1rem;
-    color: var(--muted);
+    display: grid;
+    min-height: 4.7rem;
+    padding: 0.8rem var(--inset) 1.15rem;
+    color: var(--text-2);
     font-size: var(--step--1);
+    line-height: 1.5;
+  }
+
+  figcaption span {
+    grid-area: 1 / 1;
+    visibility: hidden;
+  }
+
+  #note-overview { visibility: visible; }
+  .system:has(input:not(#view-overview):checked) #note-overview { visibility: hidden; }
+  .system:has(#view-allocation:checked) #note-allocation,
+  .system:has(#view-playback:checked) #note-playback { visibility: visible; }
+
+  @supports not selector(:has(input:checked)) {
+    .views { display: none; }
+    figcaption { gap: 0.5rem; }
+    figcaption span { grid-area: auto; visibility: visible; }
+  }
+
+  .system:has(#view-allocation:checked) :is(.endpoints, .streams) { opacity: 0.32; }
+  .system:has(#view-allocation:checked) .bus { stroke-width: 2; stroke-opacity: 1; }
+  .system:has(#view-playback:checked) :is(.controller, .bus) { opacity: 0.4; }
+  .system:has(#view-playback:checked) .wire { stroke-width: 2.3; stroke-opacity: 1; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .packet { display: inline; }
+    .endpoints, .streams, .controller, .bus { transition: opacity 0.2s; }
+    .system:has(#view-allocation:checked) .bus { animation: assign-host 1.4s linear infinite; }
+  }
+
+  @keyframes assign-host {
+    to { stroke-dashoffset: -14; }
   }
 
   @media (max-width: 40rem) {
-    .label {
-      font-size: 20px;
-    }
-
-    .host {
-      font-size: 18px;
-    }
-
-    .sub,
-    .track,
-    .load {
-      display: none;
-    }
+    .views { width: calc(100% - 2 * var(--inset)); }
+    .views div { flex: 1 1 auto; text-align: center; }
+    .views label { min-height: 2.75rem; padding-inline: 0.35rem; }
+    .node-name, .callout { font-size: 20px; }
+    .detail, .callout-detail { font-size: 16px; }
+    .host { font-size: 14px; }
   }
 
-  @media print {
-    .window {
-      background: var(--surface);
-      box-shadow: none;
-      backdrop-filter: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .window {
-      animation: window-in 0.8s var(--ease) 0.15s both;
-    }
-
-    .route {
-      stroke-dasharray: 1 1;
-      animation: trace 0.9s var(--ease) calc(0.6s + var(--i) * 0.12s) both;
-    }
-
-    .part {
-      animation: part-in 0.6s var(--ease) var(--at) both;
-    }
-
-    .packet {
-      display: inline;
-    }
-
-    .pulse {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: ping 2.4s ease-out 1.6s infinite;
-    }
-
-    .load {
-      transform-box: fill-box;
-      transform-origin: left;
-      animation: breathe var(--pace) ease-in-out 1.4s infinite alternate;
-    }
-  }
-
-  @keyframes window-in {
-    from {
-      opacity: 0;
-      transform: translateY(1rem) scale(0.98);
-    }
-  }
-
-  @keyframes trace {
-    from {
-      stroke-dashoffset: 1;
-    }
-
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  @keyframes part-in {
-    from {
-      opacity: 0;
-    }
-  }
-
-  @keyframes ping {
-    from {
-      opacity: 0.55;
-      transform: scale(1);
-    }
-
-    to {
-      opacity: 0;
-      transform: scale(3.2);
-    }
-  }
-
-  @keyframes breathe {
-    to {
-      transform: scaleX(0.7);
-    }
+  @media (forced-colors: active) {
+    input:checked + label { outline: 1px solid Highlight; }
   }
 </style>
