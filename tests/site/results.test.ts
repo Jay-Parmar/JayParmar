@@ -23,7 +23,7 @@ describe('results', () => {
     expect(rows.filter((row) => row.includes('data-start'))).toHaveLength(3);
   });
 
-  it('shows each summary as a badge', () => {
-    expect(section.match(/<span class="badge"[^>]*>[^<]+<\/span>/g)).toHaveLength(3);
+  it('shows each summary as a pill', () => {
+    expect(section.match(/<span class="delta"[^>]*>[^<]+<\/span>/g) ?? []).toHaveLength(3);
   });
 });
