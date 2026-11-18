@@ -1,0 +1,273 @@
+---
+import { drawn, mapStations, viewBox, type MapStation } from '../data/map';
+import { nearest, pathData, polylineLength, seconds, trainTiming, type Point } from '../lib/metro';
+
+const [width, height] = viewBox;
+
+const middle = ({ ends: [[x1, y1], [x2, y2]] }: MapStation): Point => [(x1 + x2) / 2, (y1 + y2) / 2];
+
+/** When the first of a station's lines reaches it while drawing. */
+const arrival = (station: MapStation) =>
+  Math.min(
+    ...drawn
+      .filter(({ line }) => station.lines.includes(line))
+      .map(({ points, delay, duration }) => delay + nearest(points, middle(station)).fraction * duration),
+  );
+
+// Once the map is drawn, a train runs each line out and back, waiting at its stations.
+const done = Math.max(...drawn.map(({ delay, duration }) => delay + duration));
+const trains = drawn.map(({ line, points }) => {
+  const fractions = mapStations
+    .filter((station) => station.lines.includes(line))
+    .map((station) => nearest(points, middle(station)).fraction);
+  const stops = [...new Set([0, 1, ...fractions].map((f) => Number(f.toFixed(4))))].sort((a, b) => a - b);
+  const loop = (2 * polylineLength(points)) / 70 + 0.8 * (2 * stops.length - 1);
+  return { line, loop, ...trainTiming(stops, 0.8 / loop) };
+});
+
+---
+
+<figure class="map">
+  <figcaption id="map-title" class="visually-hidden">
+    My work as a metro map. Each line is a set of skills, and each station is a job or a project where I used them.
+  </figcaption>
+  <svg viewBox={`0 0 ${width} ${height}`} aria-labelledby="map-title">
+    <g class="lines">
+      {
+        drawn.map(({ line, points, delay, duration }) => (
+          <path
+            id={`line-${line}`}
+            class="line"
+            d={pathData(points)}
+            pathLength="1"
+            style={`--c: var(--${line}); --delay: ${seconds(delay)}; --duration: ${seconds(duration)}`}
+          />
+        ))
+      }
+    </g>
+    <g class="trains" aria-hidden="true">
+      {
+        trains.map(({ line, loop, keyPoints, keyTimes }) => (
+          <rect class="train" x="-10" y="-4.5" width="20" height="9" rx="4.5" visibility="hidden">
+            <set attributeName="visibility" to="visible" begin={seconds(done + 0.3)} fill="freeze" />
+            <animateMotion
+              dur={seconds(loop)}
+              begin={seconds(done + 0.3)}
+              repeatCount="indefinite"
+              rotate="auto"
+              calcMode="linear"
+              keyPoints={keyPoints}
+              keyTimes={keyTimes}
+            >
+              <mpath href={`#line-${line}`} />
+            </animateMotion>
+          </rect>
+        ))
+      }
+    </g>
+    <g class="stations">
+      {
+        mapStations.map((station) => {
+          const [[x1, y1], [x2, y2]] = station.ends;
+          const { x, y, anchor } = station.label;
+          return (
+            <a
+              class="station"
+              href={station.href}
+              aria-label={`${station.name}, ${station.year}`}
+              style={`--arrive: ${seconds(arrival(station))}`}
+            >
+              {x1 === x2 && y1 === y2 ? (
+                <>
+                  <g class="focus">
+                    <circle class="halo" cx={x1} cy={y1} r="16" />
+                    <circle class="gap" cx={x1} cy={y1} r="13" />
+                  </g>
+                  <circle class="marker" cx={x1} cy={y1} r="8" />
+                </>
+              ) : (
+                <>
+                  <g class="focus">
+                    <line class="halo" x1={x1} y1={y1} x2={x2} y2={y2} />
+                    <line class="gap" x1={x1} y1={y1} x2={x2} y2={y2} />
+                  </g>
+                  <g class="marker">
+                    <line class="ring" x1={x1} y1={y1} x2={x2} y2={y2} />
+                    <line class="fill" x1={x1} y1={y1} x2={x2} y2={y2} />
+                  </g>
+                </>
+              )}
+              <text class="name" x={x} y={y} text-anchor={anchor}>
+                {station.name}
+              </text>
+              <text class="year" x={x} y={y + 18} text-anchor={anchor}>
+                {station.year}
+              </text>
+            </a>
+          );
+        })
+      }
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .map {
+    margin: 0;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .line {
+    fill: none;
+    stroke: var(--c);
+    stroke-width: var(--line);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .train {
+    display: none;
+    fill: var(--ink);
+    stroke: var(--paper);
+    stroke-width: 1.5;
+  }
+
+  circle.marker {
+    fill: var(--paper);
+    stroke: var(--ink);
+    stroke-width: 4;
+  }
+
+  .ring,
+  .fill {
+    stroke-linecap: round;
+  }
+
+  .ring {
+    stroke: var(--ink);
+    stroke-width: 22;
+  }
+
+  .fill {
+    stroke: var(--paper);
+    stroke-width: 14;
+  }
+
+  text {
+    paint-order: stroke;
+    stroke: var(--paper);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+
+  .name {
+    font-size: 17px;
+    font-weight: 700;
+    fill: var(--ink);
+  }
+
+  .year {
+    font-size: 14px;
+    font-weight: 500;
+    fill: var(--muted);
+  }
+
+  .station {
+    outline: none;
+  }
+
+  .station:hover .name,
+  .station:focus-visible .name {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  .focus {
+    display: none;
+  }
+
+  .station:focus-visible .focus {
+    display: inline;
+  }
+
+  circle.halo {
+    fill: var(--ink);
+  }
+
+  circle.gap {
+    fill: var(--paper);
+  }
+
+  line.halo,
+  line.gap {
+    stroke-linecap: round;
+  }
+
+  line.halo {
+    stroke: var(--ink);
+    stroke-width: 34;
+  }
+
+  line.gap {
+    stroke: var(--paper);
+    stroke-width: 28;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .line {
+      stroke-dasharray: 1 2;
+      animation: draw var(--duration) linear var(--delay) both;
+    }
+
+    .station {
+      animation: appear 0.4s ease-out var(--arrive) both;
+    }
+
+    .train {
+      display: inline;
+    }
+
+    .marker {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) var(--arrive) both;
+    }
+  }
+
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 1.05;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes pop {
+    from {
+      transform: scale(0.4);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .name {
+      font-size: 21px;
+    }
+
+    .year {
+      display: none;
+    }
+  }
+</style>

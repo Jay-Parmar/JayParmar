@@ -1,0 +1,215 @@
+---
+import { profile } from '../data/profile';
+
+const stops = [
+  { id: 'results', name: 'Results' },
+  { id: 'experience', name: 'Experience' },
+  { id: 'projects', name: 'Projects' },
+  { id: 'skills', name: 'Skills' },
+  { id: 'contact', name: 'Contact' },
+];
+---
+
+<header class="bar">
+  <div class="wrap inner">
+    <a class="home" href="#top">{profile.name}</a>
+    <span class="now" aria-hidden="true">Sections</span>
+    <nav class="strip" aria-label="Sections">
+      <ol role="list">
+        {
+          stops.map((stop) => (
+            <li>
+              <a href={`#${stop.id}`} data-target={stop.id}>
+                <span class="name">{stop.name}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <span class="train" aria-hidden="true"></span>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const strip = document.querySelector<HTMLElement>('.strip');
+
+  if (strip) {
+    const links = [...strip.querySelectorAll<HTMLAnchorElement>('a[data-target]')];
+    const sections = links.map((link) => document.getElementById(link.dataset.target ?? ''));
+    const now = strip.closest('header')?.querySelector<HTMLElement>('.now');
+    const unnamed = now?.textContent ?? '';
+    const smooth = matchMedia('(prefers-reduced-motion: no-preference)');
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      const mark = innerHeight * 0.35;
+      const tops = sections.map((section) => (section ? section.getBoundingClientRect().top - mark : Infinity));
+      const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      const current = atEnd ? links.length - 1 : tops.findLastIndex((top) => top <= 0);
+
+      let position = Math.max(current, 0);
+      if (smooth.matches && current >= 0 && current < links.length - 1) {
+        position += Math.min(1, -tops[current] / (tops[current + 1] - tops[current]));
+      }
+
+      strip.style.setProperty('--p', String(position / (links.length - 1)));
+      strip.classList.toggle('is-running', current >= 0);
+      links.forEach((link, i) => {
+        link.classList.toggle('is-passed', i < current);
+        if (i === current) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+      if (now) now.textContent = current >= 0 ? (links[current].textContent ?? '').trim() : unnamed;
+    };
+
+    const request = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    addEventListener('scroll', request, { passive: true });
+    addEventListener('resize', request);
+    update();
+  }
+</script>
+
+<style>
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid var(--track);
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 4rem;
+  }
+
+  .home {
+    flex: none;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .now {
+    display: none;
+    flex: none;
+    width: 4.75rem;
+    font-size: var(--step--1);
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+
+  .strip {
+    --dot: 0.75rem;
+    position: relative;
+    flex: 1;
+    max-width: 34rem;
+    margin-left: auto;
+  }
+
+  .strip::before {
+    content: '';
+    position: absolute;
+    top: calc(0.6rem + var(--dot) / 2 - 2px);
+    left: 10%;
+    right: 10%;
+    height: 4px;
+    border-radius: 99px;
+    background: var(--ink);
+  }
+
+  ol {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  a[data-target] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.4rem;
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  a[data-target]::before {
+    content: '';
+    z-index: 1;
+    width: var(--dot);
+    height: var(--dot);
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+
+  a[data-target]:hover,
+  a[aria-current] {
+    color: var(--ink);
+  }
+
+  a[aria-current] {
+    font-weight: 700;
+  }
+
+  a.is-passed::before {
+    background: var(--ink);
+  }
+
+  .train {
+    display: none;
+  }
+
+  :global(.js) .train {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    top: calc(0.6rem + var(--dot) / 2 - 5px);
+    left: calc(10% + var(--p, 0) * 80%);
+    width: 1.5rem;
+    height: 10px;
+    margin-left: -0.75rem;
+    border: 2px solid var(--paper);
+    border-radius: 99px;
+    background: var(--backend);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .strip.is-running .train {
+    opacity: 1;
+  }
+
+  @media (max-width: 40rem) {
+    .now {
+      display: block;
+    }
+
+    .name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .strip {
+      max-width: 11rem;
+    }
+  }
+</style>

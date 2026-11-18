@@ -1,0 +1,171 @@
+---
+import { projects, type Project } from '../data/projects';
+import { link } from '../lib/url';
+import LineMark from './LineMark.astro';
+
+const featured = projects.filter((project) => project.featured);
+const others = projects.filter((project) => !project.featured);
+const meta = (project: Project) => [project.year, project.where].filter(Boolean).join(', ');
+const morph = (project: Project) => (project.page ? `view-transition-name: project-${project.slug}` : undefined);
+---
+
+<section class="section" id="projects" aria-labelledby="projects-title">
+  <div class="wrap">
+    <h2 class="title" id="projects-title">Projects</h2>
+    <p class="lead">Newest first. The first three are open source.</p>
+
+    {
+      featured.map((project) => (
+        <article class="project featured" id={`project-${project.slug}`}>
+          <LineMark ids={project.lines} />
+          <p class="meta">{meta(project)}</p>
+          <h3 style={morph(project)}>{project.name}</h3>
+          <p class="tagline">{project.tagline}</p>
+          <ul class="facts" role="list">
+            {project.facts.map((fact) => (
+              <li>{fact}</li>
+            ))}
+          </ul>
+          <p class="stack">{project.stack.join(', ')}</p>
+          <p class="links">
+            {project.page && (
+              <a class="button primary" href={link(`projects/${project.slug}/`)}>
+                How it works
+              </a>
+            )}
+            {project.code && (
+              <a class="button" href={project.code}>
+                Code on GitHub
+              </a>
+            )}
+          </p>
+        </article>
+      ))
+    }
+
+    <div class="grid">
+      {
+        others.map((project) => (
+          <article class="project" id={`project-${project.slug}`}>
+            <LineMark ids={project.lines} />
+            <p class="meta">{meta(project)}</p>
+            <h3 style={morph(project)}>{project.name}</h3>
+            <p class="tagline">{project.tagline}</p>
+            {project.facts.length > 0 && (
+              <ul class="facts" role="list">
+                {project.facts.map((fact) => (
+                  <li>{fact}</li>
+                ))}
+              </ul>
+            )}
+            <p class="stack">{project.stack.join(', ')}</p>
+            {(project.page || project.code) && (
+              <p class="links">
+                {project.page && <a href={link(`projects/${project.slug}/`)}>How it works</a>}
+                {project.code && <a href={project.code}>Code on GitHub</a>}
+              </p>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .project {
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--track);
+  }
+
+  .featured {
+    margin-top: 3rem;
+    padding: clamp(1.5rem, 1rem + 2.5vw, 2.75rem);
+    border-top: 0;
+    border-radius: 12px;
+    background: var(--wash);
+  }
+
+  .meta {
+    margin-top: 1rem;
+    font-size: var(--step--1);
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  h3 {
+    width: fit-content;
+    margin-top: 0.15rem;
+    font-size: var(--step-3);
+  }
+
+  .featured h3 {
+    font-size: var(--step-4);
+  }
+
+  .tagline {
+    max-width: 52ch;
+    margin-top: 0.6rem;
+  }
+
+  .featured .tagline {
+    font-size: var(--step-1);
+    line-height: 1.45;
+  }
+
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.5rem;
+    margin-top: 1rem;
+    font-weight: 700;
+  }
+
+  .featured .facts {
+    margin-top: 1.5rem;
+    font-size: var(--step-1);
+  }
+
+  .facts li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .facts li::before {
+    content: '';
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    transform: translateY(-0.1em);
+  }
+
+  .stack {
+    margin-top: 1rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.25rem;
+    font-weight: 700;
+  }
+
+  .grid {
+    display: grid;
+    gap: 3rem 4.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 52rem) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

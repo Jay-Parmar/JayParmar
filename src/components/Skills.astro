@@ -1,0 +1,59 @@
+---
+import { languages, lines } from '../data/lines';
+---
+
+<section class="section" id="skills" aria-labelledby="skills-title">
+  <div class="wrap">
+    <h2 class="title" id="skills-title">Skills</h2>
+    <p class="lead">Each colour on this page is one of these lines.</p>
+    <dl class="legend">
+      <div class="row">
+        <dt><span class="badge">Languages</span></dt>
+        <dd>{languages.join(', ')}</dd>
+      </div>
+      {
+        lines.map((line) => (
+          <div class="row" style={`--c: var(--${line.id})`}>
+            <dt>
+              <span class="badge">{line.name}</span>
+            </dt>
+            <dd>{line.skills.join(', ')}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  section {
+    padding-bottom: var(--section);
+  }
+
+  .legend {
+    margin: 3rem 0 0;
+  }
+
+  .row {
+    display: grid;
+    gap: 0.25rem 2rem;
+    padding-block: 1.1rem;
+    border-top: 2px solid var(--track);
+  }
+
+  .row:last-child {
+    border-bottom: 2px solid var(--track);
+  }
+
+  @media (min-width: 46rem) {
+    .row {
+      grid-template-columns: 16rem 1fr;
+      align-items: baseline;
+    }
+  }
+
+  dd {
+    margin: 0;
+    max-width: var(--measure);
+  }
+</style>

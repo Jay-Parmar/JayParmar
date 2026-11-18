@@ -1,0 +1,219 @@
+---
+import { results } from '../data/results';
+---
+
+<section class="section" id="results" aria-labelledby="results-title">
+  <div class="wrap">
+    <h2 class="title" id="results-title">Results</h2>
+    <p class="lead">Measured on systems I worked on.</p>
+    <ul class="list" role="list">
+      {
+        results.map((result) => {
+          const top = Math.max(result.before, result.after);
+          const moves = result.kind === 'change';
+          return (
+            <li class="result" style={`--c: var(--${result.line})`}>
+              <div class="top">
+                <span class="stroke" aria-hidden="true" />
+                {result.delta && <span class="badge">{result.delta}</span>}
+              </div>
+              <h3>{result.label}</h3>
+              <dl class="bars">
+                <div class="bar before" style={`--w: ${result.before / top}`}>
+                  <dt>{result.beforeName}</dt>
+                  <dd>
+                    <span class="fill" />
+                    <span class="value">{result.beforeText}</span>
+                  </dd>
+                </div>
+                <div
+                  class="bar after"
+                  style={`--w: ${result.after / top}`}
+                  data-from={moves ? result.before / top : undefined}
+                  data-start={moves ? result.before : undefined}
+                  data-end={moves ? result.after : undefined}
+                  data-unit={moves ? result.unit : undefined}
+                >
+                  <dt>{result.afterName}</dt>
+                  <dd>
+                    <span class="fill" />
+                    <span class="value" aria-hidden="true">{result.afterText}</span>
+                    <span class="visually-hidden">{result.afterText}</span>
+                  </dd>
+                </div>
+              </dl>
+              <p class="context">{result.context}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  const bars = [...document.querySelectorAll<HTMLElement>('.result .after[data-start]')];
+
+  if (bars.length && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+    const show = (unit: string, value: number) => `${Math.round(value)}${unit === '%' ? '%' : unit ? ` ${unit}` : ''}`;
+    const label = (bar: HTMLElement) => bar.querySelector<HTMLElement>('.value')!;
+    const targets = new Map(bars.map((bar) => [bar, bar.style.getPropertyValue('--w')]));
+    const finals = new Map(bars.map((bar) => [bar, label(bar).textContent ?? '']));
+    const done = new Set<HTMLElement>();
+
+    const finish = (bar: HTMLElement) => {
+      done.add(bar);
+      observer.unobserve(bar);
+      bar.classList.remove('is-moving');
+      bar.style.setProperty('--w', targets.get(bar)!);
+      label(bar).textContent = finals.get(bar)!;
+    };
+
+    const run = (bar: HTMLElement) => {
+      const start = Number(bar.dataset.start);
+      const end = Number(bar.dataset.end);
+      const began = performance.now();
+
+      void bar.offsetWidth;
+      bar.classList.add('is-moving');
+      bar.style.setProperty('--w', targets.get(bar)!);
+
+      const tick = (now: number) => {
+        if (done.has(bar)) return;
+        const t = Math.min(1, (now - began) / 1400);
+        if (t === 1) return finish(bar);
+        label(bar).textContent = show(bar.dataset.unit ?? '', start + (end - start) * ease(t));
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          run(entry.target as HTMLElement);
+        }
+      },
+      { threshold: 1, rootMargin: '0px 0px -15% 0px' },
+    );
+
+    for (const bar of bars) {
+      bar.style.setProperty('--w', bar.dataset.from ?? '1');
+      label(bar).textContent = show(bar.dataset.unit ?? '', Number(bar.dataset.start));
+      observer.observe(bar);
+    }
+
+    addEventListener('beforeprint', () => bars.forEach(finish));
+  }
+</script>
+
+<style>
+  .list {
+    display: grid;
+    gap: 3rem 4.5rem;
+    margin-top: 3rem;
+  }
+
+  @media (min-width: 52rem) {
+    .list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .stroke {
+    width: 3rem;
+    height: var(--line);
+    border-radius: 99px;
+    background: var(--c);
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    font-weight: 700;
+  }
+
+  .bars {
+    display: grid;
+    gap: 0.6rem;
+    margin: 1.25rem 0 0;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  dt {
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .fill {
+    flex: none;
+    width: calc((100% - 6rem) * var(--w));
+    min-width: 0.75rem;
+    height: 0.875rem;
+    border-radius: 99px;
+    background: var(--track);
+  }
+
+  .after .fill {
+    background: var(--c);
+  }
+
+  .after.is-moving .fill {
+    transition: width 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .value {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .after .value {
+    font-size: var(--step-1);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--c);
+  }
+
+  .before .value {
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .context {
+    max-width: 48ch;
+    margin-top: 1rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  @media (max-width: 30rem) {
+    .bar {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>
