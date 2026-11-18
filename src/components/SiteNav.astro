@@ -217,7 +217,12 @@ const target = (id: string) => (home ? id : undefined);
     stroke-linecap: round;
     transform-box: fill-box;
     transform-origin: center;
-    transition: transform 0.25s var(--ease);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .toggle path {
+      transition: transform 0.25s var(--ease);
+    }
   }
 
   .nav:has(.links:popover-open) .toggle {
