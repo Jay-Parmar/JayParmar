@@ -33,6 +33,13 @@ describe('projects', () => {
     }
   });
 
+  it('mark the projects with public code as open source', () => {
+    const open = ['hirejutsu', 'hold-my-files', 'foodhub-sniffer'];
+    const marked = projects.filter((project) => card(project.slug).includes('>Open source<'));
+    expect(marked.map((project) => project.slug)).toEqual(open);
+    for (const slug of open) expect(page(slug), slug).toContain('>Open source<');
+  });
+
   it('give every How it works and Code on GitHub link a name of its own', () => {
     expect(repeated).toHaveLength(6);
     expect(new Set(repeated.map(({ name }) => name)).size).toBe(repeated.length);
