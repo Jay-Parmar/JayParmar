@@ -23,8 +23,7 @@ const target = (id: string) => (home ? id : undefined);
   <div class="wrap inner">
     <a class="brand" href={home ? '#top' : link()}>
       <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="0.5" y="0.5" width="31" height="31" rx="8"></rect>
-        <path d="M13 9v10a4 4 0 0 1-8 0M18 23V9h4a4.5 4.5 0 0 1 0 9h-4"></path>
+        <use href={link('favicon.svg#monogram')} />
       </svg>
       {profile.name}
     </a>
@@ -133,21 +132,10 @@ const target = (id: string) => (home ? id : undefined);
   }
 
   .mark {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-
-  .mark rect {
-    fill: var(--surface-2);
-    stroke: var(--border-2);
-  }
-
-  .mark path {
-    fill: none;
-    stroke: var(--text);
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    width: 2.125rem;
+    height: 2.125rem;
+    flex: none;
+    fill: var(--accent);
   }
 
   .links {

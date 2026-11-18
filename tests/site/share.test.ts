@@ -20,4 +20,12 @@ describe('sharing', () => {
   it('has an icon for phone home screens', () => {
     expect(html).toContain('<link rel="apple-touch-icon" href="/JayParmar/apple-touch-icon.png"');
   });
+
+  it('uses the same monogram in the header and browser tab', () => {
+    const icon = readFileSync('dist/favicon.svg', 'utf8');
+    const brand = html.match(/<a class="brand"[^>]*>([\s\S]*?)<\/a>/)?.[1] ?? '';
+    const reference = brand.match(/<use href="\/JayParmar\/favicon\.svg#([^"]+)"/)?.[1];
+    expect(reference).toBeDefined();
+    expect(icon).toContain(`id="${reference}"`);
+  });
 });
