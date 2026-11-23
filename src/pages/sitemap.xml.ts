@@ -4,7 +4,7 @@ import { link } from '../lib/url';
 
 /** Every public page, for search engines. */
 export const GET: APIRoute = ({ site }) => {
-  const paths = ['', ...projects.filter((project) => project.page).map((project) => `projects/${project.slug}/`)];
+  const paths = ['', 'resume/', ...projects.filter((project) => project.page).map((project) => `projects/${project.slug}/`)];
   const urls = paths.map((path) => `  <url><loc>${new URL(link(path), site)}</loc></url>`);
   const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',

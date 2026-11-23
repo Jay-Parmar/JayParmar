@@ -52,6 +52,7 @@ describe('search', () => {
     expect(existsSync('dist/sitemap.xml')).toBe(true);
     const sitemap = readFileSync('dist/sitemap.xml', 'utf8');
     expect(sitemap).toContain(`<loc>${site}</loc>`);
+    expect(sitemap).toContain(`<loc>${site}resume/</loc>`);
     for (const project of projects.filter((project) => project.page)) {
       expect(sitemap).toContain(`<loc>${site}projects/${project.slug}/</loc>`);
     }
