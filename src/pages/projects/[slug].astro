@@ -5,6 +5,7 @@ import { profile } from '../../data/profile';
 import { contentsLabel, projectSections, projects, type Project } from '../../data/projects';
 import Base from '../../layouts/Base.astro';
 import { splitFact } from '../../lib/facts';
+import { projectSchema } from '../../lib/schema';
 import { link } from '../../lib/url';
 
 export function getStaticPaths() {
@@ -25,7 +26,11 @@ const next = withPages[(withPages.indexOf(project) + 1) % withPages.length];
 const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Number(!splitFact(b)[0]));
 ---
 
-<Base title={`${project.name}, a project by ${profile.name}`} description={project.tagline}>
+<Base
+  title={`${project.name}, a project by ${profile.name}`}
+  description={project.tagline}
+  schema={projectSchema(project, new URL(link(), Astro.site).href)}
+>
   <SiteNav current="projects" />
 
   <main id="main" class="wrap page">

@@ -37,6 +37,17 @@ describe('search', () => {
     expect(person!.knowsAbout).toEqual(expect.arrayContaining(['React', 'Python', 'PostgreSQL']));
   });
 
+  it('describes each project page as source code by Jay', () => {
+    for (const project of projects.filter((project) => project.page)) {
+      const page = readFileSync(`dist/projects/${project.slug}/index.html`, 'utf8');
+      const code = schemas(page).find((item) => item['@type'] === 'SoftwareSourceCode') as Record<string, any> | undefined;
+      expect(code, project.slug).toBeDefined();
+      expect(code!.name).toBe(project.name);
+      expect(code!.codeRepository).toBe(project.code);
+      expect(code!.author?.name).toBe(profile.name);
+    }
+  });
+
   it('lists every page in a sitemap', () => {
     expect(existsSync('dist/sitemap.xml')).toBe(true);
     const sitemap = readFileSync('dist/sitemap.xml', 'utf8');
