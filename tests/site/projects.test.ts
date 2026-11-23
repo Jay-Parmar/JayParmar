@@ -47,6 +47,13 @@ describe('projects', () => {
     expect(nums(page('foodhub-sniffer'))).toEqual(['36']);
   });
 
+  it('offer the code before the stats on their pages', () => {
+    for (const project of projects.filter((project) => project.page)) {
+      const top = page(project.slug).split('class="stats')[0];
+      expect(top, project.slug).toContain(`href="${project.code}"`);
+    }
+  });
+
   it('lead the stats on their pages with the facts that have numbers', () => {
     for (const project of projects.filter((project) => project.page)) {
       const stats = page(project.slug).match(/<ul class="stats[\s\S]*?<\/ul>/)?.[0] ?? '';

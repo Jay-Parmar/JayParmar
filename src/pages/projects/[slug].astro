@@ -36,6 +36,9 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     <ProjectMeta project={project} />
     <h1 style={`view-transition-name: project-${project.slug}`}>{project.name}</h1>
     <p class="tagline">{project.tagline}</p>
+    <p class="lead-actions">
+      <a class="button primary" href={project.code}>Code on GitHub</a>
+    </p>
 
     <ul class="stats panel" role="list">
       {
@@ -87,7 +90,7 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     </div>
 
     <p class="actions">
-      <a class="button primary" href={project.code}>Code on GitHub</a>
+      <a class="button" href={project.code}>Code on GitHub</a>
       <a class="button" href={link(`#project-${project.slug}`)}>All projects</a>
     </p>
 
@@ -157,6 +160,10 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     color: var(--text-2);
     font-size: var(--step-2);
     line-height: 1.45;
+  }
+
+  .lead-actions {
+    margin-top: 1.75rem;
   }
 
   .stats {
