@@ -71,7 +71,7 @@ export const projects: Project[] = [
     name: 'Pin & Frame',
     tagline: 'A personal travel journal that puts each trip on a map and a timeline, with photos gathered by place.',
     year: '2026',
-    stack: ['React', 'TypeScript', 'MapLibre GL', 'Django REST Framework', 'PostgreSQL'],
+    stack: ['React', 'TypeScript', 'MapLibre GL', 'Django REST', 'PostgreSQL'],
     facts: ['Phone, Google Takeout and Instagram imports', '38 backend tests', 'Owner-only photos and API'],
     code: 'https://github.com/Jay-Parmar/Pin-and-Frame',
     page: {
