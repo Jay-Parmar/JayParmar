@@ -282,24 +282,48 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     font-weight: 500;
   }
 
+  .workflow ol { counter-reset: step; }
+  .workflow li { counter-increment: step; }
   .workflow li + li { border-top: 1px solid var(--border); }
   .workflow a {
     display: grid;
-    gap: 0.15rem;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 0.25rem;
+    row-gap: 0.15rem;
     padding-block: 0.72rem;
     color: var(--text);
     font-weight: 500;
     text-decoration: none;
   }
 
-  .workflow a span {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-    text-decoration-color: var(--border-2);
+  .workflow a::before {
+    content: counter(step, decimal-leading-zero);
+    grid-row: 1 / span 2;
+    align-self: start;
+    padding-top: 0.2em;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: var(--step--2);
+    font-weight: 400;
   }
 
-  .workflow a:is(:hover, :focus-visible) span { text-decoration-color: var(--accent); }
-  .workflow small { color: var(--muted); font-size: var(--step--1); font-weight: 400; }
+  .workflow a::after {
+    content: '';
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.2rem;
+    border-top: 1.5px solid var(--muted);
+    border-right: 1.5px solid var(--muted);
+    transform: rotate(45deg);
+  }
+
+  .workflow span { grid-column: 2; transition: color 0.2s; }
+  .workflow small { grid-column: 2; color: var(--muted); font-size: var(--step--1); font-weight: 400; }
+  .workflow a:is(:hover, :focus-visible) span { color: var(--accent); }
+  .workflow a:is(:hover, :focus-visible)::after { border-color: var(--accent); }
 
   @media (min-width: 48rem) {
     .with-workflow {
