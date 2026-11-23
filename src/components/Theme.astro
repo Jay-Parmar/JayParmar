@@ -13,6 +13,7 @@ import lightPalette from '../styles/light.css?inline';
     const key = 'jay-parmar-theme';
     let choice;
     let button;
+    let shift;
 
     function paint() {
       const light = choice === 'light' || (choice !== 'dark' && system.matches);
@@ -53,14 +54,16 @@ import lightPalette from '../styles/light.css?inline';
         const y = box.top + box.height / 2;
         const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
         root.classList.add('theme-shift');
-        const shift = document.startViewTransition(flip);
-        shift.ready.then(() => {
+        const current = (shift = document.startViewTransition(flip));
+        current.ready.then(() => {
           root.animate(
             { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
             { duration: 600, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
           );
+        }, () => {});
+        current.finished.finally(() => {
+          if (shift === current) root.classList.remove('theme-shift');
         });
-        shift.finished.finally(() => root.classList.remove('theme-shift'));
       });
     });
   })();
