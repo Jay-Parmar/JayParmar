@@ -102,6 +102,34 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
   </main>
 </Base>
 
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.contents a')];
+  const parts = links.map((link) => document.getElementById(link.hash.slice(1))?.closest('section') ?? null);
+  let queued = false;
+
+  const update = () => {
+    queued = false;
+    const atEnd = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+    const current = atEnd
+      ? parts.length - 1
+      : parts.findLastIndex((part) => part !== null && part.getBoundingClientRect().top <= innerHeight * 0.3);
+    links.forEach((link, i) => {
+      if (i === current) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  const request = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  };
+
+  addEventListener('scroll', request, { passive: true });
+  addEventListener('resize', request);
+  update();
+</script>
+
 <style>
   .page {
     position: relative;
@@ -254,9 +282,18 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
   }
 
   .contents a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .contents a:hover,
+  .contents a[aria-current] {
+    color: var(--text);
   }
 
   .part + .part {
@@ -281,6 +318,16 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     }
 
     .contents ul { display: grid; margin-top: 0.4rem; }
+
+    .contents a[aria-current]::before {
+      content: '';
+      position: absolute;
+      top: 25%;
+      bottom: 25%;
+      left: calc(-1rem - 1.5px);
+      width: 2px;
+      background: var(--accent);
+    }
   }
 
   h2 {
