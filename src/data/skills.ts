@@ -35,3 +35,6 @@ export const areas: Area[] = [
 ];
 
 export const languages = ['Python', 'SQL', 'JavaScript', 'TypeScript', 'Kotlin', 'C and C++'];
+
+/** Languages first, then each area, as the Skills section and the résumé list them. */
+export const skillGroups = [{ id: 'languages', name: 'Languages', skills: languages }, ...areas];

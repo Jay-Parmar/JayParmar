@@ -1,10 +1,10 @@
 ---
 import { education, roles } from '../data/experience';
 import { areas } from '../data/skills';
+import { emphasis } from '../lib/emphasis';
 
 const names = new Map(areas.map((area) => [area.id, area.name]));
 const period = (start: string, end: string) => `${start} to ${end === 'Present' ? 'now' : end}`;
-const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
 ---
 
 <section class="section" id="experience" aria-labelledby="experience-title">
@@ -29,7 +29,7 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
                   <ul role="list">
                     {group.points.map(({ text, result }) => (
                       <li id={result && `work-${result}`} tabindex={result ? -1 : undefined}>
-                        {parts(text).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}
+                        {emphasis(text).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}
                       </li>
                     ))}
                   </ul>

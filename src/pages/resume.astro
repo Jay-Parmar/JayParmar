@@ -3,16 +3,15 @@ import SiteNav from '../components/SiteNav.astro';
 import { education, roles } from '../data/experience';
 import { profile } from '../data/profile';
 import { projects, projectSections } from '../data/projects';
-import { areas, languages } from '../data/skills';
+import { skillGroups as skills } from '../data/skills';
 import Base from '../layouts/Base.astro';
+import { emphasis } from '../lib/emphasis';
 import { link } from '../lib/url';
 
-const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
 const bare = (url: string) => url.replace(/^https:\/\/(www\.)?/, '');
 const period = (start: string, end: string) => `${start} to ${end}`;
-const list = (items: string[]) => `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+const list = (items: string[]) => new Intl.ListFormat('en-GB').format(items);
 const openSource = projects.filter((project) => project.code);
-const skills = [{ name: 'Languages', skills: languages }, ...areas];
 ---
 
 <Base
@@ -68,7 +67,7 @@ const skills = [{ name: 'Languages', skills: languages }, ...areas];
                 {role.groups
                   .flatMap((group) => group.points)
                   .map(({ text }) => (
-                    <li>{parts(text).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>
+                    <li>{emphasis(text).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>
                   ))}
               </ul>
             </div>
