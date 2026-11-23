@@ -9,9 +9,11 @@ import Skills from '../components/Skills.astro';
 import SiteNav from '../components/SiteNav.astro';
 import { search } from '../data/profile';
 import Base from '../layouts/Base.astro';
+import { personSchema } from '../lib/schema';
+import { link } from '../lib/url';
 ---
 
-<Base title={search.title} description={search.description}>
+<Base title={search.title} description={search.description} schema={personSchema(new URL(link(), Astro.site).href)}>
   <SiteNav home />
   <main id="main">
     <Hero />

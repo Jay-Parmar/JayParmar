@@ -27,4 +27,14 @@ describe('search', () => {
     for (const word of ['React', 'Python', 'AWS']) expect(description).toContain(word);
   });
 
+  it('describes Jay as a person search engines can read', () => {
+    const person = schemas(html).find((item) => item['@type'] === 'Person') as Record<string, any> | undefined;
+    expect(person).toBeDefined();
+    expect(person!.name).toBe(profile.name);
+    expect(person!.jobTitle).toBeTruthy();
+    expect(person!.sameAs).toEqual(expect.arrayContaining([profile.linkedin, profile.github]));
+    expect(person!.worksFor?.name).toBeTruthy();
+    expect(person!.knowsAbout).toEqual(expect.arrayContaining(['React', 'Python', 'PostgreSQL']));
+  });
+
 });

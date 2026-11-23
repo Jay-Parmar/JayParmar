@@ -10,9 +10,10 @@ import { link } from '../lib/url';
 interface Props {
   title: string;
   description: string;
+  schema?: object;
 }
 
-const { title, description } = Astro.props;
+const { title, description, schema } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const shareImage = new URL(link('og.png'), Astro.site);
 ---
@@ -36,6 +37,7 @@ const shareImage = new URL(link('og.png'), Astro.site);
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={`${profile.name}, ${profile.role}, with the interface, service and infrastructure layers of his work`} />
     <meta name="twitter:card" content="summary_large_image" />
+    {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
