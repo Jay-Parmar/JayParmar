@@ -358,6 +358,20 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .card:first-child:nth-last-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card:first-child:nth-last-child(odd) {
+      grid-column: auto;
+    }
   }
 
   .card {
