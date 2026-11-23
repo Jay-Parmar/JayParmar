@@ -11,14 +11,15 @@ const page = (slug: string) => {
   const text = readFileSync(`dist/projects/${slug}/index.html`, 'utf8');
   return text.slice(text.indexOf('<main'), text.indexOf('</main>'));
 };
+const decode = (text: string) => text.replace(/&amp;/g, '&');
 const chips = (text: string) => [...text.matchAll(/class="chip"[^>]*>([^<]+)</g)].map((m) => m[1].trim());
 const nums = (text: string) => [...text.matchAll(/class="num"[^>]*>([^<]+)</g)].map((m) => m[1].trim());
 const repeated = projects
   .flatMap((project) =>
     [...card(project.slug).matchAll(/<a\b([^>]*)>([^<]+)<\/a>/g)].map(([, attrs, text]) => ({
       project: project.name,
-      text: text.trim(),
-      name: attrs.match(/aria-label="([^"]+)"/)?.[1] ?? text.trim(),
+      text: decode(text.trim()),
+      name: decode(attrs.match(/aria-label="([^"]+)"/)?.[1] ?? text.trim()),
     })),
   )
   .filter(({ text }) => ['How it works', 'Code on GitHub'].includes(text));
@@ -36,6 +37,7 @@ describe('projects', () => {
 
   it('pull out the number that leads each fact', () => {
     expect(nums(card('hirejutsu'))).toEqual(['629', '15', '2,000+']);
+    expect(nums(card('pin-and-frame'))).toEqual(['38']);
     expect(nums(card('hold-my-files'))).toEqual(['146']);
     expect(nums(card('foodhub-sniffer'))).toEqual(['36']);
     expect(nums(card('ens-meeting-bridge'))).toEqual([]);
@@ -43,6 +45,7 @@ describe('projects', () => {
 
   it('pull out the number that leads each fact on their own pages', () => {
     expect(nums(page('hirejutsu'))).toEqual(['629', '15', '2,000+']);
+    expect(nums(page('pin-and-frame'))).toEqual(['38']);
     expect(nums(page('hold-my-files'))).toEqual(['146']);
     expect(nums(page('foodhub-sniffer'))).toEqual(['36']);
   });
@@ -63,14 +66,14 @@ describe('projects', () => {
   });
 
   it('mark the projects with public code as open source', () => {
-    const open = ['hirejutsu', 'hold-my-files', 'foodhub-sniffer'];
+    const open = ['hirejutsu', 'pin-and-frame', 'hold-my-files', 'foodhub-sniffer'];
     const marked = projects.filter((project) => card(project.slug).includes('>Open source<'));
     expect(marked.map((project) => project.slug)).toEqual(open);
     for (const slug of open) expect(page(slug), slug).toContain('>Open source<');
   });
 
   it('give every How it works and Code on GitHub link a name of its own', () => {
-    expect(repeated).toHaveLength(6);
+    expect(repeated).toHaveLength(8);
     expect(new Set(repeated.map(({ name }) => name)).size).toBe(repeated.length);
     for (const { project, name } of repeated) expect(name).toContain(project);
   });

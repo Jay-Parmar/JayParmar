@@ -30,6 +30,12 @@ describe('content data', () => {
     expect(links.filter((url) => !/^https:\/\/github\.com\/Jay-Parmar\/[\w.-]+$/.test(url))).toEqual([]);
   });
 
+  it('lists the open source projects first, strongest first', () => {
+    const open = projects.filter((project) => project.code).map((project) => project.slug);
+    expect(open).toEqual(['hirejutsu', 'pin-and-frame', 'hold-my-files', 'foodhub-sniffer']);
+    expect(projects.slice(0, open.length).map((project) => project.slug)).toEqual(open);
+  });
+
   it('writes a page only for projects with public code', () => {
     expect(projects.filter((project) => project.page && !project.code)).toEqual([]);
   });

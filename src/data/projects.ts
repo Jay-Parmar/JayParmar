@@ -67,6 +67,42 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: 'pin-and-frame',
+    name: 'Pin & Frame',
+    tagline: 'A personal travel journal that puts each trip on a map and a timeline, with photos gathered by place.',
+    year: '2026',
+    stack: ['React', 'TypeScript', 'MapLibre GL', 'Django REST Framework', 'PostgreSQL'],
+    facts: ['Phone, Google Takeout and Instagram imports', '38 backend tests', 'Owner-only photos and API'],
+    code: 'https://github.com/Jay-Parmar/Pin-and-Frame',
+    page: {
+      steps: [
+        {
+          id: 'import',
+          name: 'Import photos',
+          text: 'One command per source brings photos into a trip: a phone folder, an extracted Google Takeout, or an Instagram export as a folder or ZIP. It reads dates and GPS from EXIF, Takeout sidecars and Instagram post data.',
+        },
+        {
+          id: 'review',
+          name: 'Review and assign',
+          text: 'Each import lists its photos with counts and failed items. It suggests a stop from GPS within 5 km, or from the date when a photo has no GPS, and you approve one photo or a batch.',
+        },
+        {
+          id: 'browse',
+          name: 'Browse the archive',
+          text: 'Trips show on a map and in a timeline, filtered by year or trip. A place opens a gallery of its photos across visits.',
+        },
+      ],
+      how: [
+        'A Django REST Framework API over PostgreSQL serves a React and TypeScript app built with Vite.',
+        'The importer is a Django management command that shares the database and photo storage with the API.',
+        'Identical files are stored once, matched by SHA-256. Each photo, HEIC included, gets a 400 px and a 2,048 px WebP copy with its metadata stripped.',
+        'Copies are written to temporary files and moved into place, so an interrupted import can be run again.',
+        'One owner signs in with a Django session. The same check guards the API and every photo URL, and the API only answers requests from the same computer.',
+        '38 backend tests cover sign-in, the catalog, concurrent edits, review and each import source.',
+      ],
+    },
+  },
+  {
     slug: 'hold-my-files',
     name: 'Hold My Files',
     tagline: 'Turns an Android phone into a temporary, read-only file server for people on the same Wi-Fi or hotspot.',

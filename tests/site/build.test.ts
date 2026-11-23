@@ -82,7 +82,7 @@ describe('built site', () => {
 
 describe('home page', () => {
   const html = read(join(dist, 'index.html'));
-  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').replace(/&amp;/g, '&');
 
   it('has every section', () => {
     for (const id of ['top', 'results', 'experience', 'education', 'projects', 'skills', 'contact']) {
@@ -143,7 +143,7 @@ describe('project pages', () => {
   const withPages = projects.filter((project) => project.page);
 
   it('exist for every project with public code', () => {
-    expect(withPages.map((project) => project.slug)).toEqual(['hirejutsu', 'hold-my-files', 'foodhub-sniffer']);
+    expect(withPages.map((project) => project.slug)).toEqual(['hirejutsu', 'pin-and-frame', 'hold-my-files', 'foodhub-sniffer']);
     for (const project of withPages) {
       expect(existsSync(join(dist, 'projects', project.slug, 'index.html'))).toBe(true);
     }
