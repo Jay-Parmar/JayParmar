@@ -141,8 +141,15 @@ const target = (id: string) => (home ? id : undefined);
     border: 1px solid var(--border-2);
     border-radius: 50%;
     color: var(--text-2);
-    background: var(--bg-raised);
+    background: var(--surface);
     cursor: pointer;
+  }
+
+  @media (min-width: 56rem) {
+    .theme-switch {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
   }
 
   .theme-switch:hover {
