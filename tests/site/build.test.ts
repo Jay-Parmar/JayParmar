@@ -115,6 +115,16 @@ describe('home page', () => {
   });
 });
 
+describe('fonts', () => {
+  it('preloads the text font the stylesheet uses, so names render without a font swap', () => {
+    const home = read(join(dist, 'index.html'));
+    const preload = home.match(/<link rel="preload" href="([^"]+\.woff2)" as="font" type="font\/woff2" crossorigin/)?.[1];
+    expect(preload).toBeDefined();
+    const css = all.filter((path) => path.endsWith('.css')).map(read).join('\n');
+    expect(css).toContain(`url(${preload})`);
+  });
+});
+
 describe('section nav', () => {
   const html = read(join(dist, 'index.html'));
 
