@@ -73,6 +73,12 @@ describe('résumé page', () => {
     expect(text).toContain(education.school);
   });
 
+  it('ships the Save as PDF button hidden until a script can print', () => {
+    const button = main.match(/<button[^>]*>(?:(?!<\/button>)[\s\S])*Save as PDF/)?.[0] ?? '';
+    expect(button).toContain('type="button"');
+    expect(button).toMatch(/^<button[^>]*\shidden(?=[\s>=])/);
+  });
+
   it('links back to the portfolio', () => {
     expect(main).toContain('href="/JayParmar/"');
   });
