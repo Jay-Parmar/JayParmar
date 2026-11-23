@@ -136,7 +136,8 @@ import SystemDiagram from './SystemDiagram.astro';
     }
 
     @media (min-width: 57rem) {
-      [data-guided] .study { --stage-top: 5.5rem; }
+      [data-guided] .study { --stage-top: max(5.5rem, calc(50dvh - var(--stage-height, 0px) / 2)); }
+      [data-guided] .chapters li:last-child { min-height: 0; }
       [data-guided] .chapters {
         /* Keep the diagram pinned until the last chapter clears the reading line. */
         padding-bottom: max(0px, calc(var(--stage-top) + var(--stage-height, 0px) - 50dvh));
