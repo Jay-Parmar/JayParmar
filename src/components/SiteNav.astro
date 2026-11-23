@@ -42,6 +42,9 @@ const target = (id: string) => (home ? id : undefined);
             </li>
           ))
         }
+        <li>
+          <a href={link('resume/')} aria-current={current === 'resume' ? 'page' : undefined}>Résumé</a>
+        </li>
         <li class="cta">
           <a class="button primary" href={to('contact')} data-target={target('contact')}>Get in touch</a>
         </li>

@@ -32,6 +32,13 @@ describe('site nav', () => {
     }
   });
 
+  it('links the résumé from every page and marks it on the résumé itself', () => {
+    for (const path of ['dist/index.html', 'dist/projects/hirejutsu/index.html', 'dist/resume/index.html']) {
+      expect(header(path), path).toMatch(/<a[^>]*href="\/JayParmar\/resume\/"/);
+    }
+    expect(header('dist/resume/index.html')).toMatch(/<a[^>]*href="\/JayParmar\/resume\/"[^>]*aria-current="page"/);
+  });
+
   it('marks Projects as the current section on project pages', () => {
     const nav = header('dist/projects/hirejutsu/index.html');
     expect(nav.match(/<a[^>]*aria-current="true"[^>]*>([^<]+)</)?.[1]?.trim()).toBe('Projects');
