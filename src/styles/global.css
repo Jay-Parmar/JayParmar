@@ -244,7 +244,7 @@ svg {
 }
 
 .footer {
-  padding-block: 2rem;
+  padding-block: 1.25rem;
   border-top: 1px solid var(--border);
   color: var(--muted);
   font-size: var(--step--1);
@@ -253,11 +253,15 @@ svg {
 .footer .wrap {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: 0.5rem 2rem;
 }
 
 .footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
   color: var(--text-2);
 }
 
