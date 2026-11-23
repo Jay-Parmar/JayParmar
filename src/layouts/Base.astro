@@ -29,13 +29,15 @@ const shareImage = new URL(link('og.png'), Astro.site);
     <link rel="apple-touch-icon" href={link('apple-touch-icon.png')} />
     <Theme />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={shareImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${profile.name}, ${profile.role}, with the interface, service and infrastructure layers of his work`} />
+    <meta property="og:image:alt" content={`${profile.name}, ${profile.role}, beside the interface, service and infrastructure layers of a full stack system`} />
     <meta name="twitter:card" content="summary_large_image" />
     {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
     <script is:inline>document.documentElement.classList.add('js');</script>

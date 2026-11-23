@@ -17,6 +17,11 @@ describe('sharing', () => {
     expect(meta('twitter:card')).toBe('summary_large_image');
   });
 
+  it('names the site and its locale in link previews', () => {
+    expect(meta('og:site_name')).toBe('Jay Parmar');
+    expect(meta('og:locale')).toBe('en_IN');
+  });
+
   it('has an icon for phone home screens', () => {
     expect(html).toContain('<link rel="apple-touch-icon" href="/JayParmar/apple-touch-icon.png"');
   });
