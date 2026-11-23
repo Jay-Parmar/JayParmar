@@ -13,9 +13,9 @@ describe('hero', () => {
     expect(html).toMatch(new RegExp(`<h1[^>]*>${profile.name}</h1>`));
   });
 
-  it('uses the full stack role on the page and in link previews', () => {
-    const title = `${profile.name}, Software Developer`;
-    expect(html.match(/<title>([^<]+)<\/title>/)?.[1]).toBe(title);
+  it('shows the role on the page and uses the same title in link previews', () => {
+    const title = html.match(/<title>([^<]+)<\/title>/)?.[1];
+    expect(title).toContain(profile.name);
     expect(html.match(/<meta property="og:title" content="([^"]+)"/)?.[1]).toBe(title);
     expect(html.match(/<p class="role"[^>]*>([^<]+)<\/p>/)?.[1]).toBe('Software Developer');
   });

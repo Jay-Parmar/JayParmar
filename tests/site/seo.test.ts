@@ -1,0 +1,30 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { profile } from '../../src/data/profile';
+import { projects } from '../../src/data/projects';
+
+const html = readFileSync('dist/index.html', 'utf8');
+const site = 'https://jay-parmar.github.io/JayParmar/';
+
+function schemas(text: string): Record<string, unknown>[] {
+  return [...text.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].flatMap((m) => {
+    const data = JSON.parse(m[1]);
+    return Array.isArray(data['@graph']) ? data['@graph'] : [data];
+  });
+}
+
+describe('search', () => {
+  it('titles the home page with the name and the roles recruiters search for', () => {
+    const title = html.match(/<title>([^<]+)<\/title>/)?.[1] ?? '';
+    expect(title).toContain(profile.name);
+    expect(title).toMatch(/full stack developer/i);
+    expect(title.length).toBeLessThanOrEqual(65);
+  });
+
+  it('describes the home page in one search snippet with the core stack', () => {
+    const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1] ?? '';
+    expect(description.length).toBeLessThanOrEqual(160);
+    for (const word of ['React', 'Python', 'AWS']) expect(description).toContain(word);
+  });
+
+});

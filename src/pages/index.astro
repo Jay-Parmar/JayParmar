@@ -7,11 +7,11 @@ import Experience from '../components/Experience.astro';
 import Results from '../components/Results.astro';
 import Skills from '../components/Skills.astro';
 import SiteNav from '../components/SiteNav.astro';
-import { profile } from '../data/profile';
+import { search } from '../data/profile';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title={`${profile.name}, ${profile.role}`} description={profile.intro}>
+<Base title={search.title} description={search.description}>
   <SiteNav home />
   <main id="main">
     <Hero />

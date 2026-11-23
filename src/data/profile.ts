@@ -9,6 +9,12 @@ export const profile = {
   github: 'https://github.com/Jay-Parmar',
 };
 
+export const search = {
+  title: 'Jay Parmar | Full Stack Developer, React, Python and AWS',
+  description:
+    'Full stack developer in New Delhi with 3+ years of React, Python, FastAPI, Django, PostgreSQL and AWS. Case studies, measured results and open source code.',
+};
+
 export const heroLabels = {
   projects: 'View projects',
   email: 'Email me',
