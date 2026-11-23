@@ -16,4 +16,10 @@ describe('skills', () => {
       expect(chips, group.name).toEqual(group.skills);
     }
   });
+
+  it('follows Languages with the layers in the order the hero names them', () => {
+    const order = [...skills.matchAll(/class="group" id="skills-(\w+)"/g)].map((m) => m[1]);
+    expect(order.slice(0, 4)).toEqual(['languages', 'frontend', 'backend', 'data']);
+    expect(order.indexOf('cloud')).toBeGreaterThan(order.indexOf('data'));
+  });
 });

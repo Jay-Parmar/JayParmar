@@ -8,6 +8,11 @@ export interface Area {
 
 export const areas: Area[] = [
   {
+    id: 'frontend',
+    name: 'Frontend and mobile',
+    skills: ['React', 'Redux Toolkit', 'React Query', 'Tailwind', 'Flutter', 'Android'],
+  },
+  {
     id: 'backend',
     name: 'Backend',
     skills: ['FastAPI', 'Django REST Framework', 'Django Channels', 'SQLAlchemy', 'Celery', 'Pydantic', 'asyncio', 'pytest'],
@@ -26,11 +31,6 @@ export const areas: Area[] = [
     id: 'ml',
     name: 'Video and ML',
     skills: ['RTSP', 'ONVIF', 'H.264 and H.265', 'FFmpeg', 'go2rtc', 'OpenCV', 'YOLO', 'SigLIP 2', 'DINOv2'],
-  },
-  {
-    id: 'frontend',
-    name: 'Frontend and mobile',
-    skills: ['React', 'Redux Toolkit', 'React Query', 'Tailwind', 'Flutter', 'Android'],
   },
 ];
 
