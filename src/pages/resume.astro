@@ -356,4 +356,129 @@ const skills = [{ name: 'Languages', skills: languages }, ...areas];
     color: var(--text);
     font-weight: 500;
   }
+
+  @page {
+    size: A4;
+    margin: 14mm 16mm;
+  }
+
+  @media print {
+    .page {
+      max-width: none;
+      padding: 0;
+    }
+
+    .page::before,
+    .sheet::before,
+    .tools {
+      display: none;
+    }
+
+    .sheet {
+      overflow: visible;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      color: var(--text);
+      font-size: 10pt;
+      line-height: 1.4;
+    }
+
+    h1 {
+      font-size: 22pt;
+    }
+
+    .role {
+      margin-top: 3pt;
+      color: var(--text);
+      font-size: 12pt;
+    }
+
+    .contact {
+      gap: 0 14pt;
+      margin-top: 6pt;
+      color: var(--text);
+      font-size: 9.5pt;
+    }
+
+    .contact a,
+    .where a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    section {
+      margin-top: 14pt;
+    }
+
+    h2 {
+      margin-bottom: 6pt;
+      color: var(--text);
+      font-size: 10.5pt;
+      font-weight: 600;
+      break-after: avoid;
+    }
+
+    h2::after {
+      background: var(--border-2);
+    }
+
+    .item + .item {
+      margin-top: 9pt;
+    }
+
+    .item-head {
+      break-inside: avoid;
+      break-after: avoid;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+    }
+
+    .when,
+    .where,
+    .facts {
+      color: var(--text-2);
+    }
+
+    .when,
+    .facts {
+      font-size: 9.5pt;
+    }
+
+    .points {
+      gap: 2pt;
+      margin-top: 3pt;
+    }
+
+    .points li {
+      break-inside: avoid;
+    }
+
+    .points li::marker {
+      color: var(--text);
+    }
+
+    .text {
+      margin-top: 2pt;
+    }
+
+    .facts {
+      margin-top: 1pt;
+    }
+
+    .skills {
+      gap: 2pt;
+    }
+
+    .skills div {
+      break-inside: avoid;
+    }
+
+    dt {
+      font-weight: 600;
+    }
+  }
 </style>

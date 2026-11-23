@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { education, roles } from '../../src/data/experience';
 import { profile } from '../../src/data/profile';
@@ -13,6 +14,10 @@ const text = main
   .replaceAll('&#39;', "'")
   .replaceAll('&amp;', '&')
   .replace(/\s+/g, ' ');
+const css = [
+  ...[...html.matchAll(/<link rel="stylesheet" href="\/JayParmar\/([^"]+)"/g)].map((m) => readFileSync(join('dist', m[1]), 'utf8')),
+  ...[...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]),
+].join('\n');
 const bare = (url: string) => url.replace(/^https:\/\/(www\.)?/, '');
 
 describe('résumé page', () => {
@@ -77,6 +82,11 @@ describe('résumé page', () => {
     const button = main.match(/<button[^>]*>(?:(?!<\/button>)[\s\S])*Save as PDF/)?.[0] ?? '';
     expect(button).toContain('type="button"');
     expect(button).toMatch(/^<button[^>]*\shidden(?=[\s>=])/);
+  });
+
+  it('prints on A4 paper without the buttons', () => {
+    expect(css).toMatch(/@page\s*\{[^}]*size:\s*A4/);
+    expect(css).toMatch(/@media print\s*\{[\s\S]*\.tools[^{]*\{display:none/);
   });
 
   it('links back to the portfolio', () => {
