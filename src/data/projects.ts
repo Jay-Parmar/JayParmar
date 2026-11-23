@@ -79,7 +79,7 @@ export const projects: Project[] = [
         {
           id: 'import',
           name: 'Import photos',
-          text: 'One command per source brings photos into a trip: a phone folder, an extracted Google Takeout, or an Instagram export as a folder or ZIP. It reads dates and GPS from EXIF, Takeout sidecars and Instagram post data.',
+          text: 'One import command, run once for each source, brings photos into a trip: a phone folder, an extracted Google Takeout, or an Instagram export as a folder or ZIP. It reads dates and GPS from EXIF, Takeout sidecars and Instagram post data.',
         },
         {
           id: 'review',
