@@ -12,7 +12,7 @@ export const profile = {
 export const search = {
   title: 'Jay Parmar | Full Stack Developer, React, Python and AWS',
   description:
-    'Full stack developer in New Delhi with 3+ years of React, Python, FastAPI, Django, PostgreSQL and AWS. Case studies, measured results and open source code.',
+    'Full stack developer in New Delhi. 3+ years designing backend systems and data pipelines in Python, with React interfaces and AWS. Case studies and code.',
 };
 
 export const heroLabels = {
