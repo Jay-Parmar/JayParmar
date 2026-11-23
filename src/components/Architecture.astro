@@ -48,6 +48,7 @@ import SystemDiagram from './SystemDiagram.astro';
     stage.style.setProperty('--spread', spread.toFixed(3));
     chapters.forEach((chapter, i) => {
       chapter.style.setProperty('--read', i < index ? '1' : i === index ? part.toFixed(3) : '0');
+      chapter.classList.toggle('is-active', i === index);
     });
 
     if (index !== active) {
@@ -123,6 +124,18 @@ import SystemDiagram from './SystemDiagram.astro';
       position: relative;
       min-height: clamp(15rem, 40svh, 25rem);
       padding-top: clamp(1.5rem, 3vw, 3rem);
+    }
+
+    [data-guided] .chapters li :is(h3, p) {
+      transition: color 0.3s;
+    }
+
+    [data-guided] .chapters li:not(.is-active) h3 {
+      color: var(--text-2);
+    }
+
+    [data-guided] .chapters li:not(.is-active) p {
+      color: var(--muted);
     }
 
     [data-guided] .chapters li::before {
