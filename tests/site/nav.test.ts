@@ -28,7 +28,7 @@ describe('site nav', () => {
   it('leads from other pages back to each section of the home page', () => {
     for (const path of ['dist/projects/hirejutsu/index.html', 'dist/404.html']) {
       const targets = [...header(path).matchAll(/href="\/JayParmar\/#(\w+)"/g)].map((m) => m[1]);
-      expect(targets, path).toEqual(['architecture', 'results', 'projects', 'experience', 'skills', 'contact']);
+      expect(targets, path).toEqual(['results', 'architecture', 'experience', 'projects', 'skills', 'contact']);
     }
   });
 

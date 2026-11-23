@@ -122,7 +122,10 @@ describe('section nav', () => {
     const nav = html.match(/<nav[^>]*aria-label="Sections"[^>]*>([\s\S]*?)<\/nav>/);
     expect(nav).not.toBeNull();
     const targets = [...nav![1].matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
-    expect(targets).toEqual(['architecture', 'results', 'projects', 'experience', 'skills', 'contact']);
+    expect(targets).toEqual(['results', 'architecture', 'experience', 'projects', 'skills', 'contact']);
+    const main = html.slice(html.indexOf('<main'));
+    const order = [...main.matchAll(/<section[^>]*\sid="([^"]+)"/g)].map((m) => m[1]).filter((id) => targets.includes(id));
+    expect(order).toEqual(targets);
   });
 });
 

@@ -5,7 +5,7 @@ import { profile } from '../../src/data/profile';
 
 const html = readFileSync('dist/index.html', 'utf8');
 const hero = html.match(/<section[^>]*id="top"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
-const study = html.slice(html.indexOf('id="architecture"'), html.indexOf('id="results"'));
+const study = html.slice(html.indexOf('id="architecture"'), html.indexOf('</section>', html.indexOf('id="architecture"')));
 const figure = study.match(/<figure class="system"[^>]*>[\s\S]*?<\/figure>/)?.[0] ?? '';
 
 describe('hero', () => {
