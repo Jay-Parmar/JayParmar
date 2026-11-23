@@ -25,6 +25,6 @@ npm run check       # types
 
 ## Change the content
 
-The portfolio copy lives in `src/data`. The hero shows the layers of my work in `src/components/StackPortrait.astro`. The architecture case study uses `src/data/platform.ts` and `src/components/SystemDiagram.astro`.
+The portfolio copy lives in `src/data`. The printable résumé at `/resume/` and the sitemap are built from the same data, so they stay in step with the site. The hero shows the layers of my work in `src/components/StackPortrait.astro`. The architecture case study uses `src/data/platform.ts` and `src/components/SystemDiagram.astro`.
 
 A push to `main` runs the tests and publishes the site to GitHub Pages.
