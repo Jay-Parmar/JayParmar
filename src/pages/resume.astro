@@ -1,0 +1,330 @@
+---
+import SiteNav from '../components/SiteNav.astro';
+import { education, roles } from '../data/experience';
+import { profile } from '../data/profile';
+import { projects, projectSections } from '../data/projects';
+import { areas, languages } from '../data/skills';
+import Base from '../layouts/Base.astro';
+import { link } from '../lib/url';
+
+const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
+const bare = (url: string) => url.replace(/^https:\/\/(www\.)?/, '');
+const period = (start: string, end: string) => `${start} to ${end}`;
+const list = (items: string[]) => `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+const openSource = projects.filter((project) => project.code);
+const skills = [{ name: 'Languages', skills: languages }, ...areas];
+---
+
+<Base
+  title={`${profile.name}, ${profile.role} résumé`}
+  description={`Résumé of ${profile.name}, ${profile.role} in ${profile.location}: experience, projects, skills and education, ready to print or save as a PDF.`}
+>
+  <SiteNav />
+
+  <main id="main" class="wrap page">
+    <div class="tools">
+      <a class="back" href={link()}>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"></path></svg>
+        Back to the portfolio
+      </a>
+    </div>
+
+    <article class="sheet panel">
+      <header class="head">
+        <h1>{profile.name}</h1>
+        <p class="role">{profile.role}</p>
+        <ul class="contact" role="list">
+          <li>{profile.location}</li>
+          <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
+          <li><a href={profile.linkedin}>{bare(profile.linkedin)}</a></li>
+          <li><a href={profile.github}>{bare(profile.github)}</a></li>
+        </ul>
+      </header>
+
+      <section aria-labelledby="summary">
+        <h2 id="summary">Summary</h2>
+        <p>{profile.intro}</p>
+      </section>
+
+      <section aria-labelledby="experience">
+        <h2 id="experience">Experience</h2>
+        {
+          roles.map((role) => (
+            <div class="item">
+              <div class="item-head">
+                <h3>{role.title}</h3>
+                <p class="when">{period(role.start, role.end)}</p>
+                <p class="where">
+                  {role.company}, {role.place}
+                </p>
+              </div>
+              <ul class="points">
+                {role.groups
+                  .flatMap((group) => group.points)
+                  .map(({ text }) => (
+                    <li>{parts(text).map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</li>
+                  ))}
+              </ul>
+            </div>
+          ))
+        }
+      </section>
+
+      <section aria-labelledby="projects">
+        <h2 id="projects">Projects</h2>
+        {
+          openSource.map((project) => (
+            <div class="item">
+              <div class="item-head">
+                <h3>{project.name}</h3>
+                <p class="when">{project.year}</p>
+                <p class="where">
+                  <a href={project.code}>{bare(project.code!)}</a>
+                </p>
+              </div>
+              <p class="text">{project.tagline}</p>
+              <p class="facts">{project.facts.join(' · ')}</p>
+              <p class="facts">
+                {projectSections.stack} {list(project.stack)}.
+              </p>
+            </div>
+          ))
+        }
+      </section>
+
+      <section aria-labelledby="skills">
+        <h2 id="skills">Skills</h2>
+        <dl class="skills">
+          {
+            skills.map((area) => (
+              <div>
+                <dt>{area.name}</dt>
+                <dd>{area.skills.join(', ')}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section aria-labelledby="education">
+        <h2 id="education">Education</h2>
+        <div class="item-head">
+          <h3>{education.degree}</h3>
+          <p class="when">{period(education.start, education.end)}</p>
+          <p class="where">
+            {education.school}, {education.place}
+          </p>
+        </div>
+      </section>
+    </article>
+  </main>
+</Base>
+
+<style>
+  .page {
+    position: relative;
+    isolation: isolate;
+    max-width: 56rem;
+    padding-block: clamp(1.5rem, 1rem + 2vw, 2.5rem) clamp(4rem, 3rem + 4vw, 6rem);
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: -4rem 0 auto;
+    z-index: -1;
+    height: 30rem;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 8%, transparent), transparent);
+    pointer-events: none;
+  }
+
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--text);
+  }
+
+  .back svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .sheet {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.5rem, 0.75rem + 3.5vw, 3.75rem);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .sheet::before {
+    content: '';
+    position: absolute;
+    inset: 0 12% auto;
+    height: 1px;
+    background: linear-gradient(to right, transparent, color-mix(in srgb, var(--accent) 55%, transparent), transparent);
+  }
+
+  h1 {
+    font-size: var(--step-4);
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .role {
+    margin-top: 0.6rem;
+    color: var(--text-2);
+    font-size: var(--step-1);
+  }
+
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin-top: 1.1rem;
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  .contact a,
+  .where a {
+    color: var(--text-2);
+    overflow-wrap: anywhere;
+  }
+
+  .contact a:hover,
+  .where a:hover {
+    color: var(--text);
+  }
+
+  section {
+    margin-top: 2.5em;
+  }
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 1.1em;
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 500;
+    line-height: 1.25rem;
+    letter-spacing: 0;
+  }
+
+  h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .item + .item {
+    margin-top: 1.75em;
+  }
+
+  .item-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1.5rem;
+    align-items: baseline;
+  }
+
+  h3 {
+    font-size: 1.125em;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  .when {
+    color: var(--muted);
+    font-size: 0.9375em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .where {
+    grid-column: 1 / -1;
+    color: var(--text-2);
+  }
+
+  @media (max-width: 35.99rem) {
+    .item-head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .when {
+      grid-row: 3;
+    }
+  }
+
+  .points {
+    display: grid;
+    gap: 0.45em;
+    margin-top: 0.75em;
+    padding-left: 1.15em;
+  }
+
+  .points li {
+    padding-left: 0.25em;
+  }
+
+  .points li::marker {
+    color: var(--muted);
+  }
+
+  .text {
+    margin-top: 0.5em;
+  }
+
+  .facts {
+    margin-top: 0.25em;
+    color: var(--muted);
+    font-size: 0.9375em;
+  }
+
+  .skills {
+    display: grid;
+    gap: 0.6em;
+  }
+
+  .skills div {
+    display: grid;
+    gap: 0 1.5rem;
+  }
+
+  @media (min-width: 36rem) {
+    .skills div {
+      grid-template-columns: 10.5em minmax(0, 1fr);
+    }
+  }
+
+  dt {
+    color: var(--text);
+    font-weight: 500;
+  }
+</style>
