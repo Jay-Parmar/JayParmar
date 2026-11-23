@@ -1,5 +1,6 @@
 ---
 import { profile } from '../data/profile';
+import { link } from '../lib/url';
 
 const [user, domain] = profile.email.split('@');
 ---
@@ -26,6 +27,7 @@ const [user, domain] = profile.email.split('@');
       <div class="actions">
         <a class="button" href={profile.linkedin}>LinkedIn</a>
         <a class="button" href={profile.github}>GitHub</a>
+        <a class="button" href={link('resume/')}>Résumé</a>
       </div>
     </div>
   </div>
@@ -186,6 +188,10 @@ const [user, domain] = profile.email.split('@');
     .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
+    }
+
+    .actions :last-child:nth-child(odd) {
+      grid-column: 1 / -1;
     }
   }
 

@@ -93,3 +93,14 @@ describe('résumé page', () => {
     expect(main).toContain('href="/JayParmar/"');
   });
 });
+
+describe('contact section', () => {
+  it('links to the résumé beside LinkedIn and GitHub', () => {
+    const home = readFileSync('dist/index.html', 'utf8');
+    const contact = home.slice(home.indexOf('id="contact"'), home.indexOf('<footer'));
+    const actions = contact.match(/<div class="actions"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? '';
+    expect(actions).toContain(`href="${profile.linkedin}"`);
+    expect(actions).toContain(`href="${profile.github}"`);
+    expect(actions).toMatch(/<a[^>]*href="\/JayParmar\/resume\/"[^>]*>Résumé<\/a>/);
+  });
+});
