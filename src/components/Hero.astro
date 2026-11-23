@@ -154,4 +154,34 @@ const current = roles.find((role) => role.end === 'Present');
 
     .current { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
   }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .text > *,
+    .current {
+      animation: hero-rise 0.8s var(--ease) both;
+    }
+
+    .text > :nth-child(2) { animation-delay: 0.06s; }
+    .text > :nth-child(3) { animation-delay: 0.14s; }
+    .text > :nth-child(4) { animation-delay: 0.22s; }
+    .text > :nth-child(5) { animation-delay: 0.3s; }
+    .current { animation-delay: 0.38s; }
+
+    .art {
+      animation: hero-fade 1.2s var(--ease) 0.15s both;
+    }
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+
+  @keyframes hero-fade {
+    from {
+      opacity: 0;
+    }
+  }
 </style>
