@@ -13,8 +13,6 @@ import { results } from '../data/results';
           return (
             <li
               class="result"
-              data-start={moves ? result.before : undefined}
-              data-end={moves ? result.after : undefined}
               data-from={moves ? result.before / top : undefined}
             >
               <h3>{result.label}</h3>
@@ -33,10 +31,7 @@ import { results } from '../data/results';
                 </div>
                 <div class="bar after" style={`--w: ${result.after / top}`}>
                   <dt>{result.afterName}</dt>
-                  <dd>
-                    <span class="value" aria-hidden="true">{result.afterText}</span>
-                    <span class="visually-hidden">{result.afterText}</span>
-                  </dd>
+                  <dd class="value">{result.afterText}</dd>
                 </div>
               </dl>
               <p class="context">{result.context}</p>
@@ -50,58 +45,35 @@ import { results } from '../data/results';
 </section>
 
 <script>
-  const cells = [...document.querySelectorAll<HTMLElement>('.result[data-start]')];
+  const cells = [...document.querySelectorAll<HTMLElement>('.result[data-from]')];
   const motion = matchMedia('(prefers-reduced-motion: no-preference)');
 
   if (cells.length && motion.matches) {
-    const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
-    const parts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.stat, .bars')];
     const after = (cell: HTMLElement) => cell.querySelector<HTMLElement>('.after')!;
-    const counts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.figure, .after .value')];
+    const parts = (cell: HTMLElement) => [...cell.querySelectorAll<HTMLElement>('.stat, .bars')];
     const widths = new Map(cells.map((cell) => [cell, after(cell).style.getPropertyValue('--w')]));
-    const finals = new Map(cells.flatMap(counts).map((count) => [count, count.textContent ?? '']));
-    const started = new Set<HTMLElement>();
-    const done = new Set<HTMLElement>();
-
-    const show = (cell: HTMLElement, value: string) => {
-      for (const count of counts(cell)) count.textContent = finals.get(count)!.replace(/\d+/, value);
-    };
+    const timers = new Map<HTMLElement, number>();
 
     const finish = (cell: HTMLElement) => {
-      done.add(cell);
+      clearTimeout(timers.get(cell));
       for (const part of parts(cell)) observer.unobserve(part);
       cell.classList.remove('is-pending', 'is-moving');
       after(cell).style.setProperty('--w', widths.get(cell)!);
-      for (const count of counts(cell)) count.textContent = finals.get(count)!;
     };
 
     const run = (cell: HTMLElement) => {
-      const start = Number(cell.dataset.start);
-      const end = Number(cell.dataset.end);
-      const began = performance.now();
-
+      for (const part of parts(cell)) observer.unobserve(part);
       void cell.offsetWidth;
       cell.classList.add('is-moving');
       after(cell).style.setProperty('--w', widths.get(cell)!);
-
-      const tick = (now: number) => {
-        if (done.has(cell)) return;
-        const t = Math.min(1, (now - began) / 1400);
-        if (t === 1) return finish(cell);
-        show(cell, String(Math.round(start + (end - start) * ease(t))));
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+      timers.set(cell, window.setTimeout(() => finish(cell), 1400));
     };
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           const cell = entry.target.closest<HTMLElement>('.result')!;
-          if (!entry.isIntersecting || started.has(cell) || done.has(cell)) continue;
-          started.add(cell);
-          for (const part of parts(cell)) observer.unobserve(part);
-          run(cell);
+          if (entry.isIntersecting && !timers.has(cell) && cell.classList.contains('is-pending')) run(cell);
         }
       },
       { threshold: 1, rootMargin: '0px 0px -15% 0px' },
@@ -110,7 +82,6 @@ import { results } from '../data/results';
     for (const cell of cells) {
       cell.classList.add('is-pending');
       after(cell).style.setProperty('--w', cell.dataset.from ?? '1');
-      show(cell, cell.dataset.start ?? '');
       for (const part of parts(cell)) observer.observe(part);
     }
 

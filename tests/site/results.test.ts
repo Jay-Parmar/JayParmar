@@ -20,8 +20,8 @@ describe('results', () => {
     const rows = section.split('<li class="result"').slice(1);
     const accuracy = rows.find((row) => row.includes('Vehicle classification accuracy'));
     expect(accuracy).toBeDefined();
-    expect(accuracy).not.toContain('data-start');
-    expect(rows.filter((row) => row.includes('data-start'))).toHaveLength(3);
+    expect(accuracy).not.toContain('data-from');
+    expect(rows.filter((row) => row.includes('data-from'))).toHaveLength(3);
   });
 
   it('shows each summary as a pill', () => {
