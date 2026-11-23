@@ -20,7 +20,7 @@ import { results } from '../data/results';
                 <span class="number" aria-hidden="true">
                   {result.afterText
                     .split(/(\d+\S*)/)
-                    .map((part, i) => (i % 2 ? <span class="figure">{part}</span> : part && <span class="unit">{part}</span>))}
+                    .map((part, i) => (i % 2 ? part : part && <span class="unit">{part}</span>))}
                 </span>
                 {result.delta && <span class="delta">{result.delta}</span>}
               </div>
@@ -31,7 +31,7 @@ import { results } from '../data/results';
                 </div>
                 <div class="bar after" style={`--w: ${result.after / top}`}>
                   <dt>{result.afterName}</dt>
-                  <dd class="value">{result.afterText}</dd>
+                  <dd>{result.afterText}</dd>
                 </div>
               </dl>
               <p class="context">{result.context}</p>
