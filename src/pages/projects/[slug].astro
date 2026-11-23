@@ -294,7 +294,6 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     min-height: 2.75rem;
     color: var(--muted);
     text-decoration: none;
-    transition: color 0.2s;
   }
 
   .contents a:hover,
@@ -452,7 +451,8 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .back { transition: color 0.2s; }
+    .back,
+    .contents a { transition: color 0.2s; }
     .next { transition: border-color 0.25s; }
     .next svg {
       transition:

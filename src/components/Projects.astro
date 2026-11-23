@@ -320,7 +320,7 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
     transform: rotate(45deg);
   }
 
-  .workflow span { grid-column: 2; transition: color 0.2s; }
+  .workflow span { grid-column: 2; }
   .workflow small { grid-column: 2; color: var(--muted); font-size: var(--step--1); font-weight: 400; }
   .workflow a:is(:hover, :focus-visible) span { color: var(--accent); }
   .workflow a:is(:hover, :focus-visible)::after { border-color: var(--accent); }
@@ -385,6 +385,7 @@ const morph = (project: Project) => (project.page ? `view-transition-name: proje
 
   @media (prefers-reduced-motion: no-preference) {
     .card { transition: border-color 0.25s; }
+    .workflow span { transition: color 0.2s; }
   }
 
   @media (hover: hover) {
