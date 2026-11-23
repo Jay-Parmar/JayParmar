@@ -213,8 +213,15 @@ const facts = [...project.facts].sort((a, b) => Number(!splitFact(a)[0]) - Numbe
     .stats li {
       flex-direction: column;
       align-items: start;
-      justify-content: center;
+      justify-content: flex-start;
       padding-block: 1.5rem;
+    }
+
+    .label:only-child {
+      font-size: var(--step-2);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
     .stats li + li {
