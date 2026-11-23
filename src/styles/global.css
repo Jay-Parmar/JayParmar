@@ -289,6 +289,16 @@ svg {
     animation-duration: 0.45s;
     animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
   }
+
+  html.theme-shift::view-transition-old(root),
+  html.theme-shift::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  html.theme-shift [style*='view-transition-name'] {
+    view-transition-name: none !important;
+  }
 }
 
 @media print {
