@@ -44,8 +44,14 @@ const parts = (text: string) => text.split(/\*\*(.+?)\*\*/);
           <span class="node" aria-hidden="true" />
           <p class="period">{period(education.start, education.end)}</p>
           <h3>{education.degree}</h3>
-          <p class="company">{education.school}</p>
-          <p class="place">{education.place}</p>
+        </div>
+        <div class="details">
+          <div class="group">
+            <h4>Education</h4>
+            <ul role="list">
+              <li>{education.school}, {education.place}</li>
+            </ul>
+          </div>
         </div>
       </li>
     </ol>
